@@ -15,12 +15,15 @@ public class RecordUrlMapper extends EntityUrlMapper {
 
     /**
      * all (mappings to records) of a band
+     */
+    protected Map<Muid, Map<String, Muid>> mappingsToRecordsOfBands;
+
+    /**
+     * create mapper for record entities
      * 
      * @param manager
      *            URL mapping manager to resolve other MUIDs
      */
-    protected Map<Muid, Map<String, Muid>> mappingsToRecordsOfBands;
-
     public RecordUrlMapper(
             EntityUrlMappingManager manager) {
         super(manager, EntityType.RECORD, "pathRecord");
