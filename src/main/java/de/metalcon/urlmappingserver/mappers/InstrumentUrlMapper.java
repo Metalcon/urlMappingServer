@@ -4,17 +4,17 @@ import de.metalcon.domain.EntityType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
-public class CityUrlMapper extends EntityUrlMapper {
+public class InstrumentUrlMapper extends EntityUrlMapper {
 
     /**
-     * create mapper for city entities
+     * create mapper for instrument entities
      * 
      * @param manager
      *            URL mapping manager to resolve other MUIDs
      */
-    public CityUrlMapper(
+    public InstrumentUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.CITY, "pathCity");
+        super(manager, EntityType.INSTRUMENT, "pathInstrument");
     }
 
 }

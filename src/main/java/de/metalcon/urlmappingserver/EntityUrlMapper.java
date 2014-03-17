@@ -22,6 +22,11 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     protected static String EMPTY_ENTITY = "_";
 
     /**
+     * URL mapping manager to resolve other MUIDs
+     */
+    protected EntityUrlMappingManager manager;
+
+    /**
      * type of the entities this mapper handles
      */
     protected EntityType entityType;
@@ -44,14 +49,18 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     /**
      * create a new basic URL mapper
      * 
+     * @param manager
+     *            URL mapping manager to resolve other MUIDs
      * @param entityType
      *            type of the entities this mapper handles
      * @param urlPathVarName
      *            name of the path variable
      */
     public EntityUrlMapper(
+            EntityUrlMappingManager manager,
             EntityType entityType,
             String urlPathVarName) {
+        this.manager = manager;
         this.entityType = entityType;
         mappingsOfEntities = new HashMap<Muid, Set<String>>();
         mappingToEntity = new HashMap<String, Muid>();
@@ -59,8 +68,11 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
         Set<String> mapping = createEmptyMappingSet();
+
+        // add mapping: /<entity name>
         String name = convertToUrlText(entityUrlData.getName());
         mapping.add(name);
+
         return mapping;
     }
 
@@ -79,7 +91,9 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         // get existing mappings of this entity
         Set<String> existingMappingsForEntity = mappingsOfEntities.get(muid);
         if (existingMappingsForEntity == null) {
+            // add empty set if no mappings yet
             existingMappingsForEntity = createEmptyMappingSet();
+            mappingsOfEntities.put(muid, existingMappingsForEntity);
         }
 
         existingMappingsForEntity.add(mapping);
@@ -102,6 +116,19 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
                 registerMapping(mapping, muid);
             }
         }
+    }
+
+    /**
+     * resolve a MUID with an other entity type
+     * 
+     * @param url
+     *            registered URL
+     * @param type
+     *            entity type matching to the MUID
+     * @return MUID registered for the URL
+     */
+    protected Muid resolveOtherMuid(Map<String, String> url, EntityType type) {
+        return manager.getMapper(type).resolveMuid(url, type);
     }
 
     /**

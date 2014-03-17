@@ -6,20 +6,27 @@ import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.mappers.BandUrlMapper;
+import de.metalcon.urlmappingserver.mappers.CityUrlMapper;
 
 public class EntityUrlMappingManager implements MetalconUrlMapper {
 
-    private BandUrlMapper bandUrlMapper;
+    private BandUrlMapper bandMapper;
+
+    private CityUrlMapper cityMapper;
 
     public EntityUrlMappingManager() {
-        bandUrlMapper = new BandUrlMapper();
+        bandMapper = new BandUrlMapper(this);
+        cityMapper = new CityUrlMapper(this);
     }
 
     protected EntityUrlMapper getMapper(EntityType entityType) {
         switch (entityType) {
 
             case BAND:
-                return bandUrlMapper;
+                return bandMapper;
+
+            case CITY:
+                return cityMapper;
 
             default:
                 throw new UnsupportedOperationException(
