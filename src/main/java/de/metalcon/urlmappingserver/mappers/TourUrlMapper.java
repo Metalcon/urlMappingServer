@@ -23,18 +23,18 @@ public class TourUrlMapper extends EntityUrlMapper {
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        Set<String> newMappingsForEvent = super.createMapping(entityUrlData);
+        Set<String> newMappingsForTour = super.createMapping(entityUrlData);
         TourUrlData tourUrlData = (TourUrlData) entityUrlData;
 
         // add mapping: /<tour year>-<tour name>
         int year = tourUrlData.getYear();
         if (year != 0) {
             String sYear = String.valueOf(year);
-            newMappingsForEvent.add(sYear + WORD_SEPERATOR
+            newMappingsForTour.add(sYear + WORD_SEPERATOR
                     + convertToUrlText(tourUrlData.getName()));
         }
 
-        return newMappingsForEvent;
+        return newMappingsForTour;
     }
 
 }
