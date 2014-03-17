@@ -41,7 +41,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
             mappingsToRecordsOfBands.put(band, mappingToEntity);
         }
 
-        // add mapping: /<band name>/<release year>
+        // add mapping: /<band name>/<release year>-<record name>
         int releaseYear = recordUrlData.getReleaseYear();
         if (releaseYear != 0) {
             String sReleaseYear = String.valueOf(releaseYear);

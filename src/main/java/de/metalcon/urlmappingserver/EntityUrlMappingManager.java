@@ -11,6 +11,7 @@ import de.metalcon.urlmappingserver.mappers.EventUrlMapper;
 import de.metalcon.urlmappingserver.mappers.GenreUrlMapper;
 import de.metalcon.urlmappingserver.mappers.InstrumentUrlMapper;
 import de.metalcon.urlmappingserver.mappers.RecordUrlMapper;
+import de.metalcon.urlmappingserver.mappers.TourUrlMapper;
 
 public class EntityUrlMappingManager implements MetalconUrlMapper {
 
@@ -26,6 +27,8 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
 
     private RecordUrlMapper recordMapper;
 
+    private TourUrlMapper tourMapper;
+
     public EntityUrlMappingManager() {
         bandMapper = new BandUrlMapper(this);
         cityMapper = new CityUrlMapper(this);
@@ -33,6 +36,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
         genreMapper = new GenreUrlMapper(this);
         instrumentMapper = new InstrumentUrlMapper(this);
         recordMapper = new RecordUrlMapper(this);
+        tourMapper = new TourUrlMapper(this);
     }
 
     protected EntityUrlMapper getMapper(EntityType entityType) {
@@ -55,6 +59,9 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
 
             case RECORD:
                 return recordMapper;
+
+            case TOUR:
+                return tourMapper;
 
             default:
                 throw new UnsupportedOperationException(
