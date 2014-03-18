@@ -12,6 +12,7 @@ import de.metalcon.urlmappingserver.mappers.GenreUrlMapper;
 import de.metalcon.urlmappingserver.mappers.InstrumentUrlMapper;
 import de.metalcon.urlmappingserver.mappers.RecordUrlMapper;
 import de.metalcon.urlmappingserver.mappers.TourUrlMapper;
+import de.metalcon.urlmappingserver.mappers.TrackUrlMapper;
 import de.metalcon.urlmappingserver.mappers.UserUrlMapper;
 import de.metalcon.urlmappingserver.mappers.VenueUrlMapper;
 
@@ -31,6 +32,8 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
 
     private TourUrlMapper tourMapper;
 
+    private TrackUrlMapper trackMapper;
+
     private UserUrlMapper userMapper;
 
     private VenueUrlMapper venueMapper;
@@ -43,6 +46,9 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
         instrumentMapper = new InstrumentUrlMapper(this);
         recordMapper = new RecordUrlMapper(this);
         tourMapper = new TourUrlMapper(this);
+        trackMapper =
+                new TrackUrlMapper(this,
+                        recordMapper.getMappingsToRecordsOfBands());
         userMapper = new UserUrlMapper(this);
         venueMapper = new VenueUrlMapper(this);
     }
@@ -70,6 +76,9 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
 
             case TOUR:
                 return tourMapper;
+
+            case TRACK:
+                return trackMapper;
 
             case USER:
                 return userMapper;

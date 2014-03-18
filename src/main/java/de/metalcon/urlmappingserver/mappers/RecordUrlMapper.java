@@ -29,6 +29,10 @@ public class RecordUrlMapper extends EntityUrlMapper {
         super(manager, EntityType.RECORD, "pathRecord");
     }
 
+    public Map<Muid, Map<String, Muid>> getMappingsToRecordsOfBands() {
+        return mappingsToRecordsOfBands;
+    }
+
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
         Set<String> newMappingsForRecord = super.createMapping(entityUrlData);
@@ -44,7 +48,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
             mappingsToRecordsOfBands.put(band, mappingToEntity);
         }
 
-        // add mapping: /<band name>/<release year>-<record name>
+        // add mapping: /<band>/<release year>-<record name>
         int releaseYear = recordUrlData.getReleaseYear();
         if (releaseYear != 0) {
             String sReleaseYear = String.valueOf(releaseYear);
@@ -57,12 +61,19 @@ public class RecordUrlMapper extends EntityUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, EntityType type) {
+        String recordMapping = getPathVar(url, urlPathVarName);
+
+        // allow empty MUIDs to access tracks of a band
+        if (recordMapping.equals(EMPTY_ENTITY)) {
+            return Muid.EMPTY_MUID;
+        }
+
         // resolve band
         Muid band = resolveOtherMuid(url, EntityType.BAND);
 
-        String mapping = getPathVar(url, urlPathVarName);
+        // resolve record
         Map<String, Muid> mappingToEntity = mappingsToRecordsOfBands.get(band);
-        return mappingToEntity.get(mapping);
+        return mappingToEntity.get(recordMapping);
     }
 
 }
