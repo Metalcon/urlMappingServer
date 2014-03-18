@@ -3,6 +3,7 @@ package de.metalcon.urlmappingserver;
 import java.io.Serializable;
 
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRegistrationRequest;
+import de.metalcon.zmqworker.ZMQRequestHandler;
 
 public class UrlMappingRequestHandler implements ZMQRequestHandler {
 
