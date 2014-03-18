@@ -70,10 +70,16 @@ public class RecordUrlMapper extends EntityUrlMapper {
 
         // resolve band
         Muid band = resolveOtherMuid(url, EntityType.BAND);
+        if (band != null) {
+            // resolve record
+            Map<String, Muid> mappingToEntity =
+                    mappingsToRecordsOfBands.get(band);
+            if (mappingToEntity != null) {
+                return mappingToEntity.get(recordMapping);
+            }
+        }
 
-        // resolve record
-        Map<String, Muid> mappingToEntity = mappingsToRecordsOfBands.get(band);
-        return mappingToEntity.get(recordMapping);
+        return null;
     }
 
 }

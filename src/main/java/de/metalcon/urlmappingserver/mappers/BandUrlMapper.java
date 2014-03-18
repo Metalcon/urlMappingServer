@@ -24,7 +24,7 @@ public class BandUrlMapper extends EntityUrlMapper {
     public Muid resolveMuid(Map<String, String> url, EntityType type) {
         String bandMapping = getPathVar(url, urlPathVarName);
 
-        // allow empty MUIDs to access specific records and below
+        // allow empty MUIDs to access records and tracks not assigned to a (single) band
         if (bandMapping.equals(EMPTY_ENTITY)) {
             return Muid.EMPTY_MUID;
         }

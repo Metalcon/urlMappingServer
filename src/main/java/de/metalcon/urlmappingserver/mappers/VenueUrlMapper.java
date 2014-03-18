@@ -29,8 +29,10 @@ public class VenueUrlMapper extends EntityUrlMapper {
 
         // add mapping: /<venue name>-<city name>
         CityUrlData cityUrlData = venueUrlData.getCity();
-        newMappingsForVenue.add(convertToUrlText(venueUrlData.getName())
-                + WORD_SEPERATOR + convertToUrlText(cityUrlData.getName()));
+        if (cityUrlData != null) {
+            newMappingsForVenue.add(convertToUrlText(venueUrlData.getName())
+                    + WORD_SEPERATOR + convertToUrlText(cityUrlData.getName()));
+        }
 
         return newMappingsForVenue;
     }
