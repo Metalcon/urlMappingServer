@@ -11,6 +11,12 @@ import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
 
+/**
+ * mapper for record entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class RecordUrlMapper extends EntityUrlMapper {
 
     /**
@@ -29,8 +35,22 @@ public class RecordUrlMapper extends EntityUrlMapper {
         super(manager, EntityType.RECORD, "pathRecord");
     }
 
+    /**
+     * access to record mapping for track mapper
+     * 
+     * @return all (mappings to records) of a band
+     */
     public Map<Muid, Map<String, Muid>> getMappingsToRecordsOfBands() {
         return mappingsToRecordsOfBands;
+    }
+
+    /**
+     * access to record MUIDs for track mapper
+     * 
+     * @return all mappings of records
+     */
+    public Map<Muid, Set<String>> getMappingsOfEntities() {
+        return mappingsOfEntities;
     }
 
     @Override

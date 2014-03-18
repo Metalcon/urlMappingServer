@@ -5,6 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -12,13 +15,25 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 /**
  * basic URL mapper for Metalcon entities
  * 
- * @author sebschlicht
+ * @author sebschlicht, Lukas Schmelzeisen
  * 
  */
 public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
+    /**
+     * server log
+     */
+    private static final Logger LOG = LoggerFactory
+            .getLogger(EntityUrlMapper.class);
+
+    /**
+     * word separator in URL mappings
+     */
     protected static String WORD_SEPERATOR = "-";
 
+    /**
+     * placeholder for missing entity
+     */
     protected static String EMPTY_ENTITY = "_";
 
     /**
@@ -66,12 +81,18 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         mappingToEntity = new HashMap<String, Muid>();
     }
 
+    /**
+     * create new mappings for the entity
+     * 
+     * @param entityUrlData
+     *            URL data needed to register this entity
+     * @return set of new mappings
+     */
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
         Set<String> mapping = createEmptyMappingSet();
 
         // add mapping: /<entity name>
-        String name = convertToUrlText(entityUrlData.getName());
-        mapping.add(name);
+        mapping.add(convertToUrlText(entityUrlData.getName()));
 
         return mapping;
     }
@@ -87,6 +108,14 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         return mappingToEntity.get(mapping);
     }
 
+    /**
+     * register a single mapping
+     * 
+     * @param mapping
+     *            mapping to be registered
+     * @param muid
+     *            MUID the mapping refers to
+     */
     protected void registerMapping(String mapping, Muid muid) {
         // get existing mappings of this entity
         Set<String> existingMappingsForEntity = mappingsOfEntities.get(muid);
@@ -99,9 +128,18 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         existingMappingsForEntity.add(mapping);
         mappingToEntity.put(mapping, muid);
 
-        // TODO: log mapping
+        // log mapping
+        LOG.debug("new mapping: " + muid + "\"" + mapping + "\"");
     }
 
+    /**
+     * register mappings for an entity
+     * 
+     * @param muid
+     *            MUID of the entity
+     * @param newMappingsForEntity
+     *            mappings to be registered
+     */
     protected void
         registerMappings(Muid muid, Set<String> newMappingsForEntity) {
 
@@ -148,6 +186,17 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         return urlText;
     }
 
+    /**
+     * read value of a path variable
+     * 
+     * @param url
+     *            path variables in URL
+     * @param pathVar
+     *            name of the path variable
+     * @return value of the path variable
+     * @throws IllegalStateException
+     *             if path variable not contained in URL
+     */
     protected static String getPathVar(Map<String, String> url, String pathVar) {
         String value = url.get(pathVar);
         if (value != null) {
@@ -157,6 +206,11 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
                 + "\"");
     }
 
+    /**
+     * create empty set to add mappings to
+     * 
+     * @return empty set
+     */
     protected static Set<String> createEmptyMappingSet() {
         return new LinkedHashSet<String>();
     }

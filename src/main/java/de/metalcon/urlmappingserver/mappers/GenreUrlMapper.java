@@ -4,6 +4,12 @@ import de.metalcon.domain.EntityType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
+/**
+ * mapper for genre entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class GenreUrlMapper extends EntityUrlMapper {
 
     /**

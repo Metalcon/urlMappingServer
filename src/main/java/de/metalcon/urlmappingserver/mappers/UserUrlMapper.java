@@ -8,6 +8,12 @@ import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.UserUrlData;
 
+/**
+ * mapper for user entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class UserUrlMapper extends EntityUrlMapper {
 
     /**

@@ -9,6 +9,12 @@ import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.VenueUrlData;
 
+/**
+ * mapper for venue entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class VenueUrlMapper extends EntityUrlMapper {
 
     /**

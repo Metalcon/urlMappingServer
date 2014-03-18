@@ -29,7 +29,8 @@ public interface MetalconUrlMapper {
      *            registered URL
      * @param type
      *            entity type matching to the MUID
-     * @return MUID registered for the URL
+     * @return MUID registered for the URL<br>
+     *         <b>null</b> if none registered
      * @throws RedirectException
      *             TODO
      */

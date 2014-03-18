@@ -12,6 +12,12 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EventUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.VenueUrlData;
 
+/**
+ * mapper for event entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class EventUrlMapper extends EntityUrlMapper {
 
     /**

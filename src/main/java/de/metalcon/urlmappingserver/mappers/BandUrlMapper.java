@@ -7,6 +7,12 @@ import de.metalcon.domain.Muid;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
+/**
+ * mapper for band entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class BandUrlMapper extends EntityUrlMapper {
 
     /**

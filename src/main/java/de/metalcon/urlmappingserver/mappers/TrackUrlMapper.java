@@ -11,12 +11,18 @@ import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.TrackUrlData;
 
+/**
+ * mapper for track entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class TrackUrlMapper extends EntityUrlMapper {
 
     /**
-     * all (mappings to records) of a band
+     * mapper for record entities to ensure parental mapping tree
      */
-    protected Map<Muid, Map<String, Muid>> mappingsToRecordsOfBands;
+    protected RecordUrlMapper recordMapper;
 
     /**
      * all (mappings to tracks) of a record
@@ -28,14 +34,14 @@ public class TrackUrlMapper extends EntityUrlMapper {
      * 
      * @param manager
      *            URL mapping manager to resolve other MUIDs
-     * @param mappingsToRecordsOfBands
-     *            all (mappings to records) of a band
+     * @param recordMapper
+     *            mapper for record entities to ensure parental mapping tree
      */
     public TrackUrlMapper(
             EntityUrlMappingManager manager,
-            Map<Muid, Map<String, Muid>> mappingsToRecordsOfBands) {
+            RecordUrlMapper recordMapper) {
         super(manager, EntityType.TRACK, "pathTrack");
-        this.mappingsToRecordsOfBands = mappingsToRecordsOfBands;
+        this.recordMapper = recordMapper;
     }
 
     @Override
@@ -43,20 +49,20 @@ public class TrackUrlMapper extends EntityUrlMapper {
         Set<String> newMappingsForTrack = super.createMapping(entityUrlData);
         TrackUrlData trackUrlData = (TrackUrlData) entityUrlData;
 
-        // switch into band mapping
         Muid band =
                 (trackUrlData.getBand() != null) ? trackUrlData.getBand()
                         .getMuid() : Muid.EMPTY_MUID;
-        mappingToEntity = mappingsToRecordsOfBands.get(band);
-        if (mappingToEntity == null) {
-            mappingToEntity = new HashMap<String, Muid>();
-            mappingsToRecordsOfBands.put(band, mappingToEntity);
-        }
-
-        // switch into record mapping
         Muid record =
                 (trackUrlData.getRecord() != null) ? trackUrlData.getRecord()
                         .getMuid() : Muid.EMPTY_MUID;
+
+        // register record for band if not registered yet
+        if (recordMapper.getMappingsToRecordsOfBands().get(band) == null
+                || !recordMapper.getMappingsOfEntities().containsKey(record)) {
+            recordMapper.registerMuid(trackUrlData.getRecord());
+        }
+
+        // switch into record mapping
         mappingToEntity = mappingsToTracksOfRecords.get(record);
         if (mappingToEntity == null) {
             mappingToEntity = new HashMap<String, Muid>();

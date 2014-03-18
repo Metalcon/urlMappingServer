@@ -8,6 +8,12 @@ import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.TourUrlData;
 
+/**
+ * mapper for tour entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class TourUrlMapper extends EntityUrlMapper {
 
     /**

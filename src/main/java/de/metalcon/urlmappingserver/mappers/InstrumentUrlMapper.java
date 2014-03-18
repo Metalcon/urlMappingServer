@@ -4,6 +4,12 @@ import de.metalcon.domain.EntityType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
+/**
+ * mapper for instrument entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class InstrumentUrlMapper extends EntityUrlMapper {
 
     /**

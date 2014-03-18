@@ -16,6 +16,12 @@ import de.metalcon.urlmappingserver.mappers.TrackUrlMapper;
 import de.metalcon.urlmappingserver.mappers.UserUrlMapper;
 import de.metalcon.urlmappingserver.mappers.VenueUrlMapper;
 
+/**
+ * URL mapping manager for all Metalcon entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class EntityUrlMappingManager implements MetalconUrlMapper {
 
     private BandUrlMapper bandMapper;
@@ -38,6 +44,9 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
 
     private VenueUrlMapper venueMapper;
 
+    /**
+     * create URL mapping manager for all Metalcon entities
+     */
     public EntityUrlMappingManager() {
         bandMapper = new BandUrlMapper(this);
         cityMapper = new CityUrlMapper(this);
@@ -46,13 +55,20 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
         instrumentMapper = new InstrumentUrlMapper(this);
         recordMapper = new RecordUrlMapper(this);
         tourMapper = new TourUrlMapper(this);
-        trackMapper =
-                new TrackUrlMapper(this,
-                        recordMapper.getMappingsToRecordsOfBands());
+        trackMapper = new TrackUrlMapper(this, recordMapper);
         userMapper = new UserUrlMapper(this);
         venueMapper = new VenueUrlMapper(this);
     }
 
+    /**
+     * get the mapper handling a specific entity type
+     * 
+     * @param entityType
+     *            type of the entity the mapper is needed for
+     * @return URL mapper for the entity type passed
+     * @throws UnsupportedOperationException
+     *             if no mapper for this entity type existing
+     */
     protected EntityUrlMapper getMapper(EntityType entityType) {
         switch (entityType) {
 
