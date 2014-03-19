@@ -33,6 +33,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
     public RecordUrlMapper(
             EntityUrlMappingManager manager) {
         super(manager, EntityType.RECORD, "pathRecord");
+        mappingsToRecordsOfBands = new HashMap<Muid, Map<String, Muid>>();
     }
 
     /**
