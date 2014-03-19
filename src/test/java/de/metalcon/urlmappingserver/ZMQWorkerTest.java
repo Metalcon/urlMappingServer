@@ -1,6 +1,8 @@
 package de.metalcon.urlmappingserver;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.After;
@@ -37,20 +39,22 @@ public class ZMQWorkerTest {
 
     private static short ID = 1;
 
-    private static String ADDRESS = "tcp://127.0.0.1:6002";//"ipc:///tmp/zmqw";
+    private static String ADDRESS = "tcp://127.0.0.1:600"; //"inproc:///tmp/zmqw";
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         CONTEXT = ZMQ.context(1);
+
         WORKER =
-                new ZMQWorker(ADDRESS, new UrlMappingRequestHandler(
-                        new EntityUrlMappingManager()));
+                new ZMQWorker(ADDRESS + 1, ADDRESS + 0,
+                        new UrlMappingRequestHandler(
+                                new EntityUrlMappingManager()), CONTEXT);
         WORKER.start();
     }
 
     @Before
     public void setUp() {
-        socket = CONTEXT.socket(ZMQ.REQ);
+        socket = CONTEXT.socket(ZMQ.DEALER);
         socket.connect(ADDRESS);
     }
 
@@ -109,21 +113,80 @@ public class ZMQWorkerTest {
     }
 
     @Test
-    public void test() {
-        short type = 0;
-        for (int i = 0; i < 100000; i++) {
-            EntityUrlData urlData = generatedData(type);
-            UrlMappingRegistrationRequest request =
-                    new UrlMappingRegistrationRequest(urlData);
+    public void test() throws InterruptedException {
+        List<Thread> threads = new LinkedList<Thread>();
+        for (int i = 0; i < 1; i++) {
+            ZMQ.Socket socketReceive = CONTEXT.socket(ZMQ.PULL);
+            socketReceive.connect(ADDRESS + i);
+            Thread thread = new Thread(new Receive(socketReceive));
+            threads.add(thread);
+            thread.start();
 
-            socket.send(SerializationUtils.serialize(request));
-            SerializationUtils.deserialize(socket.recv());
+            ZMQ.Socket socketSend = CONTEXT.socket(ZMQ.PUSH);
+            socketSend.connect(ADDRESS + (i + 1));
+            thread = new Thread(new Send(socketSend));
+            threads.add(thread);
+            thread.start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+    }
 
-            type += 1;
-            if (type == 10) {
-                type = 0;
+    private class Receive implements Runnable {
+
+        private ZMQ.Socket socketReceive;
+
+        public Receive(
+                ZMQ.Socket socketReceive) {
+            this.socketReceive = socketReceive;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 1000000; i++) {
+                SerializationUtils.deserialize(socketReceive.recv());
+
+                if (i % 10000 == 0) {
+                    System.out.println(i + " received");
+                }
             }
         }
-        System.out.println("done");
+    }
+
+    private class Send implements Runnable {
+
+        private ZMQ.Socket socketSend;
+
+        public Send(
+                ZMQ.Socket socketSend) {
+            this.socketSend = socketSend;
+        }
+
+        @Override
+        public void run() {
+            long ms = System.currentTimeMillis();
+            short type = 0;
+
+            for (int i = 0; i < 1000000; i++) {
+                EntityUrlData urlData = generatedData(type);
+                UrlMappingRegistrationRequest request =
+                        new UrlMappingRegistrationRequest(urlData);
+
+                byte[] serRequest = SerializationUtils.serialize(request);
+                socketSend.send(serRequest);
+
+                type += 1;
+                if (type == 10) {
+                    type = 0;
+                }
+                if (i % 10000 == 0) {
+                    System.out.println(i + " sent");
+                }
+            }
+            System.out.println("done: " + (System.currentTimeMillis() - ms)
+                    + "ms");
+        }
+
     }
 }
