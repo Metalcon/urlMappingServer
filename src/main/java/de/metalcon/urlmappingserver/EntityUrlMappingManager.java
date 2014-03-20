@@ -112,7 +112,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
 
     @Override
     public void registerMuid(EntityUrlData urlData) {
-        getMapper(urlData.getMuid().getEntityType()).registerMuid(urlData);
+        getMapper(urlData.getMuid().getMuidType()).registerMuid(urlData);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class UrlMappingRequestHandler implements ZMQRequestHandler {
             urlMappingManager.registerMuid(urlData);
         } catch (MetalconRuntimeException e) {
             return new UsageErrorResponse("unknown entity type \""
-                    + urlData.getMuid().getEntityType() + "\"",
+                    + urlData.getMuid().getMuidType() + "\"",
                     "use a valid MUID");
         }
 
@@ -51,7 +51,7 @@ public class UrlMappingRequestHandler implements ZMQRequestHandler {
     private Response handleResolveRequest(UrlMappingResolveRequest request) {
         Muid muid =
                 urlMappingManager.resolveMuid(request.getUrlPathVars(),
-                        request.getEntityType());
+                        request.getMuidType());
 
         if (muid != null) {
             return new MuidResolvedResponse(muid);
