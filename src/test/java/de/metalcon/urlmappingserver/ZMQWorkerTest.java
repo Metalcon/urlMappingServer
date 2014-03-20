@@ -39,16 +39,15 @@ public class ZMQWorkerTest {
 
     private static short ID = 1;
 
-    private static String ADDRESS = "tcp://127.0.0.1:600"; //"inproc:///tmp/zmqw";
+    private static String ADDRESS = "tcp://127.0.0.1:6001"; //"inproc:///tmp/zmqw";
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         CONTEXT = ZMQ.context(1);
 
         WORKER =
-                new ZMQWorker(ADDRESS + 1, ADDRESS + 0,
-                        new UrlMappingRequestHandler(
-                                new EntityUrlMappingManager()), CONTEXT);
+                new ZMQWorker(ADDRESS, new UrlMappingRequestHandler(
+                        new EntityUrlMappingManager()), CONTEXT);
         WORKER.start();
     }
 
@@ -116,14 +115,14 @@ public class ZMQWorkerTest {
     public void test() throws InterruptedException {
         List<Thread> threads = new LinkedList<Thread>();
         for (int i = 0; i < 1; i++) {
-            ZMQ.Socket socketReceive = CONTEXT.socket(ZMQ.PULL);
-            socketReceive.connect(ADDRESS + i);
+            ZMQ.Socket socketReceive = CONTEXT.socket(ZMQ.DEALER);
+            socketReceive.connect(ADDRESS);
             Thread thread = new Thread(new Receive(socketReceive));
             threads.add(thread);
             thread.start();
 
-            ZMQ.Socket socketSend = CONTEXT.socket(ZMQ.PUSH);
-            socketSend.connect(ADDRESS + (i + 1));
+            ZMQ.Socket socketSend = CONTEXT.socket(ZMQ.DEALER);
+            socketSend.connect(ADDRESS);
             thread = new Thread(new Send(socketSend));
             threads.add(thread);
             thread.start();

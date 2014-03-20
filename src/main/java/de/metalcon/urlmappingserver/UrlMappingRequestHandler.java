@@ -1,12 +1,16 @@
 package de.metalcon.urlmappingserver;
 
+import de.metalcon.api.responses.Response;
+import de.metalcon.api.responses.SuccessResponse;
+import de.metalcon.api.responses.errors.UsageErrorResponse;
+import de.metalcon.domain.Muid;
 import de.metalcon.exceptions.MetalconRuntimeException;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRegistrationRequest;
+import de.metalcon.urlmappingserver.api.requests.UrlMappingResolveRequest;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
+import de.metalcon.urlmappingserver.api.responses.MuidResolvedResponse;
+import de.metalcon.urlmappingserver.api.responses.UnknownMuidResponse;
 import de.metalcon.zmqworker.ZMQRequestHandler;
-import de.metalcon.zmqworker.responses.Response;
-import de.metalcon.zmqworker.responses.SuccessResponse;
-import de.metalcon.zmqworker.responses.errors.UsageErrorResponse;
 
 public class UrlMappingRequestHandler implements ZMQRequestHandler {
 
@@ -19,22 +23,14 @@ public class UrlMappingRequestHandler implements ZMQRequestHandler {
 
     @Override
     public Response handleRequest(Object request) {
-        return new SuccessResponse();
+        if (request instanceof UrlMappingRegistrationRequest) {
+            return handleRegistrationRequest((UrlMappingRegistrationRequest) request);
+        } else if (request instanceof UrlMappingResolveRequest) {
+            return handleResolveRequest((UrlMappingResolveRequest) request);
+        }
 
-        //        if (request instanceof UrlMappingRegistrationRequest) {
-        //            return handleRegistrationRequest((UrlMappingRegistrationRequest) request);
-        //        } else if (request instanceof UrlMappingResolveRequest) {
-        //            UrlMappingResolveRequest resolveRequest =
-        //                    (UrlMappingResolveRequest) request;
-        //            Muid muid =
-        //                    urlMappingManager.resolveMuid(
-        //                            resolveRequest.getUrlPathVars(),
-        //                            resolveRequest.getEntityType());
-        //
-        //            return new SuccessResponse();
-        //        }
-        //
-        //        return null;
+        return new UsageErrorResponse("unknown request type",
+                "use requests defined in URL mapping server API");
     }
 
     private Response handleRegistrationRequest(
@@ -50,5 +46,16 @@ public class UrlMappingRequestHandler implements ZMQRequestHandler {
         }
 
         return new SuccessResponse();
+    }
+
+    private Response handleResolveRequest(UrlMappingResolveRequest request) {
+        Muid muid =
+                urlMappingManager.resolveMuid(request.getUrlPathVars(),
+                        request.getEntityType());
+
+        if (muid != null) {
+            return new MuidResolvedResponse(muid);
+        }
+        return new UnknownMuidResponse();
     }
 }
