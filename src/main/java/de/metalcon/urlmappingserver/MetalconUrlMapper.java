@@ -2,8 +2,8 @@ package de.metalcon.urlmappingserver;
 
 import java.util.Map;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 /**
@@ -31,9 +31,7 @@ public interface MetalconUrlMapper {
      *            entity type matching to the MUID
      * @return MUID registered for the URL<br>
      *         <b>null</b> if none registered
-     * @throws RedirectException
-     *             TODO
      */
-    Muid resolveMuid(Map<String, String> url, EntityType type);
+    Muid resolveMuid(Map<String, String> url, MuidType type);
 
 }

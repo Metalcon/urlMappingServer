@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -40,7 +40,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
     public TrackUrlMapper(
             EntityUrlMappingManager manager,
             RecordUrlMapper recordMapper) {
-        super(manager, EntityType.TRACK, "pathTrack");
+        super(manager, "pathTrack");
         this.recordMapper = recordMapper;
         mappingsToTracksOfRecords = new HashMap<Muid, Map<String, Muid>>();
     }
@@ -85,9 +85,9 @@ public class TrackUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, EntityType type) {
+    public Muid resolveMuid(Map<String, String> url, MuidType type) {
         // resolve record
-        Muid record = resolveOtherMuid(url, EntityType.RECORD);
+        Muid record = resolveOtherMuid(url, MuidType.RECORD);
 
         // resolve track        
         String trackMapping = getPathVar(url, urlPathVarName);

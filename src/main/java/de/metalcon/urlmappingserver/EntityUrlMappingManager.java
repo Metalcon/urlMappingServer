@@ -2,8 +2,8 @@ package de.metalcon.urlmappingserver;
 
 import java.util.Map;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.mappers.BandUrlMapper;
 import de.metalcon.urlmappingserver.mappers.CityUrlMapper;
@@ -63,14 +63,14 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
     /**
      * get the mapper handling a specific entity type
      * 
-     * @param entityType
+     * @param muidType
      *            type of the entity the mapper is needed for
      * @return URL mapper for the entity type passed
      * @throws UnsupportedOperationException
      *             if no mapper for this entity type existing
      */
-    protected EntityUrlMapper getMapper(EntityType entityType) {
-        switch (entityType) {
+    protected EntityUrlMapper getMapper(MuidType muidType) {
+        switch (muidType) {
 
             case BAND:
                 return bandMapper;
@@ -104,7 +104,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
 
             default:
                 throw new UnsupportedOperationException(
-                        "unknown entity type \"" + entityType.getIdentifier()
+                        "unknown entity type \"" + muidType.getIdentifier()
                                 + "\"");
 
         }
@@ -116,7 +116,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, EntityType type) {
+    public Muid resolveMuid(Map<String, String> url, MuidType type) {
         return getMapper(type).resolveMuid(url, type);
     }
 

@@ -1,6 +1,5 @@
 package de.metalcon.urlmappingserver.mappers;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
@@ -20,7 +19,7 @@ public class GenreUrlMapper extends EntityUrlMapper {
      */
     public GenreUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.GENRE, "pathGenre");
+        super(manager, "pathGenre");
     }
 
 }

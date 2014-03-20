@@ -2,7 +2,6 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Set;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -24,7 +23,7 @@ public class UserUrlMapper extends EntityUrlMapper {
      */
     public UserUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.USER, "pathUser");
+        super(manager, "pathUser");
     }
 
     @Override

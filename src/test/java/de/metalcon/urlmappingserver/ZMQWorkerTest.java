@@ -12,9 +12,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zeromq.ZMQ;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidConverter;
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRegistrationRequest;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
@@ -68,46 +67,48 @@ public class ZMQWorkerTest {
     }
 
     protected EntityUrlData generatedData(short type) {
-        Muid muid =
-                new Muid(MuidConverter.generateMUID(type, (byte) 0,
-                        (int) System.currentTimeMillis(), ID));
+        MuidType muidType = MuidType.parseShort(type);
+        Muid muid = Muid.create(muidType);
         String name = "id" + ID;
         ID += 1;
 
-        if (EntityType.BAND.getRawIdentifier() == type) {
-            return new BandUrlData(muid, name);
-        } else if (EntityType.CITY.getRawIdentifier() == type) {
-            return new CityUrlData(muid, name);
-        } else if (EntityType.EVENT.getRawIdentifier() == type) {
-            return new EventUrlData(muid, name, new Date(
-                    System.currentTimeMillis()),
-                    (CityUrlData) generatedData(EntityType.CITY
-                            .getRawIdentifier()),
-                    (VenueUrlData) generatedData(EntityType.VENUE
-                            .getRawIdentifier()));
-        } else if (EntityType.GENRE.getRawIdentifier() == type) {
-            return new GenreUrlData(muid, name);
-        } else if (EntityType.INSTRUMENT.getRawIdentifier() == type) {
-            return new InstrumentUrlData(muid, name);
-        } else if (EntityType.RECORD.getRawIdentifier() == type) {
-            return new RecordUrlData(muid, name,
-                    (BandUrlData) generatedData(EntityType.BAND
-                            .getRawIdentifier()), ID);
-        } else if (EntityType.TOUR.getRawIdentifier() == type) {
-            return new TourUrlData(muid, name, ID);
-        } else if (EntityType.TRACK.getRawIdentifier() == type) {
-            return new TrackUrlData(muid, name,
-                    (BandUrlData) generatedData(EntityType.BAND
-                            .getRawIdentifier()),
-                    (RecordUrlData) generatedData(EntityType.RECORD
-                            .getRawIdentifier()), ID);
-        } else if (EntityType.USER.getRawIdentifier() == type) {
-            return new UserUrlData(muid, String.valueOf(ID), String.valueOf(ID));
-        } else if (EntityType.VENUE.getRawIdentifier() == type) {
-            return new VenueUrlData(muid, name,
-                    (CityUrlData) generatedData(EntityType.CITY
-                            .getRawIdentifier()));
+        switch (muidType) {
+            case BAND:
+                return new BandUrlData(muid, name);
+            case CITY:
+                return new CityUrlData(muid, name);
+            case EVENT:
+                return new EventUrlData(muid, name, new Date(
+                        System.currentTimeMillis()),
+                        (CityUrlData) generatedData(MuidType.CITY
+                                .getRawIdentifier()),
+                        (VenueUrlData) generatedData(MuidType.VENUE
+                                .getRawIdentifier()));
+            case GENRE:
+                return new GenreUrlData(muid, name);
+            case INSTRUMENT:
+                return new InstrumentUrlData(muid, name);
+            case RECORD:
+                return new RecordUrlData(muid, name,
+                        (BandUrlData) generatedData(MuidType.BAND
+                                .getRawIdentifier()), ID);
+            case TOUR:
+                return new TourUrlData(muid, name, ID);
+            case TRACK:
+                return new TrackUrlData(muid, name,
+                        (BandUrlData) generatedData(MuidType.BAND
+                                .getRawIdentifier()),
+                        (RecordUrlData) generatedData(MuidType.RECORD
+                                .getRawIdentifier()), ID);
+            case USER:
+                return new UserUrlData(muid, String.valueOf(ID),
+                        String.valueOf(ID));
+            case VENUE:
+                return new VenueUrlData(muid, name,
+                        (CityUrlData) generatedData(MuidType.CITY
+                                .getRawIdentifier()));
         }
+
         throw new UnsupportedOperationException("unknown entity type");
     }
 

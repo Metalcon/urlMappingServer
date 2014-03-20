@@ -8,8 +8,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 /**
@@ -42,11 +42,6 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     protected EntityUrlMappingManager manager;
 
     /**
-     * type of the entities this mapper handles
-     */
-    protected EntityType entityType;
-
-    /**
      * name of the path variable
      */
     protected String urlPathVarName;
@@ -73,10 +68,8 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      */
     public EntityUrlMapper(
             EntityUrlMappingManager manager,
-            EntityType entityType,
             String urlPathVarName) {
         this.manager = manager;
-        this.entityType = entityType;
         mappingsOfEntities = new HashMap<Muid, Set<String>>();
         mappingToEntity = new HashMap<String, Muid>();
     }
@@ -103,7 +96,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, EntityType type) {
+    public Muid resolveMuid(Map<String, String> url, MuidType type) {
         String mapping = getPathVar(url, urlPathVarName);
         return mappingToEntity.get(mapping);
     }
@@ -165,7 +158,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            entity type matching to the MUID
      * @return MUID registered for the URL
      */
-    protected Muid resolveOtherMuid(Map<String, String> url, EntityType type) {
+    protected Muid resolveOtherMuid(Map<String, String> url, MuidType type) {
         return manager.getMapper(type).resolveMuid(url, type);
     }
 
