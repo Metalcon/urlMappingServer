@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -32,7 +32,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
      */
     public RecordUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.RECORD, "pathRecord");
+        super(manager, "pathRecord");
         mappingsToRecordsOfBands = new HashMap<Muid, Map<String, Muid>>();
     }
 
@@ -81,7 +81,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, EntityType type) {
+    public Muid resolveMuid(Map<String, String> url, MuidType type) {
         String recordMapping = getPathVar(url, urlPathVarName);
 
         // allow empty MUIDs to access tracks of a band
@@ -90,7 +90,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
         }
 
         // resolve band
-        Muid band = resolveOtherMuid(url, EntityType.BAND);
+        Muid band = resolveOtherMuid(url, MuidType.BAND);
         if (band != null) {
             // resolve record
             Map<String, Muid> mappingToEntity =

@@ -1,6 +1,5 @@
 package de.metalcon.urlmappingserver.mappers;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
@@ -20,7 +19,7 @@ public class CityUrlMapper extends EntityUrlMapper {
      */
     public CityUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.CITY, "pathCity");
+        super(manager, "pathCity");
     }
 
 }

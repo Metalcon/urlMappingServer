@@ -2,8 +2,8 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Map;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.domain.Muid;
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
@@ -23,11 +23,11 @@ public class BandUrlMapper extends EntityUrlMapper {
      */
     public BandUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.BAND, "pathBand");
+        super(manager, "pathBand");
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, EntityType type) {
+    public Muid resolveMuid(Map<String, String> url, MuidType type) {
         String bandMapping = getPathVar(url, urlPathVarName);
 
         // allow empty MUIDs to access records and tracks not assigned to a (single) band

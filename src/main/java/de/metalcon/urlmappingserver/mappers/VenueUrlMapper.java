@@ -2,7 +2,6 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Set;
 
-import de.metalcon.domain.EntityType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
@@ -25,7 +24,7 @@ public class VenueUrlMapper extends EntityUrlMapper {
      */
     public VenueUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.VENUE, "pathVenue");
+        super(manager, "pathVenue");
     }
 
     @Override
