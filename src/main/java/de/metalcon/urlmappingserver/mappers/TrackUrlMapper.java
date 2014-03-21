@@ -40,7 +40,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
     public TrackUrlMapper(
             EntityUrlMappingManager manager,
             RecordUrlMapper recordMapper) {
-        super(manager, "pathTrack");
+        super(manager, MuidType.TRACK, "pathTrack");
         this.recordMapper = recordMapper;
         mappingsToTracksOfRecords = new HashMap<Muid, Map<String, Muid>>();
     }

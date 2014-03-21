@@ -23,7 +23,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     /**
      * server log
      */
-    private static final Logger LOG = LoggerFactory
+    protected static final Logger LOG = LoggerFactory
             .getLogger(EntityUrlMapper.class);
 
     /**
@@ -35,6 +35,11 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * placeholder for missing entity
      */
     protected static String EMPTY_ENTITY = "_";
+
+    /**
+     * type of the entities this mapper handles
+     */
+    protected MuidType muidType;
 
     /**
      * URL mapping manager to resolve other MUIDs
@@ -61,17 +66,25 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * 
      * @param manager
      *            URL mapping manager to resolve other MUIDs
-     * @param entityType
+     * @param muidType
      *            type of the entities this mapper handles
      * @param urlPathVarName
      *            name of the path variable
      */
     public EntityUrlMapper(
             EntityUrlMappingManager manager,
+            MuidType muidType,
             String urlPathVarName) {
         this.manager = manager;
         mappingsOfEntities = new HashMap<Muid, Set<String>>();
         mappingToEntity = new HashMap<String, Muid>();
+    }
+
+    /**
+     * @return type of the entities this mapper handles
+     */
+    public MuidType getMuidType() {
+        return muidType;
     }
 
     /**
@@ -80,8 +93,16 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * @param entityUrlData
      *            URL data needed to register this entity
      * @return set of new mappings
+     * @throws IllegalArgumentException
+     *             if entity type not handled
      */
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
+        if (entityUrlData.getMuid().getMuidType() != muidType) {
+            throw new IllegalArgumentException("mapper handles muid type \""
+                    + getMuidType() + "\" only (was: \""
+                    + entityUrlData.getMuid().getMuidType() + "\")");
+        }
+
         Set<String> mapping = createEmptyMappingSet();
 
         // add mapping: /<entity name>

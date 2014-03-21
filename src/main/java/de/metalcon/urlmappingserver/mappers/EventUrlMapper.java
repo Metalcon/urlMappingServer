@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
@@ -33,7 +34,7 @@ public class EventUrlMapper extends EntityUrlMapper {
      */
     public EventUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, "pathEvent");
+        super(manager, MuidType.EVENT, "pathEvent");
     }
 
     @Override

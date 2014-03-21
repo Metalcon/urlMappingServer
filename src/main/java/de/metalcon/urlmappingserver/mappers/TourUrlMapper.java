@@ -2,6 +2,7 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Set;
 
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -23,7 +24,7 @@ public class TourUrlMapper extends EntityUrlMapper {
      */
     public TourUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, "pathTour");
+        super(manager, MuidType.TOUR, "pathTour");
     }
 
     @Override

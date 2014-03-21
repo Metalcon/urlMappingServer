@@ -23,7 +23,7 @@ public class BandUrlMapper extends EntityUrlMapper {
      */
     public BandUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, "pathBand");
+        super(manager, MuidType.BAND, "pathBand");
     }
 
     @Override

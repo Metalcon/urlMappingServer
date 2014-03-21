@@ -1,5 +1,6 @@
 package de.metalcon.urlmappingserver.mappers;
 
+import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
@@ -19,7 +20,7 @@ public class GenreUrlMapper extends EntityUrlMapper {
      */
     public GenreUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, "pathGenre");
+        super(manager, MuidType.GENRE, "pathGenre");
     }
 
 }
