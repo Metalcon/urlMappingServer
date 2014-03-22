@@ -28,14 +28,18 @@ public class BandUrlMapper extends EntityUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        String bandMapping = getPathVar(url, urlPathVarName);
+        if (type == muidType) {
+            String bandMapping = getPathVar(url, urlPathVarName);
 
-        // allow empty MUIDs to access records and tracks not assigned to a (single) band
-        if (bandMapping.equals(EMPTY_ENTITY)) {
-            return Muid.EMPTY_MUID;
+            // allow empty MUIDs to access records and tracks not assigned to a (single) band
+            if (bandMapping.equals(EMPTY_ENTITY)) {
+                return Muid.EMPTY_MUID;
+            }
+
+            return mappingToEntity.get(bandMapping);
         }
-
-        return mappingToEntity.get(bandMapping);
+        throw new IllegalArgumentException("mapper handles muid type \""
+                + getMuidType() + "\" only (was: \"" + type + "\")");
     }
 
 }

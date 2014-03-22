@@ -5,16 +5,16 @@ import org.junit.BeforeClass;
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
-import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
+import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
 
-public class BandUrlMapperTest extends EntityUrlMapperTest {
+public class CityUrlMapperTest extends EntityUrlMapperTest {
 
-    public static final BandUrlData BAND = new BandUrlData(
-            Muid.create(MuidType.BAND), VALID_NAME);
+    public static final CityUrlData CITY = new CityUrlData(
+            Muid.create(MuidType.CITY), VALID_NAME);
 
     @BeforeClass
     public static void beforeClass() {
-        ENTITY = BAND;
+        ENTITY = CITY;
         EntityUrlMapperTest.beforeClass();
     }
 

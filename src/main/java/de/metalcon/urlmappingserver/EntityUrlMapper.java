@@ -77,6 +77,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
             String urlPathVarName) {
         this.manager = manager;
         this.muidType = muidType;
+        this.urlPathVarName = urlPathVarName;
         mappingsOfEntities = new HashMap<Muid, Set<String>>();
         mappingToEntity = new HashMap<String, Muid>();
     }
@@ -126,8 +127,12 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        String mapping = getPathVar(url, urlPathVarName);
-        return mappingToEntity.get(mapping);
+        if (type == muidType) {
+            String mapping = getPathVar(url, urlPathVarName);
+            return mappingToEntity.get(mapping);
+        }
+        throw new IllegalArgumentException("mapper handles muid type \""
+                + getMuidType() + "\" only (was: \"" + type + "\")");
     }
 
     /**
