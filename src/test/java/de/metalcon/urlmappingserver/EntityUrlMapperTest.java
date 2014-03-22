@@ -43,13 +43,13 @@ public abstract class EntityUrlMapperTest {
     }
 
     @Test
-    public void testName() {
-        checkForMapping(ENTITY.getName());
+    public void testNameWithMuid() {
+        checkForMapping(UNIQUE_MAPPING);
     }
 
     @Test
-    public void testNameWithMuid() {
-        checkForMapping(UNIQUE_MAPPING);
+    public void testName() {
+        checkForMapping(ENTITY.getName());
     }
 
     @Test(
