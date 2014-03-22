@@ -69,7 +69,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
      * @throws UnsupportedOperationException
      *             if no mapper for this entity type existing
      */
-    protected EntityUrlMapper getMapper(MuidType muidType) {
+    public EntityUrlMapper getMapper(MuidType muidType) {
         switch (muidType) {
 
             case BAND:

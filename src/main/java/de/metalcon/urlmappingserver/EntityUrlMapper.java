@@ -76,6 +76,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
             MuidType muidType,
             String urlPathVarName) {
         this.manager = manager;
+        this.muidType = muidType;
         mappingsOfEntities = new HashMap<Muid, Set<String>>();
         mappingToEntity = new HashMap<String, Muid>();
     }
@@ -85,6 +86,13 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      */
     public MuidType getMuidType() {
         return muidType;
+    }
+
+    /**
+     * @return name of the path variable
+     */
+    public String getUrlPathVarName() {
+        return urlPathVarName;
     }
 
     /**
@@ -180,7 +188,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * @return MUID registered for the URL
      */
     protected Muid resolveOtherMuid(Map<String, String> url, MuidType type) {
-        return manager.getMapper(type).resolveMuid(url, type);
+        return manager.resolveMuid(url, type);
     }
 
     /**
