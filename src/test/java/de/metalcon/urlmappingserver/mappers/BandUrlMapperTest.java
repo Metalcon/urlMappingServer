@@ -1,6 +1,9 @@
 package de.metalcon.urlmappingserver.mappers;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
@@ -20,6 +23,13 @@ public class BandUrlMapperTest extends EntityUrlMapperTest {
         ENTITY = BAND;
         SIMILAR_ENTITY = SIMILAR_BAND;
         EntityUrlMapperTest.beforeClass();
+    }
+
+    @Test
+    public void testRegistrationNoBand() {
+        // this is never called directly via API but indirectly via record/track mapper
+        mapper.registerMuid(null);
+        assertNotNull(resolveMapping(EMPTY_ENTITY));
     }
 
 }
