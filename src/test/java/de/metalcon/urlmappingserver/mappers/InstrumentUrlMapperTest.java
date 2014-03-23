@@ -9,8 +9,8 @@ import de.metalcon.urlmappingserver.api.requests.registration.InstrumentUrlData;
 
 public class InstrumentUrlMapperTest extends EntityUrlMapperTest {
 
-    public static final InstrumentUrlData INSTRUMENT = new InstrumentUrlData(
-            Muid.create(MuidType.INSTRUMENT), VALID_NAME);
+    protected static final InstrumentUrlData INSTRUMENT =
+            new InstrumentUrlData(Muid.create(MuidType.INSTRUMENT), VALID_NAME);
 
     protected static final InstrumentUrlData SIMILAR_INSTRUMENT =
             new InstrumentUrlData(Muid.create(MuidType.INSTRUMENT),

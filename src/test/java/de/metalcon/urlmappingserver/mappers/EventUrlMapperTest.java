@@ -31,7 +31,7 @@ public class EventUrlMapperTest extends EntityUrlMapperTest {
             Muid.create(MuidType.VENUE), VALID_NAME, new CityUrlData(
                     Muid.create(MuidType.CITY), VALID_NAME));
 
-    public static final EventUrlData EVENT = new EventUrlData(
+    protected static final EventUrlData EVENT = new EventUrlData(
             Muid.create(MuidType.EVENT), VALID_NAME, VALID_DATE, VALID_CITY,
             VALID_VENUE);
 

@@ -13,7 +13,7 @@ public class UserUrlMapperTest extends EntityUrlMapperTest {
 
     protected static final String VALID_LAST_NAME = "Testarum";
 
-    public static final UserUrlData USER = new UserUrlData(
+    protected static final UserUrlData USER = new UserUrlData(
             Muid.create(MuidType.USER), VALID_NAME, VALID_LAST_NAME);
 
     protected static final UserUrlData SIMILAR_USER =

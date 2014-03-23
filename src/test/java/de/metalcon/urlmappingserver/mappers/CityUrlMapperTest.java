@@ -9,7 +9,7 @@ import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
 
 public class CityUrlMapperTest extends EntityUrlMapperTest {
 
-    public static final CityUrlData CITY = new CityUrlData(
+    protected static final CityUrlData CITY = new CityUrlData(
             Muid.create(MuidType.CITY), VALID_NAME);
 
     protected static final CityUrlData SIMILAR_CITY = new CityUrlData(

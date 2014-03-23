@@ -15,7 +15,7 @@ public class TourUrlMapperTest extends EntityUrlMapperTest {
 
     protected static final int VALID_YEAR = 2014;
 
-    public static final TourUrlData TOUR = new TourUrlData(
+    protected static final TourUrlData TOUR = new TourUrlData(
             Muid.create(MuidType.TOUR), VALID_NAME, VALID_YEAR);
 
     protected static final TourUrlData SIMILAR_TOUR = new TourUrlData(

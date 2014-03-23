@@ -8,12 +8,16 @@ import org.junit.Test;
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
+import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.VenueUrlData;
 
 public class VenueUrlMapperTest extends EntityUrlMapperTest {
 
-    public static final VenueUrlData VENUE = new VenueUrlData(
-            Muid.create(MuidType.VENUE), VALID_NAME, CityUrlMapperTest.CITY);
+    protected static final CityUrlData VALID_CITY = new CityUrlData(
+            Muid.create(MuidType.CITY), VALID_NAME);
+
+    protected static final VenueUrlData VENUE = new VenueUrlData(
+            Muid.create(MuidType.VENUE), VALID_NAME, VALID_CITY);
 
     protected static final VenueUrlData SIMILAR_VENUE = new VenueUrlData(
             Muid.create(MuidType.VENUE), VENUE.getName(), VENUE.getCity());

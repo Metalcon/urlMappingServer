@@ -9,7 +9,7 @@ import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 
 public class BandUrlMapperTest extends EntityUrlMapperTest {
 
-    public static final BandUrlData BAND = new BandUrlData(
+    protected static final BandUrlData BAND = new BandUrlData(
             Muid.create(MuidType.BAND), VALID_NAME);
 
     protected static final BandUrlData SIMILAR_BAND = new BandUrlData(
