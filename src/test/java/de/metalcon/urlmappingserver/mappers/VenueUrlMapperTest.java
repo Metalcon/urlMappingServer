@@ -1,5 +1,7 @@
 package de.metalcon.urlmappingserver.mappers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -32,6 +34,13 @@ public class VenueUrlMapperTest extends EntityUrlMapperTest {
     public void testMappingCityName() {
         mappingCityName = generateMappingCityName(VENUE);
         checkForEntityMapping(mappingCityName);
+    }
+
+    @Test
+    public void testRegistrationNoCity() {
+        mapper.registerMuid(VENUE_WITHOUT_CITY);
+        assertEquals(VENUE_WITHOUT_CITY.getMuid(),
+                resolveMapping(generateUniqueMapping(VENUE_WITHOUT_CITY)));
     }
 
     @Override

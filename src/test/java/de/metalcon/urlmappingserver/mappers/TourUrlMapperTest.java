@@ -1,5 +1,6 @@
 package de.metalcon.urlmappingserver.mappers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.BeforeClass;
@@ -42,6 +43,8 @@ public class TourUrlMapperTest extends EntityUrlMapperTest {
     @Test
     public void testMappingNoYear() {
         mapper.registerMuid(TOUR_WITHOUT_YEAR);
+        assertEquals(TOUR_WITHOUT_YEAR.getMuid(),
+                resolveMapping(generateUniqueMapping(TOUR_WITHOUT_YEAR)));
         mappingYear = generateMappingYear(TOUR_WITHOUT_YEAR);
         assertNull(resolveMapping(mappingYear));
     }
