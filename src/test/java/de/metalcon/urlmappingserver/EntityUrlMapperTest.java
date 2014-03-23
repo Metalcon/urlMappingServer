@@ -28,8 +28,6 @@ public abstract class EntityUrlMapperTest {
     protected EntityUrlMappingManager manager;
 
     protected EntityUrlMapper mapper;
-    
-    protected EntityUrlData entity;
 
     protected String mappingUnique;
 

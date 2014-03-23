@@ -46,6 +46,12 @@ public class TourUrlMapperTest extends EntityUrlMapperTest {
         assertNull(resolveMapping(mappingYear));
     }
 
+    @Override
+    public void testFirstNameRegistrationOnly() {
+        super.testFirstNameRegistrationOnly();
+        testMappingYear();
+    }
+
     protected static String generateMappingYear(TourUrlData tour) {
         return tour.getYear() + EntityUrlMapper.WORD_SEPARATOR + tour.getName();
     }
