@@ -54,8 +54,7 @@ public class VenueUrlMapperTest extends EntityUrlMapperTest {
     }
 
     protected static String generateMappingCityName(VenueUrlData venue) {
-        return venue.getName() + VenueUrlMapper.WORD_SEPARATOR
-                + venue.getCity().getName();
+        return venue.getName() + WORD_SEPARATOR + venue.getCity().getName();
     }
 
 }

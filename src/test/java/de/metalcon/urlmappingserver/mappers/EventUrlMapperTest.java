@@ -112,18 +112,16 @@ public class EventUrlMapperTest extends EntityUrlMapperTest {
     }
 
     protected static String generateMappingDate(EventUrlData event) {
-        return DATE_FORMATTER.format(event.getDate())
-                + EventUrlMapper.WORD_SEPARATOR + event.getName();
+        return DATE_FORMATTER.format(event.getDate()) + WORD_SEPARATOR
+                + event.getName();
     }
 
     protected static String generateMappingCityName(EventUrlData event) {
-        return event.getName() + EventUrlMapper.WORD_SEPARATOR
-                + event.getCity().getName();
+        return event.getName() + WORD_SEPARATOR + event.getCity().getName();
     }
 
     protected static String generateMappingVenueName(EventUrlData event) {
-        return event.getName() + EventUrlMapper.WORD_SEPARATOR
-                + event.getVenue().getName();
+        return event.getName() + WORD_SEPARATOR + event.getVenue().getName();
     }
 
 }

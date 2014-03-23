@@ -15,6 +15,11 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 public abstract class EntityUrlMapperTest {
 
+    protected static final String PATH_SEPARATOR = "/";
+
+    protected static final String WORD_SEPARATOR =
+            EntityUrlMapper.WORD_SEPARATOR;
+
     protected static final String VALID_NAME = "Testy";
 
     protected static EntityUrlData ENTITY;
@@ -91,8 +96,7 @@ public abstract class EntityUrlMapperTest {
     }
 
     protected static String generateMappingUnique(EntityUrlData entity) {
-        return entity.getName() + EntityUrlMapper.WORD_SEPARATOR
-                + entity.getMuid();
+        return entity.getName() + WORD_SEPARATOR + entity.getMuid();
     }
 
     protected static MuidType getInvalidMuidType(MuidType validMuidType) {

@@ -35,7 +35,7 @@ public class UserUrlMapperTest extends EntityUrlMapperTest {
 
     @Override
     public void testName() {
-        checkForEntityMapping(mappingUnique);
+        checkForEntityMapping(generateMappingName(USER));
     }
 
     @Override
@@ -47,9 +47,11 @@ public class UserUrlMapperTest extends EntityUrlMapperTest {
     }
 
     protected static String generateMappingUnique(UserUrlData user) {
-        return user.getFirstName() + UserUrlMapper.WORD_SEPARATOR
-                + user.getLastName() + UserUrlMapper.WORD_SEPARATOR
-                + user.getMuid();
+        return generateMappingName(user) + WORD_SEPARATOR + user.getMuid();
+    }
+
+    protected static String generateMappingName(UserUrlData user) {
+        return user.getFirstName() + WORD_SEPARATOR + user.getLastName();
     }
 
 }

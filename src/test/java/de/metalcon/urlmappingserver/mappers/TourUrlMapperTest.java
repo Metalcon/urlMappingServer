@@ -55,7 +55,7 @@ public class TourUrlMapperTest extends EntityUrlMapperTest {
     }
 
     protected static String generateMappingYear(TourUrlData tour) {
-        return tour.getYear() + TourUrlMapper.WORD_SEPARATOR + tour.getName();
+        return tour.getYear() + WORD_SEPARATOR + tour.getName();
     }
 
 }
