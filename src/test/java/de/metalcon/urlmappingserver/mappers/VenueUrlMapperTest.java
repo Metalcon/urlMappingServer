@@ -40,7 +40,7 @@ public class VenueUrlMapperTest extends EntityUrlMapperTest {
     public void testRegistrationNoCity() {
         mapper.registerMuid(VENUE_WITHOUT_CITY);
         assertEquals(VENUE_WITHOUT_CITY.getMuid(),
-                resolveMapping(generateUniqueMapping(VENUE_WITHOUT_CITY)));
+                resolveMapping(generateMappingUnique(VENUE_WITHOUT_CITY)));
     }
 
     @Override

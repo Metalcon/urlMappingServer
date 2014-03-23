@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
-import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
 import de.metalcon.urlmappingserver.api.requests.registration.TourUrlData;
 
@@ -44,7 +43,7 @@ public class TourUrlMapperTest extends EntityUrlMapperTest {
     public void testMappingNoYear() {
         mapper.registerMuid(TOUR_WITHOUT_YEAR);
         assertEquals(TOUR_WITHOUT_YEAR.getMuid(),
-                resolveMapping(generateUniqueMapping(TOUR_WITHOUT_YEAR)));
+                resolveMapping(generateMappingUnique(TOUR_WITHOUT_YEAR)));
         mappingYear = generateMappingYear(TOUR_WITHOUT_YEAR);
         assertNull(resolveMapping(mappingYear));
     }
@@ -56,7 +55,7 @@ public class TourUrlMapperTest extends EntityUrlMapperTest {
     }
 
     protected static String generateMappingYear(TourUrlData tour) {
-        return tour.getYear() + EntityUrlMapper.WORD_SEPARATOR + tour.getName();
+        return tour.getYear() + TourUrlMapper.WORD_SEPARATOR + tour.getName();
     }
 
 }

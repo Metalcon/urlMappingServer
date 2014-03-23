@@ -42,7 +42,7 @@ public abstract class EntityUrlMapperTest {
         manager = new EntityUrlMappingManager();
         mapper = manager.getMapper(MUID_TYPE);
         mapper.registerMuid(ENTITY);
-        mappingUnique = generateUniqueMapping(ENTITY);
+        mappingUnique = generateMappingUnique(ENTITY);
     }
 
     @Test
@@ -67,7 +67,7 @@ public abstract class EntityUrlMapperTest {
         mapper.registerMuid(SIMILAR_ENTITY);
         testNameWithMuid();
         assertEquals(SIMILAR_ENTITY.getMuid(),
-                resolveMapping(generateUniqueMapping(SIMILAR_ENTITY)));
+                resolveMapping(generateMappingUnique(SIMILAR_ENTITY)));
     }
 
     @Test(
@@ -90,7 +90,7 @@ public abstract class EntityUrlMapperTest {
         assertEquals(ENTITY.getMuid(), resolveMapping(mapping));
     }
 
-    protected static String generateUniqueMapping(EntityUrlData entity) {
+    protected static String generateMappingUnique(EntityUrlData entity) {
         return entity.getName() + EntityUrlMapper.WORD_SEPARATOR
                 + entity.getMuid();
     }
