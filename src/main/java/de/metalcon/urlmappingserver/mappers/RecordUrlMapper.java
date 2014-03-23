@@ -20,6 +20,11 @@ import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
 public class RecordUrlMapper extends EntityUrlMapper {
 
     /**
+     * mapper for band entities to ensure parental mapping tree
+     */
+    protected BandUrlMapper bandMapper;
+
+    /**
      * all (mappings to records) of a band
      */
     protected Map<Muid, Map<String, Muid>> mappingsToRecordsOfBands;
@@ -29,10 +34,14 @@ public class RecordUrlMapper extends EntityUrlMapper {
      * 
      * @param manager
      *            URL mapping manager to resolve other MUIDs
+     * @param bandMapper
+     *            mapper for band entities to ensure parental mapping tree
      */
     public RecordUrlMapper(
-            EntityUrlMappingManager manager) {
+            EntityUrlMappingManager manager,
+            BandUrlMapper bandMapper) {
         super(manager, MuidType.RECORD, "pathRecord");
+        this.bandMapper = bandMapper;
         mappingsToRecordsOfBands = new HashMap<Muid, Map<String, Muid>>();
     }
 
@@ -59,10 +68,17 @@ public class RecordUrlMapper extends EntityUrlMapper {
         Set<String> newMappingsForRecord = super.createMapping(entityUrlData);
         RecordUrlData recordUrlData = (RecordUrlData) entityUrlData;
 
-        // switch into band mapping
         Muid band =
                 (recordUrlData.getBand() != null) ? recordUrlData.getBand()
                         .getMuid() : Muid.EMPTY_MUID;
+
+        // register band if not registered yet
+        if (!bandMapper.getMappingsOfBand().containsKey(band)) {
+            manager.getMapper(MuidType.BAND).registerMuid(
+                    recordUrlData.getBand());
+        }
+
+        // switch into record mapping
         mappingToEntity = mappingsToRecordsOfBands.get(band);
         if (mappingToEntity == null) {
             mappingToEntity = new HashMap<String, Muid>();
@@ -82,25 +98,29 @@ public class RecordUrlMapper extends EntityUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        String recordMapping = getPathVar(url, urlPathVarName);
+        if (type == muidType) {
+            String recordMapping = getPathVar(url, urlPathVarName);
 
-        // allow empty MUIDs to access tracks of a band
-        if (recordMapping.equals(EMPTY_ENTITY)) {
-            return Muid.EMPTY_MUID;
-        }
-
-        // resolve band
-        Muid band = resolveOtherMuid(url, MuidType.BAND);
-        if (band != null) {
-            // resolve record
-            Map<String, Muid> mappingToEntity =
-                    mappingsToRecordsOfBands.get(band);
-            if (mappingToEntity != null) {
-                return mappingToEntity.get(recordMapping);
+            // allow empty MUIDs to access tracks of a band
+            if (recordMapping.equals(EMPTY_ENTITY)) {
+                return Muid.EMPTY_MUID;
             }
-        }
 
-        return null;
+            // resolve band
+            Muid band = resolveOtherMuid(url, MuidType.BAND);
+            if (band != null) {
+                // resolve record
+                Map<String, Muid> mappingToEntity =
+                        mappingsToRecordsOfBands.get(band);
+                if (mappingToEntity != null) {
+                    return mappingToEntity.get(recordMapping);
+                }
+            }
+
+            return null;
+        }
+        throw new IllegalArgumentException("mapper handles muid type \""
+                + getMuidType() + "\" only (was: \"" + type + "\")");
     }
 
 }

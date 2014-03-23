@@ -20,6 +20,8 @@ public abstract class EntityUrlMapperTest {
     protected static final String WORD_SEPARATOR =
             EntityUrlMapper.WORD_SEPARATOR;
 
+    protected static String EMPTY_ENTITY = "_";
+
     protected static final String VALID_NAME = "Testy";
 
     protected static EntityUrlData ENTITY;

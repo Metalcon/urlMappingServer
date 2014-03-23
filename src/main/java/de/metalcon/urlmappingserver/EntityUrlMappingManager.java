@@ -53,7 +53,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
         eventMapper = new EventUrlMapper(this);
         genreMapper = new GenreUrlMapper(this);
         instrumentMapper = new InstrumentUrlMapper(this);
-        recordMapper = new RecordUrlMapper(this);
+        recordMapper = new RecordUrlMapper(this, bandMapper);
         tourMapper = new TourUrlMapper(this);
         trackMapper = new TrackUrlMapper(this, recordMapper);
         userMapper = new UserUrlMapper(this);

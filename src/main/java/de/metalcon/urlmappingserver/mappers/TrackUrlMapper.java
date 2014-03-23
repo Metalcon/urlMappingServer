@@ -50,16 +50,12 @@ public class TrackUrlMapper extends EntityUrlMapper {
         Set<String> newMappingsForTrack = super.createMapping(entityUrlData);
         TrackUrlData trackUrlData = (TrackUrlData) entityUrlData;
 
-        Muid band =
-                (trackUrlData.getBand() != null) ? trackUrlData.getBand()
-                        .getMuid() : Muid.EMPTY_MUID;
         Muid record =
                 (trackUrlData.getRecord() != null) ? trackUrlData.getRecord()
                         .getMuid() : Muid.EMPTY_MUID;
 
         // register record for band if not registered yet
-        if (recordMapper.getMappingsToRecordsOfBands().get(band) == null
-                || !recordMapper.getMappingsOfEntities().containsKey(record)) {
+        if (!recordMapper.getMappingsOfEntities().containsKey(record)) {
             recordMapper.registerMuid(trackUrlData.getRecord());
         }
 
