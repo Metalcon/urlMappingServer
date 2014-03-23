@@ -35,7 +35,7 @@ public class UserUrlMapper extends EntityUrlMapper {
         // add mapping: /<user's first name>-<user's last name>
         String firstName = convertToUrlText(userUrlData.getFirstName());
         String lastName = convertToUrlText(userUrlData.getLastName());
-        newMappingsForUser.add(firstName + WORD_SEPERATOR + lastName);
+        newMappingsForUser.add(firstName + WORD_SEPARATOR + lastName);
 
         return newMappingsForUser;
     }

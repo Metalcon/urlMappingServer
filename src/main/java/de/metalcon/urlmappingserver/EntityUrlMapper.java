@@ -21,20 +21,20 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
     /**
-     * server log
-     */
-    protected static final Logger LOG = LoggerFactory
-            .getLogger(EntityUrlMapper.class);
-
-    /**
      * word separator in URL mappings
      */
-    protected static String WORD_SEPERATOR = "-";
+    public static String WORD_SEPARATOR = "-";
 
     /**
      * placeholder for missing entity
      */
-    protected static String EMPTY_ENTITY = "_";
+    public static String EMPTY_ENTITY = "_";
+
+    /**
+     * server log
+     */
+    protected static final Logger LOG = LoggerFactory
+            .getLogger(EntityUrlMapper.class);
 
     /**
      * type of the entities this mapper handles
@@ -172,7 +172,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
         // add first mapping with MUID
         String muidMapping =
-                newMappingsForEntity.iterator().next() + WORD_SEPERATOR + muid;
+                newMappingsForEntity.iterator().next() + WORD_SEPARATOR + muid;
         registerMapping(muidMapping, muid);
 
         // add further mappings without MUID if not in use yet
@@ -209,7 +209,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         urlText = urlText.replaceAll("[^\\p{L}\\p{Nd} ]", "");
         // Convert whitespace to WORD_SEPERATOR
         urlText = urlText.trim();
-        urlText = urlText.replaceAll("\\s+", WORD_SEPERATOR);
+        urlText = urlText.replaceAll("\\s+", WORD_SEPARATOR);
         return urlText;
     }
 

@@ -36,7 +36,7 @@ public class TourUrlMapper extends EntityUrlMapper {
         int year = tourUrlData.getYear();
         if (year != 0) {
             String sYear = String.valueOf(year);
-            newMappingsForTour.add(sYear + WORD_SEPERATOR
+            newMappingsForTour.add(sYear + WORD_SEPARATOR
                     + convertToUrlText(tourUrlData.getName()));
         }
 

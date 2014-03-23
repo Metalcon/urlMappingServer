@@ -73,7 +73,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
         int releaseYear = recordUrlData.getReleaseYear();
         if (releaseYear != 0) {
             String sReleaseYear = String.valueOf(releaseYear);
-            newMappingsForRecord.add(sReleaseYear + WORD_SEPERATOR
+            newMappingsForRecord.add(sReleaseYear + WORD_SEPARATOR
                     + convertToUrlText(recordUrlData.getName()));
         }
 

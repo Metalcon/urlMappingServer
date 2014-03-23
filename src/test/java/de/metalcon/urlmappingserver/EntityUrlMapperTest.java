@@ -19,8 +19,6 @@ public abstract class EntityUrlMapperTest {
 
     protected static EntityUrlData ENTITY;
 
-    protected static String UNIQUE_MAPPING;
-
     protected static EntityUrlData SIMILAR_ENTITY;
 
     protected static MuidType MUID_TYPE;
@@ -30,10 +28,13 @@ public abstract class EntityUrlMapperTest {
     protected EntityUrlMappingManager manager;
 
     protected EntityUrlMapper mapper;
+    
+    protected EntityUrlData entity;
+
+    protected String mappingUnique;
 
     @BeforeClass
     public static void beforeClass() {
-        UNIQUE_MAPPING = generateUniqueMapping(ENTITY);
         MUID_TYPE = ENTITY.getMuid().getMuidType();
         INVALID_TYPE = getInvalidMuidType(MUID_TYPE);
     }
@@ -43,11 +44,12 @@ public abstract class EntityUrlMapperTest {
         manager = new EntityUrlMappingManager();
         mapper = manager.getMapper(MUID_TYPE);
         mapper.registerMuid(ENTITY);
+        mappingUnique = generateUniqueMapping(ENTITY);
     }
 
     @Test
     public void testNameWithMuid() {
-        checkForEntityMapping(UNIQUE_MAPPING);
+        checkForEntityMapping(mappingUnique);
     }
 
     @Test
@@ -73,7 +75,7 @@ public abstract class EntityUrlMapperTest {
     @Test(
             expected = IllegalArgumentException.class)
     public void testMuidTypeInvalid() {
-        mapper.resolveMuid(generateUrl(UNIQUE_MAPPING), INVALID_TYPE);
+        mapper.resolveMuid(generateUrl(mappingUnique), INVALID_TYPE);
     }
 
     protected Map<String, String> generateUrl(String mapping) {
@@ -91,7 +93,8 @@ public abstract class EntityUrlMapperTest {
     }
 
     protected static String generateUniqueMapping(EntityUrlData entity) {
-        return entity.getName() + "-" + entity.getMuid();
+        return entity.getName() + EntityUrlMapper.WORD_SEPARATOR
+                + entity.getMuid();
     }
 
     protected static MuidType getInvalidMuidType(MuidType validMuidType) {

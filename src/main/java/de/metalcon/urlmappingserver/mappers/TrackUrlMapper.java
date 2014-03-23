@@ -77,7 +77,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
             // add mapping:/<band>/<record>/<track number>
             newMappingsForTrack.add(sTrackNumber);
             // add mapping: /<band>/<record>/<track number>-<track name>
-            newMappingsForTrack.add(sTrackNumber + WORD_SEPERATOR
+            newMappingsForTrack.add(sTrackNumber + WORD_SEPARATOR
                     + convertToUrlText(trackUrlData.getName()));
         }
 
