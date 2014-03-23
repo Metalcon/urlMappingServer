@@ -1,6 +1,6 @@
 package de.metalcon.urlmappingserver;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
@@ -20,6 +21,8 @@ public abstract class EntityUrlMapperTest {
 
     protected static String UNIQUE_MAPPING;
 
+    protected static EntityUrlData SIMILAR_ENTITY;
+
     protected static MuidType MUID_TYPE;
 
     protected static MuidType INVALID_TYPE;
@@ -30,7 +33,7 @@ public abstract class EntityUrlMapperTest {
 
     @BeforeClass
     public static void beforeClass() {
-        UNIQUE_MAPPING = ENTITY.getName() + "-" + ENTITY.getMuid();
+        UNIQUE_MAPPING = generateUniqueMapping(ENTITY);
         MUID_TYPE = ENTITY.getMuid().getMuidType();
         INVALID_TYPE = getInvalidMuidType(MUID_TYPE);
     }
@@ -44,12 +47,27 @@ public abstract class EntityUrlMapperTest {
 
     @Test
     public void testNameWithMuid() {
-        checkForMapping(UNIQUE_MAPPING);
+        checkForEntityMapping(UNIQUE_MAPPING);
     }
 
     @Test
     public void testName() {
-        checkForMapping(ENTITY.getName());
+        checkForEntityMapping(ENTITY.getName());
+    }
+
+    @Test
+    public void testFirstNameRegistrationOnly() {
+        assertEquals(ENTITY.getName(), SIMILAR_ENTITY.getName());
+        mapper.registerMuid(SIMILAR_ENTITY);
+        testName();
+    }
+
+    @Test
+    public void testUniqueMappings() {
+        mapper.registerMuid(SIMILAR_ENTITY);
+        testNameWithMuid();
+        assertEquals(SIMILAR_ENTITY.getMuid(),
+                resolveMapping(generateUniqueMapping(SIMILAR_ENTITY)));
     }
 
     @Test(
@@ -64,8 +82,16 @@ public abstract class EntityUrlMapperTest {
         return pathVars;
     }
 
-    protected void checkForMapping(String mapping) {
-        assertNotNull(mapper.resolveMuid(generateUrl(mapping), MUID_TYPE));
+    protected Muid resolveMapping(String mapping) {
+        return mapper.resolveMuid(generateUrl(mapping), MUID_TYPE);
+    }
+
+    protected void checkForEntityMapping(String mapping) {
+        assertEquals(ENTITY.getMuid(), resolveMapping(mapping));
+    }
+
+    protected static String generateUniqueMapping(EntityUrlData entity) {
+        return entity.getName() + "-" + entity.getMuid();
     }
 
     protected static MuidType getInvalidMuidType(MuidType validMuidType) {

@@ -12,9 +12,13 @@ public class CityUrlMapperTest extends EntityUrlMapperTest {
     public static final CityUrlData CITY = new CityUrlData(
             Muid.create(MuidType.CITY), VALID_NAME);
 
+    protected static final CityUrlData SIMILAR_CITY = new CityUrlData(
+            Muid.create(MuidType.CITY), CITY.getName());
+
     @BeforeClass
     public static void beforeClass() {
         ENTITY = CITY;
+        SIMILAR_ENTITY = SIMILAR_CITY;
         EntityUrlMapperTest.beforeClass();
     }
 
