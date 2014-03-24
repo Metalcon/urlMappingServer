@@ -25,7 +25,7 @@ public class BandUrlMapper extends EntityUrlMapper {
      */
     public BandUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.BAND, "pathBand");
+        super(manager, MuidType.BAND, false, "pathBand");
     }
 
     /**
@@ -37,7 +37,7 @@ public class BandUrlMapper extends EntityUrlMapper {
 
     @Override
     public void registerMuid(EntityUrlData entityUrlData) {
-        if (entityUrlData != null) {
+        if (!entityUrlData.hasEmptyMuid()) {
             super.registerMuid(entityUrlData);
         } else {
             registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);

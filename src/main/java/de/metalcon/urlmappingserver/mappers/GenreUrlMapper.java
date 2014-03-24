@@ -20,7 +20,7 @@ public class GenreUrlMapper extends EntityUrlMapper {
      */
     public GenreUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.GENRE, "pathGenre");
+        super(manager, MuidType.GENRE, false, "pathGenre");
     }
 
 }

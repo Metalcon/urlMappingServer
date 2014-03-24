@@ -1,7 +1,6 @@
 package de.metalcon.urlmappingserver.mappers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
@@ -71,14 +70,6 @@ public class RecordUrlMapperTest extends EntityUrlMapperTest {
         assertNull(resolveMapping(mappingReleaseYear));
     }
 
-    @Test
-    public void testRegistrationNoRecord() {
-        // this is never called directly via API but indirectly via track mapper
-        assertNull(resolveMapping(EMPTY_ENTITY));
-        mapper.registerMuid(null);
-        assertNotNull(resolveMapping(EMPTY_ENTITY));
-    }
-
     @Override
     public void testFirstNameRegistrationOnly() {
         super.testFirstNameRegistrationOnly();
@@ -100,10 +91,10 @@ public class RecordUrlMapperTest extends EntityUrlMapperTest {
         Map<String, String> pathVars = new HashMap<String, String>();
 
         BandUrlData band = record.getBand();
-        pathVars.put(
-                new BandUrlMapper(null).getUrlPathVarName(),
-                (band != null) ? (band.getName() + WORD_SEPARATOR + band
-                        .getMuid()) : EMPTY_ENTITY);
+        pathVars.put(new BandUrlMapper(null).getUrlPathVarName(),
+                (!band.hasEmptyMuid())
+                        ? (band.getName() + WORD_SEPARATOR + band.getMuid())
+                        : EMPTY_ENTITY);
 
         pathVars.put(mapper.getUrlPathVarName(), mapping);
         return pathVars;

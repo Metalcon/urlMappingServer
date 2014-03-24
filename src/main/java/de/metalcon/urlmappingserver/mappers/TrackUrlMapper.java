@@ -40,21 +40,17 @@ public class TrackUrlMapper extends EntityUrlMapper {
     public TrackUrlMapper(
             EntityUrlMappingManager manager,
             RecordUrlMapper recordMapper) {
-        super(manager, MuidType.TRACK, "pathTrack");
+        super(manager, MuidType.TRACK, true, "pathTrack");
         this.recordMapper = recordMapper;
         mappingsToTracksOfRecords = new HashMap<Muid, Map<String, Muid>>();
     }
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        Set<String> newMappingsForTrack = super.createMapping(entityUrlData);
         TrackUrlData trackUrlData = (TrackUrlData) entityUrlData;
 
-        Muid record =
-                (trackUrlData.getRecord() != null) ? trackUrlData.getRecord()
-                        .getMuid() : Muid.EMPTY_MUID;
-
         // register record if not registered yet
+        Muid record = trackUrlData.getRecord().getMuid();
         if (!recordMapper.getMappingsOfRecord().containsKey(record)) {
             recordMapper.registerMuid(trackUrlData.getRecord());
         }
@@ -65,6 +61,8 @@ public class TrackUrlMapper extends EntityUrlMapper {
             mappingToEntity = new HashMap<String, Muid>();
             mappingsToTracksOfRecords.put(record, mappingToEntity);
         }
+
+        Set<String> newMappingsForTrack = super.createMapping(entityUrlData);
 
         int trackNumber = trackUrlData.getTrackNumber();
         if (trackNumber != 0) {

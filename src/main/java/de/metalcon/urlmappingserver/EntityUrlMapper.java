@@ -37,14 +37,19 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
             .getLogger(EntityUrlMapper.class);
 
     /**
+     * URL mapping manager to resolve other MUIDs
+     */
+    protected EntityUrlMappingManager manager;
+
+    /**
      * type of the entities this mapper handles
      */
     protected MuidType muidType;
 
     /**
-     * URL mapping manager to resolve other MUIDs
+     * empty MUID flag
      */
-    protected EntityUrlMappingManager manager;
+    protected boolean allowEmptyMuid;
 
     /**
      * name of the path variable
@@ -68,15 +73,19 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            URL mapping manager to resolve other MUIDs
      * @param muidType
      *            type of the entities this mapper handles
+     * @param allowEmptyMuid
+     *            empty MUID flag
      * @param urlPathVarName
      *            name of the path variable
      */
     public EntityUrlMapper(
             EntityUrlMappingManager manager,
             MuidType muidType,
+            boolean allowEmptyMuid,
             String urlPathVarName) {
         this.manager = manager;
         this.muidType = muidType;
+        this.allowEmptyMuid = allowEmptyMuid;
         this.urlPathVarName = urlPathVarName;
         mappingsOfEntities = new HashMap<Muid, Set<String>>();
         mappingToEntity = new HashMap<String, Muid>();
@@ -166,20 +175,28 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            MUID of the entity
      * @param newMappingsForEntity
      *            mappings to be registered
+     * @throws IllegalArgumentException
+     *             if MUID was empty while empty MUID flag unset
      */
     protected void
         registerMappings(Muid muid, Set<String> newMappingsForEntity) {
+        if (muid != Muid.EMPTY_MUID) {
+            // add first mapping with MUID
+            String muidMapping =
+                    newMappingsForEntity.iterator().next() + WORD_SEPARATOR
+                            + muid;
+            registerMapping(muidMapping, muid);
 
-        // add first mapping with MUID
-        String muidMapping =
-                newMappingsForEntity.iterator().next() + WORD_SEPARATOR + muid;
-        registerMapping(muidMapping, muid);
-
-        // add further mappings without MUID if not in use yet
-        for (String mapping : newMappingsForEntity) {
-            if (!mappingToEntity.containsKey(mapping)) {
-                registerMapping(mapping, muid);
+            // add further mappings without MUID if not in use yet
+            for (String mapping : newMappingsForEntity) {
+                if (!mappingToEntity.containsKey(mapping)) {
+                    registerMapping(mapping, muid);
+                }
             }
+        } else if (allowEmptyMuid) {
+            registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
+        } else {
+            throw new IllegalArgumentException("empty MUID not allowed");
         }
     }
 

@@ -47,7 +47,7 @@ public class TrackUrlMapperTest extends EntityUrlMapperTest {
 
     protected static final TrackUrlData TRACK_WITHOUT_RECORD =
             new TrackUrlData(Muid.create(MuidType.TRACK), TRACK.getName(),
-                    TRACK.getBand(), null, TRACK.getTrackNumber());
+                    TRACK.getRecord().getBand(), null, TRACK.getTrackNumber());
 
     protected static final TrackUrlData TRACK_WITHOUT_TRACK_NUMBER =
             new TrackUrlData(Muid.create(MuidType.TRACK), TRACK.getName(),
@@ -167,17 +167,18 @@ public class TrackUrlMapperTest extends EntityUrlMapperTest {
         generateUrl(TrackUrlData track, String mapping) {
         Map<String, String> pathVars = new HashMap<String, String>();
 
-        BandUrlData band = track.getBand();
-        pathVars.put(
-                new BandUrlMapper(null).getUrlPathVarName(),
-                (band != null) ? (band.getName() + WORD_SEPARATOR + band
-                        .getMuid()) : EMPTY_ENTITY);
+        BandUrlData band = track.getRecord().getBand();
+        pathVars.put(new BandUrlMapper(null).getUrlPathVarName(),
+                (!band.hasEmptyMuid())
+                        ? (band.getName() + WORD_SEPARATOR + band.getMuid())
+                        : EMPTY_ENTITY);
 
         RecordUrlData record = track.getRecord();
         pathVars.put(
                 new RecordUrlMapper(null, null).getUrlPathVarName(),
-                (record != null) ? (record.getName() + WORD_SEPARATOR + record
-                        .getMuid()) : EMPTY_ENTITY);
+                (!record.hasEmptyMuid())
+                        ? (record.getName() + WORD_SEPARATOR + record.getMuid())
+                        : EMPTY_ENTITY);
 
         pathVars.put(mapper.getUrlPathVarName(), mapping);
         return pathVars;

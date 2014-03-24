@@ -24,7 +24,7 @@ public class UserUrlMapper extends EntityUrlMapper {
      */
     public UserUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.USER, "pathUser");
+        super(manager, MuidType.USER, false, "pathUser");
     }
 
     @Override

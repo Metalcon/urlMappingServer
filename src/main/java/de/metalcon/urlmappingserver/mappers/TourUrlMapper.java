@@ -24,7 +24,7 @@ public class TourUrlMapper extends EntityUrlMapper {
      */
     public TourUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.TOUR, "pathTour");
+        super(manager, MuidType.TOUR, false, "pathTour");
     }
 
     @Override

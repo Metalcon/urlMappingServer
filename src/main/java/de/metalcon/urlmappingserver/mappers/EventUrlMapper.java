@@ -34,7 +34,7 @@ public class EventUrlMapper extends EntityUrlMapper {
      */
     public EventUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.EVENT, "pathEvent");
+        super(manager, MuidType.EVENT, false, "pathEvent");
     }
 
     @Override

@@ -40,7 +40,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
     public RecordUrlMapper(
             EntityUrlMappingManager manager,
             BandUrlMapper bandMapper) {
-        super(manager, MuidType.RECORD, "pathRecord");
+        super(manager, MuidType.RECORD, true, "pathRecord");
         this.bandMapper = bandMapper;
         mappingsToRecordsOfBands = new HashMap<Muid, Map<String, Muid>>();
     }
@@ -62,39 +62,11 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    public void registerMuid(EntityUrlData entityUrlData) {
-        if (entityUrlData != null) {
-            super.registerMuid(entityUrlData);
-        } else {
-            // record is null -> band is null
-            Muid band = Muid.EMPTY_MUID;
-
-            // register anonymous band if not registered yet
-            if (!bandMapper.getMappingsOfBand().containsKey(band)) {
-                bandMapper.registerMuid(null);
-            }
-
-            // switch into record mapping
-            mappingToEntity = mappingsToRecordsOfBands.get(band);
-            if (mappingToEntity == null) {
-                mappingToEntity = new HashMap<String, Muid>();
-                mappingsToRecordsOfBands.put(band, mappingToEntity);
-            }
-
-            registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
-        }
-    }
-
-    @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        Set<String> newMappingsForRecord = super.createMapping(entityUrlData);
         RecordUrlData recordUrlData = (RecordUrlData) entityUrlData;
 
-        Muid band =
-                (recordUrlData.getBand() != null) ? recordUrlData.getBand()
-                        .getMuid() : Muid.EMPTY_MUID;
-
         // register band if not registered yet
+        Muid band = recordUrlData.getBand().getMuid();
         if (!bandMapper.getMappingsOfBand().containsKey(band)) {
             bandMapper.registerMuid(recordUrlData.getBand());
         }
@@ -106,15 +78,21 @@ public class RecordUrlMapper extends EntityUrlMapper {
             mappingsToRecordsOfBands.put(band, mappingToEntity);
         }
 
-        // add mapping: /<band>/<release year>-<record name>
-        int releaseYear = recordUrlData.getReleaseYear();
-        if (releaseYear != 0) {
-            String sReleaseYear = String.valueOf(releaseYear);
-            newMappingsForRecord.add(sReleaseYear + WORD_SEPARATOR
-                    + convertToUrlText(recordUrlData.getName()));
-        }
+        if (!recordUrlData.hasEmptyMuid()) {
+            Set<String> newMappingsForRecord =
+                    super.createMapping(entityUrlData);
 
-        return newMappingsForRecord;
+            // add mapping: /<band>/<release year>-<record name>
+            int releaseYear = recordUrlData.getReleaseYear();
+            if (releaseYear != 0) {
+                String sReleaseYear = String.valueOf(releaseYear);
+                newMappingsForRecord.add(sReleaseYear + WORD_SEPARATOR
+                        + convertToUrlText(recordUrlData.getName()));
+            }
+
+            return newMappingsForRecord;
+        }
+        return null;
     }
 
     @Override

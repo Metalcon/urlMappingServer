@@ -30,7 +30,7 @@ public class BandUrlMapperTest extends EntityUrlMapperTest {
     public void testRegistrationNoBand() {
         // this is never called directly via API but indirectly via record/track mapper
         assertNull(resolveMapping(EMPTY_ENTITY));
-        mapper.registerMuid(null);
+        mapper.registerMuid(new BandUrlData());
         assertNotNull(resolveMapping(EMPTY_ENTITY));
     }
 

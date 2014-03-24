@@ -25,7 +25,7 @@ public class VenueUrlMapper extends EntityUrlMapper {
      */
     public VenueUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.VENUE, "pathVenue");
+        super(manager, MuidType.VENUE, false, "pathVenue");
     }
 
     @Override
