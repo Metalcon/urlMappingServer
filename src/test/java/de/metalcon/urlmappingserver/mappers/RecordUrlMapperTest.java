@@ -1,6 +1,7 @@
 package de.metalcon.urlmappingserver.mappers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
@@ -68,6 +69,14 @@ public class RecordUrlMapperTest extends EntityUrlMapperTest {
         mappingReleaseYear =
                 generateMappingReleaseYear(RECORD_WITHOUT_RELEASE_YEAR);
         assertNull(resolveMapping(mappingReleaseYear));
+    }
+
+    @Test
+    public void testRegistrationNoRecord() {
+        // this is never called directly via API but indirectly via track mapper
+        assertNull(resolveMapping(EMPTY_ENTITY));
+        mapper.registerMuid(null);
+        assertNotNull(resolveMapping(EMPTY_ENTITY));
     }
 
     @Override
