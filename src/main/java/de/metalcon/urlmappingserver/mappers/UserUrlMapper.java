@@ -24,7 +24,7 @@ public class UserUrlMapper extends EntityUrlMapper {
      */
     public UserUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.USER, "pathUser");
+        super(manager, MuidType.USER, false, "pathUser");
     }
 
     @Override
@@ -35,7 +35,7 @@ public class UserUrlMapper extends EntityUrlMapper {
         // add mapping: /<user's first name>-<user's last name>
         String firstName = convertToUrlText(userUrlData.getFirstName());
         String lastName = convertToUrlText(userUrlData.getLastName());
-        newMappingsForUser.add(firstName + WORD_SEPERATOR + lastName);
+        newMappingsForUser.add(firstName + WORD_SEPARATOR + lastName);
 
         return newMappingsForUser;
     }

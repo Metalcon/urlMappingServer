@@ -21,20 +21,25 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
     /**
+     * word separator in URL mappings
+     */
+    public static String WORD_SEPARATOR = "-";
+
+    /**
+     * placeholder for missing entity
+     */
+    public static String EMPTY_ENTITY = "_";
+
+    /**
      * server log
      */
     protected static final Logger LOG = LoggerFactory
             .getLogger(EntityUrlMapper.class);
 
     /**
-     * word separator in URL mappings
+     * URL mapping manager to resolve other MUIDs
      */
-    protected static String WORD_SEPERATOR = "-";
-
-    /**
-     * placeholder for missing entity
-     */
-    protected static String EMPTY_ENTITY = "_";
+    protected EntityUrlMappingManager manager;
 
     /**
      * type of the entities this mapper handles
@@ -42,9 +47,9 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     protected MuidType muidType;
 
     /**
-     * URL mapping manager to resolve other MUIDs
+     * empty MUID flag
      */
-    protected EntityUrlMappingManager manager;
+    protected boolean allowEmptyMuid;
 
     /**
      * name of the path variable
@@ -68,14 +73,20 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            URL mapping manager to resolve other MUIDs
      * @param muidType
      *            type of the entities this mapper handles
+     * @param allowEmptyMuid
+     *            empty MUID flag
      * @param urlPathVarName
      *            name of the path variable
      */
     public EntityUrlMapper(
             EntityUrlMappingManager manager,
             MuidType muidType,
+            boolean allowEmptyMuid,
             String urlPathVarName) {
         this.manager = manager;
+        this.muidType = muidType;
+        this.allowEmptyMuid = allowEmptyMuid;
+        this.urlPathVarName = urlPathVarName;
         mappingsOfEntities = new HashMap<Muid, Set<String>>();
         mappingToEntity = new HashMap<String, Muid>();
     }
@@ -85,6 +96,13 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      */
     public MuidType getMuidType() {
         return muidType;
+    }
+
+    /**
+     * @return name of the path variable
+     */
+    public String getUrlPathVarName() {
+        return urlPathVarName;
     }
 
     /**
@@ -118,8 +136,12 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        String mapping = getPathVar(url, urlPathVarName);
-        return mappingToEntity.get(mapping);
+        if (type == muidType) {
+            String mapping = getPathVar(url, urlPathVarName);
+            return mappingToEntity.get(mapping);
+        }
+        throw new IllegalArgumentException("mapper handles muid type \""
+                + getMuidType() + "\" only (was: \"" + type + "\")");
     }
 
     /**
@@ -153,20 +175,28 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            MUID of the entity
      * @param newMappingsForEntity
      *            mappings to be registered
+     * @throws IllegalArgumentException
+     *             if MUID was empty while empty MUID flag unset
      */
     protected void
         registerMappings(Muid muid, Set<String> newMappingsForEntity) {
+        if (muid != Muid.EMPTY_MUID) {
+            // add first mapping with MUID
+            String muidMapping =
+                    newMappingsForEntity.iterator().next() + WORD_SEPARATOR
+                            + muid;
+            registerMapping(muidMapping, muid);
 
-        // add first mapping with MUID
-        String muidMapping =
-                newMappingsForEntity.iterator().next() + WORD_SEPERATOR + muid;
-        registerMapping(muidMapping, muid);
-
-        // add further mappings without MUID if not in use yet
-        for (String mapping : newMappingsForEntity) {
-            if (!mappingToEntity.containsKey(mapping)) {
-                registerMapping(mapping, muid);
+            // add further mappings without MUID if not in use yet
+            for (String mapping : newMappingsForEntity) {
+                if (!mappingToEntity.containsKey(mapping)) {
+                    registerMapping(mapping, muid);
+                }
             }
+        } else if (allowEmptyMuid) {
+            registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
+        } else {
+            throw new IllegalArgumentException("empty MUID not allowed");
         }
     }
 
@@ -180,7 +210,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * @return MUID registered for the URL
      */
     protected Muid resolveOtherMuid(Map<String, String> url, MuidType type) {
-        return manager.getMapper(type).resolveMuid(url, type);
+        return manager.resolveMuid(url, type);
     }
 
     /**
@@ -196,7 +226,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         urlText = urlText.replaceAll("[^\\p{L}\\p{Nd} ]", "");
         // Convert whitespace to WORD_SEPERATOR
         urlText = urlText.trim();
-        urlText = urlText.replaceAll("\\s+", WORD_SEPERATOR);
+        urlText = urlText.replaceAll("\\s+", WORD_SEPARATOR);
         return urlText;
     }
 

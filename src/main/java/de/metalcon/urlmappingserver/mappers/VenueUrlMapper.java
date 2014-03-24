@@ -25,7 +25,7 @@ public class VenueUrlMapper extends EntityUrlMapper {
      */
     public VenueUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.VENUE, "pathVenue");
+        super(manager, MuidType.VENUE, false, "pathVenue");
     }
 
     @Override
@@ -37,7 +37,7 @@ public class VenueUrlMapper extends EntityUrlMapper {
         CityUrlData cityUrlData = venueUrlData.getCity();
         if (cityUrlData != null) {
             newMappingsForVenue.add(convertToUrlText(venueUrlData.getName())
-                    + WORD_SEPERATOR + convertToUrlText(cityUrlData.getName()));
+                    + WORD_SEPARATOR + convertToUrlText(cityUrlData.getName()));
         }
 
         return newMappingsForVenue;

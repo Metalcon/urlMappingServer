@@ -20,7 +20,7 @@ public class InstrumentUrlMapper extends EntityUrlMapper {
      */
     public InstrumentUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.INSTRUMENT, "pathInstrument");
+        super(manager, MuidType.INSTRUMENT, false, "pathInstrument");
     }
 
 }

@@ -20,7 +20,7 @@ public class CityUrlMapper extends EntityUrlMapper {
      */
     public CityUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.CITY, "pathCity");
+        super(manager, MuidType.CITY, false, "pathCity");
     }
 
 }

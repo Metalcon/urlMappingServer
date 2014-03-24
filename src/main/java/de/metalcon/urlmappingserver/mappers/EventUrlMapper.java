@@ -34,7 +34,7 @@ public class EventUrlMapper extends EntityUrlMapper {
      */
     public EventUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.EVENT, "pathEvent");
+        super(manager, MuidType.EVENT, false, "pathEvent");
     }
 
     @Override
@@ -47,20 +47,20 @@ public class EventUrlMapper extends EntityUrlMapper {
         Date date = eventUrlData.getDate();
         if (date != null) {
             String sDate = DATE_FORMATTER.format(date);
-            newMappingsForEvent.add(sDate + WORD_SEPERATOR + eventName);
+            newMappingsForEvent.add(sDate + WORD_SEPARATOR + eventName);
         }
 
         // add mapping: /<event name>-<city name>
         CityUrlData cityUrlData = eventUrlData.getCity();
         if (cityUrlData != null) {
-            newMappingsForEvent.add(eventName + WORD_SEPERATOR
+            newMappingsForEvent.add(eventName + WORD_SEPARATOR
                     + convertToUrlText(cityUrlData.getName()));
         }
 
         // add mapping: /<event name>-<venue name>
         VenueUrlData venueUrlData = eventUrlData.getVenue();
         if (venueUrlData != null) {
-            newMappingsForEvent.add(eventName + WORD_SEPERATOR
+            newMappingsForEvent.add(eventName + WORD_SEPARATOR
                     + convertToUrlText(venueUrlData.getName()));
         }
 

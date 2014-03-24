@@ -40,35 +40,29 @@ public class TrackUrlMapper extends EntityUrlMapper {
     public TrackUrlMapper(
             EntityUrlMappingManager manager,
             RecordUrlMapper recordMapper) {
-        super(manager, MuidType.TRACK, "pathTrack");
+        super(manager, MuidType.TRACK, true, "pathTrack");
         this.recordMapper = recordMapper;
         mappingsToTracksOfRecords = new HashMap<Muid, Map<String, Muid>>();
     }
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        Set<String> newMappingsForTrack = super.createMapping(entityUrlData);
         TrackUrlData trackUrlData = (TrackUrlData) entityUrlData;
 
-        Muid band =
-                (trackUrlData.getBand() != null) ? trackUrlData.getBand()
-                        .getMuid() : Muid.EMPTY_MUID;
-        Muid record =
-                (trackUrlData.getRecord() != null) ? trackUrlData.getRecord()
-                        .getMuid() : Muid.EMPTY_MUID;
-
-        // register record for band if not registered yet
-        if (recordMapper.getMappingsToRecordsOfBands().get(band) == null
-                || !recordMapper.getMappingsOfEntities().containsKey(record)) {
+        // register record if not registered yet
+        Muid record = trackUrlData.getRecord().getMuid();
+        if (!recordMapper.getMappingsOfRecord().containsKey(record)) {
             recordMapper.registerMuid(trackUrlData.getRecord());
         }
 
-        // switch into record mapping
+        // switch into track mapping
         mappingToEntity = mappingsToTracksOfRecords.get(record);
         if (mappingToEntity == null) {
             mappingToEntity = new HashMap<String, Muid>();
             mappingsToTracksOfRecords.put(record, mappingToEntity);
         }
+
+        Set<String> newMappingsForTrack = super.createMapping(entityUrlData);
 
         int trackNumber = trackUrlData.getTrackNumber();
         if (trackNumber != 0) {
@@ -77,7 +71,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
             // add mapping:/<band>/<record>/<track number>
             newMappingsForTrack.add(sTrackNumber);
             // add mapping: /<band>/<record>/<track number>-<track name>
-            newMappingsForTrack.add(sTrackNumber + WORD_SEPERATOR
+            newMappingsForTrack.add(sTrackNumber + WORD_SEPARATOR
                     + convertToUrlText(trackUrlData.getName()));
         }
 
@@ -86,14 +80,22 @@ public class TrackUrlMapper extends EntityUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        // resolve record
-        Muid record = resolveOtherMuid(url, MuidType.RECORD);
-
-        // resolve track        
-        String trackMapping = getPathVar(url, urlPathVarName);
-        Map<String, Muid> mappingToEntity =
-                mappingsToTracksOfRecords.get(record);
-        return mappingToEntity.get(trackMapping);
+        if (type == muidType) {
+            // resolve record
+            Muid record = resolveOtherMuid(url, MuidType.RECORD);
+            if (record != null) {
+                // resolve track        
+                String trackMapping = getPathVar(url, urlPathVarName);
+                Map<String, Muid> mappingToEntity =
+                        mappingsToTracksOfRecords.get(record);
+                if (mappingToEntity != null) {
+                    return mappingToEntity.get(trackMapping);
+                }
+            }
+            return null;
+        }
+        throw new IllegalArgumentException("mapper handles muid type \""
+                + getMuidType() + "\" only (was: \"" + type + "\")");
     }
 
     /**

@@ -24,7 +24,7 @@ public class TourUrlMapper extends EntityUrlMapper {
      */
     public TourUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.TOUR, "pathTour");
+        super(manager, MuidType.TOUR, false, "pathTour");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class TourUrlMapper extends EntityUrlMapper {
         int year = tourUrlData.getYear();
         if (year != 0) {
             String sYear = String.valueOf(year);
-            newMappingsForTour.add(sYear + WORD_SEPERATOR
+            newMappingsForTour.add(sYear + WORD_SEPARATOR
                     + convertToUrlText(tourUrlData.getName()));
         }
 
