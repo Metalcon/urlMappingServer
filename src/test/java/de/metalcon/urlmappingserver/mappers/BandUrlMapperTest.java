@@ -1,6 +1,7 @@
 package de.metalcon.urlmappingserver.mappers;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,6 +29,7 @@ public class BandUrlMapperTest extends EntityUrlMapperTest {
     @Test
     public void testRegistrationNoBand() {
         // this is never called directly via API but indirectly via record/track mapper
+        assertNull(resolveMapping(EMPTY_ENTITY));
         mapper.registerMuid(null);
         assertNotNull(resolveMapping(EMPTY_ENTITY));
     }

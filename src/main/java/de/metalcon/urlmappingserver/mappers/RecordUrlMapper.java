@@ -122,11 +122,6 @@ public class RecordUrlMapper extends EntityUrlMapper {
         if (type == muidType) {
             String recordMapping = getPathVar(url, urlPathVarName);
 
-            // allow empty MUIDs to access tracks of a band
-            if (recordMapping.equals(EMPTY_ENTITY)) {
-                return Muid.EMPTY_MUID;
-            }
-
             // resolve band
             Muid band = resolveOtherMuid(url, MuidType.BAND);
             if (band != null) {

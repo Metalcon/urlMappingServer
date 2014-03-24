@@ -1,8 +1,8 @@
 package de.metalcon.urlmappingserver.mappers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,11 +71,33 @@ public class TrackUrlMapperTest extends EntityUrlMapperTest {
                 TRACK_WITHOUT_BAND.getMuid(),
                 resolveMapping(TRACK_WITHOUT_BAND,
                         generateMappingUnique(TRACK_WITHOUT_BAND)));
+        assertNotNull(manager.resolveMuid(
+                generateUrl(TRACK_WITHOUT_BAND,
+                        generateMappingUnique(TRACK_WITHOUT_BAND)),
+                MuidType.BAND));
+        assertNull(manager.resolveMuid(
+                generateUrl(TRACK_WITHOUT_RECORD,
+                        generateMappingUnique(TRACK_WITHOUT_RECORD)),
+                MuidType.RECORD));
     }
 
     @Test
     public void testMappingNoRecord() {
-        fail("not implemented yet");
+        // TODO: fix track/record mapper: do not register empty band
+        registerMuid(TRACK_WITHOUT_RECORD);
+        assertEquals(
+                TRACK_WITHOUT_RECORD.getMuid(),
+                resolveMapping(TRACK_WITHOUT_RECORD,
+                        generateMappingUnique(TRACK_WITHOUT_RECORD)));
+        assertNull(manager.resolveMuid(
+                generateUrl(TRACK_WITHOUT_BAND,
+                        generateMappingUnique(TRACK_WITHOUT_BAND)),
+                MuidType.BAND));
+        assertNotNull(manager.resolveMuid(
+                generateUrl(TRACK_WITHOUT_RECORD,
+                        generateMappingUnique(TRACK_WITHOUT_RECORD)),
+                MuidType.RECORD));
+        System.out.println(mapper.getMuidType());
     }
 
     @Test
@@ -85,6 +107,9 @@ public class TrackUrlMapperTest extends EntityUrlMapperTest {
                 TRACK_WITHOUT_BAND_AND_RECORD.getMuid(),
                 resolveMapping(TRACK_WITHOUT_BAND_AND_RECORD,
                         generateMappingUnique(TRACK_WITHOUT_BAND_AND_RECORD)));
+        assertNotNull(manager
+                .resolveMuid(generateUrl(TRACK_WITHOUT_BAND_AND_RECORD, null),
+                        MuidType.BAND));
     }
 
     @Test
