@@ -1,6 +1,7 @@
 package de.metalcon.urlmappingserver;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +49,7 @@ public abstract class EntityUrlMapperTest {
     public void setUp() {
         manager = new EntityUrlMappingManager();
         mapper = manager.getMapper(MUID_TYPE);
-        mapper.registerMuid(ENTITY);
-        mappingUnique = generateMappingUnique(ENTITY);
+        registerMuid(ENTITY);
     }
 
     @Test
@@ -95,6 +95,12 @@ public abstract class EntityUrlMapperTest {
 
     protected void checkForEntityMapping(String mapping) {
         assertEquals(ENTITY.getMuid(), resolveMapping(mapping));
+    }
+
+    protected void registerMuid(EntityUrlData entity) {
+        mappingUnique = generateMappingUnique(entity);
+        assertNull(resolveMapping(mappingUnique));
+        mapper.registerMuid(entity);
     }
 
     protected static String generateMappingUnique(EntityUrlData entity) {

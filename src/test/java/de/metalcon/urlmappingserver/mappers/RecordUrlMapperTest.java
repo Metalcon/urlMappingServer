@@ -89,12 +89,13 @@ public class RecordUrlMapperTest extends EntityUrlMapperTest {
             RecordUrlData record,
             String mapping) {
         Map<String, String> pathVars = new HashMap<String, String>();
-        BandUrlData band = record.getBand();
 
+        BandUrlData band = record.getBand();
         pathVars.put(
                 new BandUrlMapper(null).getUrlPathVarName(),
                 (band != null) ? (band.getName() + WORD_SEPARATOR + band
                         .getMuid()) : EMPTY_ENTITY);
+
         pathVars.put(mapper.getUrlPathVarName(), mapping);
         return pathVars;
     }

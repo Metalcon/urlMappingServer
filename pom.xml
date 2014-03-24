@@ -23,7 +23,7 @@
     <junit.version>4.9</junit.version>
 
     <!-- version of server API -->
-    <api.version>0.0.2</api.version>
+    <api.version>0.1.0</api.version>
     <!-- version of logging tool -->
     <slf4j.version>1.7.5</slf4j.version>
   </properties>

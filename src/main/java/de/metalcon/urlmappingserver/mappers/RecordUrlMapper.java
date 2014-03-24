@@ -55,12 +55,34 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     /**
-     * access to record MUIDs for track mapper
-     * 
-     * @return all mappings of records
+     * @return all mappings of a record
      */
-    public Map<Muid, Set<String>> getMappingsOfEntities() {
+    public Map<Muid, Set<String>> getMappingsOfRecord() {
         return mappingsOfEntities;
+    }
+
+    @Override
+    public void registerMuid(EntityUrlData entityUrlData) {
+        if (entityUrlData != null) {
+            super.registerMuid(entityUrlData);
+        } else {
+            // record is null -> band is null
+            Muid band = Muid.EMPTY_MUID;
+
+            // register anonymous band if not registered yet
+            if (!bandMapper.getMappingsOfBand().containsKey(band)) {
+                bandMapper.registerMuid(null);
+            }
+
+            // switch into record mapping
+            mappingToEntity = mappingsToRecordsOfBands.get(band);
+            if (mappingToEntity == null) {
+                mappingToEntity = new HashMap<String, Muid>();
+                mappingsToRecordsOfBands.put(band, mappingToEntity);
+            }
+
+            registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
+        }
     }
 
     @Override
@@ -74,8 +96,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
 
         // register band if not registered yet
         if (!bandMapper.getMappingsOfBand().containsKey(band)) {
-            manager.getMapper(MuidType.BAND).registerMuid(
-                    recordUrlData.getBand());
+            bandMapper.registerMuid(recordUrlData.getBand());
         }
 
         // switch into record mapping
@@ -116,7 +137,6 @@ public class RecordUrlMapper extends EntityUrlMapper {
                     return mappingToEntity.get(recordMapping);
                 }
             }
-
             return null;
         }
         throw new IllegalArgumentException("mapper handles muid type \""

@@ -54,12 +54,12 @@ public class TrackUrlMapper extends EntityUrlMapper {
                 (trackUrlData.getRecord() != null) ? trackUrlData.getRecord()
                         .getMuid() : Muid.EMPTY_MUID;
 
-        // register record for band if not registered yet
-        if (!recordMapper.getMappingsOfEntities().containsKey(record)) {
+        // register record if not registered yet
+        if (!recordMapper.getMappingsOfRecord().containsKey(record)) {
             recordMapper.registerMuid(trackUrlData.getRecord());
         }
 
-        // switch into record mapping
+        // switch into track mapping
         mappingToEntity = mappingsToTracksOfRecords.get(record);
         if (mappingToEntity == null) {
             mappingToEntity = new HashMap<String, Muid>();
@@ -82,14 +82,22 @@ public class TrackUrlMapper extends EntityUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        // resolve record
-        Muid record = resolveOtherMuid(url, MuidType.RECORD);
-
-        // resolve track        
-        String trackMapping = getPathVar(url, urlPathVarName);
-        Map<String, Muid> mappingToEntity =
-                mappingsToTracksOfRecords.get(record);
-        return mappingToEntity.get(trackMapping);
+        if (type == muidType) {
+            // resolve record
+            Muid record = resolveOtherMuid(url, MuidType.RECORD);
+            if (record != null) {
+                // resolve track        
+                String trackMapping = getPathVar(url, urlPathVarName);
+                Map<String, Muid> mappingToEntity =
+                        mappingsToTracksOfRecords.get(record);
+                if (mappingToEntity != null) {
+                    return mappingToEntity.get(trackMapping);
+                }
+            }
+            return null;
+        }
+        throw new IllegalArgumentException("mapper handles muid type \""
+                + getMuidType() + "\" only (was: \"" + type + "\")");
     }
 
     /**
