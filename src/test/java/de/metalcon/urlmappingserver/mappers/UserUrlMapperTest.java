@@ -1,12 +1,14 @@
 package de.metalcon.urlmappingserver.mappers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.BeforeClass;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
+import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.UserUrlData;
 
 public class UserUrlMapperTest extends EntityUrlMapperTest {
@@ -29,8 +31,10 @@ public class UserUrlMapperTest extends EntityUrlMapperTest {
 
     @Override
     public void setUp() {
-        super.setUp();
+        manager = new EntityUrlMappingManager();
+        mapper = manager.getMapper(MUID_TYPE);
         mappingUnique = generateMappingUnique(USER);
+        registerMuid(USER);
     }
 
     @Override
@@ -44,6 +48,12 @@ public class UserUrlMapperTest extends EntityUrlMapperTest {
         testNameWithMuid();
         assertEquals(SIMILAR_USER.getMuid(),
                 resolveMapping(generateMappingUnique(SIMILAR_USER)));
+    }
+
+    protected void registerMuid(UserUrlData user) {
+        mappingUnique = generateMappingUnique(user);
+        assertNull(resolveMapping(mappingUnique));
+        mapper.registerMuid(user);
     }
 
     protected static String generateMappingUnique(UserUrlData user) {

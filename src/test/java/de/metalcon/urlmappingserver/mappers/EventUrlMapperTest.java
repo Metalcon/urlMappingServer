@@ -72,7 +72,7 @@ public class EventUrlMapperTest extends EntityUrlMapperTest {
 
     @Test
     public void testRegistrationNoDate() {
-        mapper.registerMuid(EVENT_WITHOUT_DATE);
+        registerMuid(EVENT_WITHOUT_DATE);
         assertEquals(EVENT_WITHOUT_DATE.getMuid(),
                 resolveMapping(generateMappingUnique(EVENT_WITHOUT_DATE)));
     }
@@ -85,7 +85,7 @@ public class EventUrlMapperTest extends EntityUrlMapperTest {
 
     @Test
     public void testRegistrationNoCity() {
-        mapper.registerMuid(EVENT_WITHOUT_CITY);
+        registerMuid(EVENT_WITHOUT_CITY);
         assertEquals(EVENT_WITHOUT_CITY.getMuid(),
                 resolveMapping(generateMappingUnique(EVENT_WITHOUT_CITY)));
     }
@@ -98,7 +98,7 @@ public class EventUrlMapperTest extends EntityUrlMapperTest {
 
     @Test
     public void testRegistrationNoVenue() {
-        mapper.registerMuid(EVENT_WITHOUT_VENUE);
+        registerMuid(EVENT_WITHOUT_VENUE);
         assertEquals(EVENT_WITHOUT_VENUE.getMuid(),
                 resolveMapping(generateMappingUnique(EVENT_WITHOUT_VENUE)));
     }

@@ -41,7 +41,7 @@ public class TourUrlMapperTest extends EntityUrlMapperTest {
 
     @Test
     public void testMappingNoYear() {
-        mapper.registerMuid(TOUR_WITHOUT_YEAR);
+        registerMuid(TOUR_WITHOUT_YEAR);
         assertEquals(TOUR_WITHOUT_YEAR.getMuid(),
                 resolveMapping(generateMappingUnique(TOUR_WITHOUT_YEAR)));
         mappingYear = generateMappingYear(TOUR_WITHOUT_YEAR);

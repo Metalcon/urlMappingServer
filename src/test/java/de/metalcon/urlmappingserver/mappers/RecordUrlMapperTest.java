@@ -46,7 +46,7 @@ public class RecordUrlMapperTest extends EntityUrlMapperTest {
 
     @Test
     public void testMappingNoBand() {
-        mapper.registerMuid(RECORD_WITHOUT_BAND);
+        registerMuid(RECORD_WITHOUT_BAND);
         assertEquals(
                 RECORD_WITHOUT_BAND.getMuid(),
                 resolveMapping(RECORD_WITHOUT_BAND,
@@ -61,7 +61,7 @@ public class RecordUrlMapperTest extends EntityUrlMapperTest {
 
     @Test
     public void testMappingNoReleaseYear() {
-        mapper.registerMuid(RECORD_WITHOUT_RELEASE_YEAR);
+        registerMuid(RECORD_WITHOUT_RELEASE_YEAR);
         assertEquals(
                 RECORD_WITHOUT_RELEASE_YEAR.getMuid(),
                 resolveMapping(generateMappingUnique(RECORD_WITHOUT_RELEASE_YEAR)));
