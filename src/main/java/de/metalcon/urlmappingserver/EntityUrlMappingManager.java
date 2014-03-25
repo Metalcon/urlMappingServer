@@ -1,6 +1,7 @@
 package de.metalcon.urlmappingserver;
 
 import java.util.Map;
+import java.util.Set;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
@@ -16,7 +17,7 @@ import de.metalcon.urlmappingserver.mappers.TrackUrlMapper;
 import de.metalcon.urlmappingserver.mappers.UserUrlMapper;
 import de.metalcon.urlmappingserver.mappers.VenueUrlMapper;
 import de.metalcon.urlmappingserver.persistence.PersistentStorage;
-import de.metalcon.urlmappingserver.persistence.UrlMappingData;
+import de.metalcon.urlmappingserver.persistence.UrlMappingPersistenceData;
 
 /**
  * URL mapping manager for all Metalcon entities
@@ -151,21 +152,32 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
         if (persistentStorage == null) {
             return;
         }
+        UrlMappingPersistenceData persistenceData =
+                persistentStorage.restoreMappings();
 
-        UrlMappingData persistenceData = persistentStorage.restoreMappings();
-        recordMapper.setMappingsOfRecordsOfBand(persistenceData
-                .getMappingsOfRecordsOfBand());
-        trackMapper.setMappingsToTracksOfRecords(persistenceData
-                .getMappingsOfTracksOfRecord());
-
+        Map<Muid, Set<String>> mappingsOfEntities =
+                persistenceData.getMappingsOfEntities();
         EntityUrlMapper mapper;
-        for (Muid muid : persistenceData.getMappingsOfEntity().keySet()) {
+        Set<String> mappingsOfEntity;
+
+        // loop through all MUIDs
+        for (Muid muid : mappingsOfEntities.keySet()) {
+            // get correct mapper
             mapper = getMapper(muid.getMuidType());
-            for (String mapping : persistenceData.getMappingsOfEntity().get(
-                    muid)) {
+            mappingsOfEntity = mappingsOfEntities.get(muid);
+
+            // register all mappings for this MUID
+            for (String mapping : mappingsOfEntity) {
                 mapper.registerMapping(mapping, muid);
             }
         }
+
+        // register mappings and hierarchy for records
+        recordMapper.setMappingsOfRecordsOfBand(persistenceData
+                .getMappingsOfRecordsOfBand());
+        // register mappings and hierarchy for tracks
+        trackMapper.setMappingsToTracksOfRecords(persistenceData
+                .getMappingsOfTracksOfRecord());
     }
 
 }

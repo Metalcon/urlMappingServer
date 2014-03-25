@@ -40,7 +40,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
     public TrackUrlMapper(
             EntityUrlMappingManager manager,
             RecordUrlMapper recordMapper) {
-        super(manager, MuidType.TRACK, true, "pathTrack");
+        super(manager, MuidType.TRACK, false, "pathTrack");
         this.recordMapper = recordMapper;
         mappingsToTracksOfRecords = new HashMap<Muid, Map<String, Muid>>();
     }
@@ -49,24 +49,25 @@ public class TrackUrlMapper extends EntityUrlMapper {
             Map<Muid, Map<String, Muid>> mappingsToTracksOfRecords) {
         this.mappingsToTracksOfRecords = mappingsToTracksOfRecords;
 
-        // iterate over all records
-        Map<String, Muid> mappingToTrack;
-        Set<String> trackMappings;
+        Map<String, Muid> mappingsToTrack;
+        Set<String> mappingsOfTrack;
         Muid muidTrack;
+
+        // iterate over all records
         for (Muid recordMuid : mappingsToTracksOfRecords.keySet()) {
-            mappingToTrack = mappingsToTracksOfRecords.get(recordMuid);
+            mappingsToTrack = mappingsToTracksOfRecords.get(recordMuid);
 
             // iterate over all track mappings for this record
-            for (String trackMapping : mappingToTrack.keySet()) {
-                muidTrack = mappingToTrack.get(trackMapping);
+            for (String trackMapping : mappingsToTrack.keySet()) {
+                muidTrack = mappingsToTrack.get(trackMapping);
 
-                trackMappings = mappingsOfEntities.get(muidTrack);
-                if (trackMappings == null) {
-                    trackMappings = createEmptyMappingSet();
-                    mappingsOfEntities.put(muidTrack, trackMappings);
+                mappingsOfTrack = mappingsOfEntities.get(muidTrack);
+                if (mappingsOfTrack == null) {
+                    mappingsOfTrack = createEmptyMappingSet();
+                    mappingsOfEntities.put(muidTrack, mappingsOfTrack);
                 }
 
-                trackMappings.add(trackMapping);
+                mappingsOfTrack.add(trackMapping);
             }
         }
     }
@@ -102,6 +103,15 @@ public class TrackUrlMapper extends EntityUrlMapper {
         }
 
         return newMappingsForTrack;
+    }
+
+    @Override
+    protected void storeMapping(EntityUrlData entity, String mapping) {
+        // MUID can not be empty here, parental record MUID gets set
+        TrackUrlData track = (TrackUrlData) entity;
+        persistentStorage.saveMapping(entity.getMuid().getMuidType()
+                .getRawIdentifier(), entity.getMuid().getValue(), mapping,
+                track.getRecord().getMuid().getValue());
     }
 
     @Override

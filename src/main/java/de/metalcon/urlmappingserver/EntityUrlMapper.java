@@ -179,7 +179,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
                     // make mapping persistent
                     if (persistentStorage != null) {
-                        persistentStorage.saveMapping(entity, mapping);
+                        storeMapping(entity, mapping);
                     }
                 }
             }
@@ -188,6 +188,20 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         } else {
             throw new IllegalArgumentException("empty MUID not allowed");
         }
+    }
+
+    /**
+     * make a mapping persistent
+     * 
+     * @param entity
+     *            URL data needed to register this entity
+     * @param mapping
+     *            mapping to be made persistent
+     */
+    protected void storeMapping(EntityUrlData entity, String mapping) {
+        // MUID can not be empty here, parental MUID remains unset
+        persistentStorage.saveMapping(entity.getMuid().getMuidType()
+                .getRawIdentifier(), entity.getMuid().getValue(), mapping, 0);
     }
 
     /**

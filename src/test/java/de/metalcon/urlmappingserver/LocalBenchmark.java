@@ -22,17 +22,47 @@ public class LocalBenchmark extends Benchmark {
 
     @Override
     protected void benchmark() {
-        benchmarkWrite(10000);
-        benchmarkRead(100000);
+        int totalWrites = 100000 * 5;
+        int totalReads = totalWrites * 10;
+
+        benchmarkWrite(totalWrites);
+        benchmarkRead(totalReads);
 
         server.stop();
         server.cleanUp();
 
+        // benchmark restart
+        long crrNano = System.nanoTime();
+
         server = new UrlMappingServer(CONFIG);
         server.loadFromDatabase();
-        mappingManager = server.getMappingManager();
 
-        benchmarkRead(100000);
+        crrNano = System.nanoTime() - crrNano;
+        long crrMis = crrNano / 1000;
+        long crrMs = crrMis / 1000;
+        System.out.println("benchmark duration (restart): " + crrMs + "ms");
+        System.out.println("per write: " + (crrMis / totalWrites) + "µs");
+        System.out.println("writes per second: " + 1000
+                / (crrMs / (double) totalWrites));
+
+        mappingManager = server.getMappingManager();
+        benchmarkRead(totalReads);
+
+        server.stop();
+        server.cleanUp();
+    }
+
+    protected void benchmarkWithoutPersistence() {
+        mappingManager = new EntityUrlMappingManager();
+
+        int totalWrites = 100000 * 5;
+        int totalReads = totalWrites * 10;
+
+        benchmarkWrite(totalWrites);
+        benchmarkRead(totalReads);
+
+        server.stop();
+        server.cleanUp();
     }
 
     @Override
@@ -48,7 +78,8 @@ public class LocalBenchmark extends Benchmark {
     }
 
     public static void main(String[] args) {
-        new LocalBenchmark().benchmark();
+        //        new LocalBenchmark().benchmark();
+        new LocalBenchmark().benchmarkWithoutPersistence();
     }
 
 }

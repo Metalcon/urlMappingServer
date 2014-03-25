@@ -5,7 +5,13 @@ import java.util.Set;
 
 import de.metalcon.domain.Muid;
 
-public class UrlMappingData {
+/**
+ * data object containing mapping data from persistent storage
+ * 
+ * @author sebschlicht
+ * 
+ */
+public class UrlMappingPersistenceData {
 
     protected Map<Muid, Set<String>> mappingsOfEntity;
 
@@ -13,7 +19,7 @@ public class UrlMappingData {
 
     protected Map<Muid, Map<String, Muid>> mappingsOfTracksOfRecord;
 
-    public UrlMappingData(
+    public UrlMappingPersistenceData(
             Map<Muid, Set<String>> mappingsOfEntity,
             Map<Muid, Map<String, Muid>> mappingsOfRecordsOfBand,
             Map<Muid, Map<String, Muid>> mappingsOfTracksOfRecord) {
@@ -22,7 +28,7 @@ public class UrlMappingData {
         this.mappingsOfTracksOfRecord = mappingsOfTracksOfRecord;
     }
 
-    public Map<Muid, Set<String>> getMappingsOfEntity() {
+    public Map<Muid, Set<String>> getMappingsOfEntities() {
         return mappingsOfEntity;
     }
 

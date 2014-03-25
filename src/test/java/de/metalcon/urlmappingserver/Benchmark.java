@@ -60,6 +60,7 @@ public abstract class Benchmark {
         crrNano = System.nanoTime() - crrNano;
         long crrMis = crrNano / 1000;
         long crrMs = crrMis / 1000;
+        System.out.println("total number: " + totalWrites);
         System.out.println("benchmark duration (write): " + crrMs + "ms");
         System.out.println("per write: " + (crrMis / totalWrites) + "µs");
         System.out.println("writes per second: " + 1000
@@ -94,6 +95,7 @@ public abstract class Benchmark {
         crrNano = System.nanoTime() - crrNano;
         long crrMis = crrNano / 1000;
         long crrMs = crrMis / 1000;
+        System.out.println("total number: " + totalReads);
         System.out.println("benchmark duration (read): " + crrMs + "ms");
         System.out.println("per read: " + (crrNano / totalReads) + "ns");
         System.out.println("reads per second: " + 1000

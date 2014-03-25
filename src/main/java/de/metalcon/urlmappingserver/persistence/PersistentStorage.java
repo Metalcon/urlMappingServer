@@ -1,6 +1,5 @@
 package de.metalcon.urlmappingserver.persistence;
 
-import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 /**
  * interface for underlying persistent storage
@@ -10,8 +9,12 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
  */
 public interface PersistentStorage {
 
-    void saveMapping(EntityUrlData entity, String mapping);
+    void saveMapping(
+            short muidType,
+            long muidValue,
+            String mapping,
+            long muidParentValue);
 
-    UrlMappingData restoreMappings();
+    UrlMappingPersistenceData restoreMappings();
 
 }
