@@ -1,6 +1,7 @@
 package de.metalcon.urlmappingserver;
 
 import java.util.Map;
+import java.util.Set;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
@@ -15,6 +16,8 @@ import de.metalcon.urlmappingserver.mappers.TourUrlMapper;
 import de.metalcon.urlmappingserver.mappers.TrackUrlMapper;
 import de.metalcon.urlmappingserver.mappers.UserUrlMapper;
 import de.metalcon.urlmappingserver.mappers.VenueUrlMapper;
+import de.metalcon.urlmappingserver.persistence.PersistentStorage;
+import de.metalcon.urlmappingserver.persistence.UrlMappingPersistenceData;
 
 /**
  * URL mapping manager for all Metalcon entities
@@ -23,6 +26,11 @@ import de.metalcon.urlmappingserver.mappers.VenueUrlMapper;
  * 
  */
 public class EntityUrlMappingManager implements MetalconUrlMapper {
+
+    /**
+     * storage to make mapping persistent
+     */
+    private PersistentStorage persistentStorage;
 
     private BandUrlMapper bandMapper;
 
@@ -45,9 +53,22 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
     private VenueUrlMapper venueMapper;
 
     /**
-     * create URL mapping manager for all Metalcon entities
+     * create URL mapping manager for all Metalcon entities<br>
+     * not persistent
      */
     public EntityUrlMappingManager() {
+        this(null);
+    }
+
+    /**
+     * create URL mapping manager for all Metalcon entities
+     * 
+     * @param persistentStorage
+     *            storage to make mapping persistent
+     */
+    public EntityUrlMappingManager(
+            PersistentStorage persistentStorage) {
+        this.persistentStorage = persistentStorage;
         bandMapper = new BandUrlMapper(this);
         cityMapper = new CityUrlMapper(this);
         eventMapper = new EventUrlMapper(this);
@@ -58,6 +79,13 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
         trackMapper = new TrackUrlMapper(this, recordMapper);
         userMapper = new UserUrlMapper(this);
         venueMapper = new VenueUrlMapper(this);
+    }
+
+    /**
+     * @return storage to make mapping persistent
+     */
+    public PersistentStorage getPersistentStorage() {
+        return persistentStorage;
     }
 
     /**
@@ -118,6 +146,38 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
         return getMapper(type).resolveMuid(url, type);
+    }
+
+    public void loadFromDatabase() {
+        if (persistentStorage == null) {
+            return;
+        }
+        UrlMappingPersistenceData persistenceData =
+                persistentStorage.restoreMappings();
+
+        Map<Muid, Set<String>> mappingsOfEntities =
+                persistenceData.getMappingsOfEntities();
+        EntityUrlMapper mapper;
+        Set<String> mappingsOfEntity;
+
+        // loop through all MUIDs
+        for (Muid muid : mappingsOfEntities.keySet()) {
+            // get correct mapper
+            mapper = getMapper(muid.getMuidType());
+            mappingsOfEntity = mappingsOfEntities.get(muid);
+
+            // register all mappings for this MUID
+            for (String mapping : mappingsOfEntity) {
+                mapper.registerMapping(mapping, muid);
+            }
+        }
+
+        // register mappings and hierarchy for records
+        recordMapper.setMappingsOfRecordsOfBand(persistenceData
+                .getMappingsOfRecordsOfBand());
+        // register mappings and hierarchy for tracks
+        trackMapper.setMappingsToTracksOfRecords(persistenceData
+                .getMappingsOfTracksOfRecord());
     }
 
 }

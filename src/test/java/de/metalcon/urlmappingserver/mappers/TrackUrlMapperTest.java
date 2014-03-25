@@ -13,6 +13,7 @@ import org.junit.Test;
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
+import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.TrackUrlData;
@@ -53,6 +54,15 @@ public class TrackUrlMapperTest extends EntityUrlMapperTest {
             new TrackUrlData(Muid.create(MuidType.TRACK), TRACK.getName(),
                     null, TRACK.getRecord(), 0);
 
+    protected static final EntityUrlMappingManager MANAGER =
+            new EntityUrlMappingManager();
+
+    protected static final String PATH_BAND = MANAGER.getMapper(MuidType.BAND)
+            .getUrlPathVarName();
+
+    protected static final String PATH_RECORD = MANAGER.getMapper(
+            MuidType.RECORD).getUrlPathVarName();
+
     protected String mappingTrackNumber;
 
     protected String mappingTrackNumberTrackName;
@@ -83,7 +93,6 @@ public class TrackUrlMapperTest extends EntityUrlMapperTest {
 
     @Test
     public void testMappingNoRecord() {
-        // TODO: fix track/record mapper: do not register empty band
         registerMuid(TRACK_WITHOUT_RECORD);
         assertEquals(
                 TRACK_WITHOUT_RECORD.getMuid(),
@@ -97,7 +106,6 @@ public class TrackUrlMapperTest extends EntityUrlMapperTest {
                 generateUrl(TRACK_WITHOUT_RECORD,
                         generateMappingUnique(TRACK_WITHOUT_RECORD)),
                 MuidType.RECORD));
-        System.out.println(mapper.getMuidType());
     }
 
     @Test
@@ -168,17 +176,12 @@ public class TrackUrlMapperTest extends EntityUrlMapperTest {
         Map<String, String> pathVars = new HashMap<String, String>();
 
         BandUrlData band = track.getRecord().getBand();
-        pathVars.put(new BandUrlMapper(null).getUrlPathVarName(),
-                (!band.hasEmptyMuid())
-                        ? (band.getName() + WORD_SEPARATOR + band.getMuid())
-                        : EMPTY_ENTITY);
+        pathVars.put(PATH_BAND, (!band.hasEmptyMuid()) ? (band.getName()
+                + WORD_SEPARATOR + band.getMuid()) : EMPTY_ENTITY);
 
         RecordUrlData record = track.getRecord();
-        pathVars.put(
-                new RecordUrlMapper(null, null).getUrlPathVarName(),
-                (!record.hasEmptyMuid())
-                        ? (record.getName() + WORD_SEPARATOR + record.getMuid())
-                        : EMPTY_ENTITY);
+        pathVars.put(PATH_RECORD, (!record.hasEmptyMuid()) ? (record.getName()
+                + WORD_SEPARATOR + record.getMuid()) : EMPTY_ENTITY);
 
         pathVars.put(mapper.getUrlPathVarName(), mapping);
         return pathVars;

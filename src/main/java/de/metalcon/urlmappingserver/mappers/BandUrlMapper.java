@@ -25,7 +25,7 @@ public class BandUrlMapper extends EntityUrlMapper {
      */
     public BandUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.BAND, false, "pathBand");
+        super(manager, MuidType.BAND, true, "pathBand");
     }
 
     /**
@@ -33,6 +33,13 @@ public class BandUrlMapper extends EntityUrlMapper {
      */
     public Map<Muid, Set<String>> getMappingsOfBand() {
         return mappingsOfEntities;
+    }
+
+    @Override
+    protected void storeMapping(EntityUrlData entity, String mapping) {
+        // MUID can be empty here, parental MUID remains unset
+        persistentStorage.saveMapping(MuidType.BAND.getRawIdentifier(), entity
+                .getMuid().getValue(), mapping, 0);
     }
 
     @Override

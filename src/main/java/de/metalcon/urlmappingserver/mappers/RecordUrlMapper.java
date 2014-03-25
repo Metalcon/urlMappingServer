@@ -54,6 +54,33 @@ public class RecordUrlMapper extends EntityUrlMapper {
         return mappingsToRecordsOfBands;
     }
 
+    public void setMappingsOfRecordsOfBand(
+            Map<Muid, Map<String, Muid>> mappingsOfRecordsOfBand) {
+        mappingsToRecordsOfBands = mappingsOfRecordsOfBand;
+
+        Map<String, Muid> mappingsToRecord;
+        Set<String> mappingsOfRecord;
+        Muid muidRecord;
+
+        // iterate over all bands
+        for (Muid muidBand : mappingsOfRecordsOfBand.keySet()) {
+            mappingsToRecord = mappingsOfRecordsOfBand.get(muidBand);
+
+            // iterate over all record mappings for this band
+            for (String recordMapping : mappingsToRecord.keySet()) {
+                muidRecord = mappingsToRecord.get(recordMapping);
+
+                mappingsOfRecord = mappingsOfEntities.get(muidRecord);
+                if (mappingsOfRecord == null) {
+                    mappingsOfRecord = createEmptyMappingSet();
+                    mappingsOfEntities.put(muidRecord, mappingsOfRecord);
+                }
+
+                mappingsOfRecord.add(recordMapping);
+            }
+        }
+    }
+
     /**
      * @return all mappings of a record
      */
@@ -93,6 +120,15 @@ public class RecordUrlMapper extends EntityUrlMapper {
             return newMappingsForRecord;
         }
         return null;
+    }
+
+    @Override
+    protected void storeMapping(EntityUrlData entity, String mapping) {
+        // MUID can be empty here, parental band MUID gets set
+        RecordUrlData record = (RecordUrlData) entity;
+        persistentStorage.saveMapping(MuidType.RECORD.getRawIdentifier(),
+                entity.getMuid().getValue(), mapping, record.getBand()
+                        .getMuid().getValue());
     }
 
     @Override

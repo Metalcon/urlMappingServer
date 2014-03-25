@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
+import de.metalcon.urlmappingserver.persistence.PersistentStorage;
 
 /**
  * basic URL mapper for Metalcon entities
@@ -40,6 +41,11 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * URL mapping manager to resolve other MUIDs
      */
     protected EntityUrlMappingManager manager;
+
+    /**
+     * storage to make mapping persistent
+     */
+    protected PersistentStorage persistentStorage;
 
     /**
      * type of the entities this mapper handles
@@ -84,6 +90,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
             boolean allowEmptyMuid,
             String urlPathVarName) {
         this.manager = manager;
+        persistentStorage = manager.getPersistentStorage();
         this.muidType = muidType;
         this.allowEmptyMuid = allowEmptyMuid;
         this.urlPathVarName = urlPathVarName;
@@ -124,14 +131,21 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         Set<String> mapping = createEmptyMappingSet();
 
         // add mapping: /<entity name>
-        mapping.add(convertToUrlText(entityUrlData.getName()));
+        String nameMapping = convertToUrlText(entityUrlData.getName());
+        mapping.add(nameMapping);
+
+        // add mapping: /<entity name>-<muid>
+        String uniqueMapping =
+                nameMapping + WORD_SEPARATOR + entityUrlData.getMuid();
+        mapping.add(uniqueMapping);
 
         return mapping;
     }
 
     @Override
     public void registerMuid(EntityUrlData entityUrlData) {
-        registerMappings(entityUrlData.getMuid(), createMapping(entityUrlData));
+        registerUnregisteredMappings(entityUrlData,
+                createMapping(entityUrlData));
     }
 
     @Override
@@ -142,6 +156,52 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
         }
         throw new IllegalArgumentException("mapper handles muid type \""
                 + getMuidType() + "\" only (was: \"" + type + "\")");
+    }
+
+    /**
+     * register unregistered mappings for an entity
+     * 
+     * @param entity
+     *            URL data needed to register this entity
+     * @param newMappingsForEntity
+     *            mappings to be registered
+     * @throws IllegalArgumentException
+     *             if MUID was empty while empty MUID flag unset
+     */
+    protected void registerUnregisteredMappings(
+            EntityUrlData entity,
+            Set<String> newMappingsForEntity) {
+        if (entity.getMuid() != Muid.EMPTY_MUID) {
+            // add further mappings without MUID if not in use yet
+            for (String mapping : newMappingsForEntity) {
+                if (!mappingToEntity.containsKey(mapping)) {
+                    registerMapping(mapping, entity.getMuid());
+
+                    // make mapping persistent
+                    if (persistentStorage != null) {
+                        storeMapping(entity, mapping);
+                    }
+                }
+            }
+        } else if (allowEmptyMuid) {
+            registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
+        } else {
+            throw new IllegalArgumentException("empty MUID not allowed");
+        }
+    }
+
+    /**
+     * make a mapping persistent
+     * 
+     * @param entity
+     *            URL data needed to register this entity
+     * @param mapping
+     *            mapping to be made persistent
+     */
+    protected void storeMapping(EntityUrlData entity, String mapping) {
+        // MUID can not be empty here, parental MUID remains unset
+        persistentStorage.saveMapping(entity.getMuid().getMuidType()
+                .getRawIdentifier(), entity.getMuid().getValue(), mapping, 0);
     }
 
     /**
@@ -166,38 +226,6 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
         // log mapping
         LOG.debug("new mapping: " + muid + "\"" + mapping + "\"");
-    }
-
-    /**
-     * register mappings for an entity
-     * 
-     * @param muid
-     *            MUID of the entity
-     * @param newMappingsForEntity
-     *            mappings to be registered
-     * @throws IllegalArgumentException
-     *             if MUID was empty while empty MUID flag unset
-     */
-    protected void
-        registerMappings(Muid muid, Set<String> newMappingsForEntity) {
-        if (muid != Muid.EMPTY_MUID) {
-            // add first mapping with MUID
-            String muidMapping =
-                    newMappingsForEntity.iterator().next() + WORD_SEPARATOR
-                            + muid;
-            registerMapping(muidMapping, muid);
-
-            // add further mappings without MUID if not in use yet
-            for (String mapping : newMappingsForEntity) {
-                if (!mappingToEntity.containsKey(mapping)) {
-                    registerMapping(mapping, muid);
-                }
-            }
-        } else if (allowEmptyMuid) {
-            registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
-        } else {
-            throw new IllegalArgumentException("empty MUID not allowed");
-        }
     }
 
     /**

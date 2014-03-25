@@ -12,6 +12,7 @@ import org.junit.Test;
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
+import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
 
@@ -34,6 +35,12 @@ public class RecordUrlMapperTest extends EntityUrlMapperTest {
     protected static final RecordUrlData RECORD_WITHOUT_RELEASE_YEAR =
             new RecordUrlData(Muid.create(MuidType.RECORD), RECORD.getName(),
                     RECORD.getBand(), 0);
+
+    protected static final EntityUrlMappingManager MANAGER =
+            new EntityUrlMappingManager();
+
+    protected static final String PATH_BAND = MANAGER.getMapper(MuidType.BAND)
+            .getUrlPathVarName();
 
     protected String mappingReleaseYear;
 
@@ -91,10 +98,8 @@ public class RecordUrlMapperTest extends EntityUrlMapperTest {
         Map<String, String> pathVars = new HashMap<String, String>();
 
         BandUrlData band = record.getBand();
-        pathVars.put(new BandUrlMapper(null).getUrlPathVarName(),
-                (!band.hasEmptyMuid())
-                        ? (band.getName() + WORD_SEPARATOR + band.getMuid())
-                        : EMPTY_ENTITY);
+        pathVars.put(PATH_BAND, (!band.hasEmptyMuid()) ? (band.getName()
+                + WORD_SEPARATOR + band.getMuid()) : EMPTY_ENTITY);
 
         pathVars.put(mapper.getUrlPathVarName(), mapping);
         return pathVars;
