@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.zeromq.ZMQ;
-
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
@@ -21,50 +19,95 @@ import de.metalcon.urlmappingserver.api.requests.registration.TourUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.TrackUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.UserUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.VenueUrlData;
-import de.metalcon.zmqworker.ZMQWorker;
 
-public class Benchmark {
-
-    protected static final String ADDRESS_TCP = "tcp://127.0.0.1:6001";
-
-    protected static final String ADDRESS_INPROC = "inproc:///tmp/zmqw";
-
-    protected String address;
-
-    protected static ZMQ.Context CONTEXT;
-
-    protected static ZMQWorker WORKER;
-
-    protected ZMQ.Socket socket;
+public abstract class Benchmark {
 
     protected static long ID = 1;
 
-    //    public static void main(String[] args) {
-    //        String address = ADDRESS_TCP;
-    //
-    //        CONTEXT = ZMQ.context(1);
-    //        WORKER =
-    //                new ZMQWorker(address, new UrlMappingRequestHandler(
-    //                        new EntityUrlMappingManager()), CONTEXT);
-    //        WORKER.start();
-    //
-    //        Benchmark benchmark = new Benchmark(ADDRESS_TCP);
-    //        benchmark.start();
-    //    }
+    protected List<EntityUrlData> registered;
 
-    //    public Benchmark(
-    //            String address) {
-    //        this.address = address;
-    //        socket = CONTEXT.socket(ZMQ.DEALER);
-    //        socket.connect(address);
-    //    }
+    public Benchmark() {
+        registered = new LinkedList<EntityUrlData>();
+    }
 
-    public void start() {
+    protected void benchmark() {
+        benchmarkWrite(1000000);
+        benchmarkRead(10000000);
+        cleanUp();
+    }
 
-        // TODO: send/receive via DEALER socket
+    protected void benchmarkWrite(long totalWrites) {
+        short type = 9;
+        long crrNano = System.nanoTime();
 
-        socket.close();
-        CONTEXT.term();
+        System.out.println("progress:");
+        for (long write = 0; write < totalWrites; write++) {
+            EntityUrlData entity = generatedData(type);
+            registered.add(entity);
+
+            // register MUID
+            registerMuid(entity);
+
+            type -= 1;
+            if (type == -1) {
+                type = 9;
+            }
+
+            if (write % (totalWrites / 10) == 0 && write != 0) {
+                System.out.println((write / (double) totalWrites * 100) + "%");
+            }
+        }
+        crrNano = System.nanoTime() - crrNano;
+        long crrMis = crrNano / 1000;
+        long crrMs = crrMis / 1000;
+        System.out.println("benchmark duration (write): " + crrMs + "ms");
+        System.out.println("per write: " + (crrMis / totalWrites) + "µs");
+        System.out.println("writes per second: " + 1000
+                / (crrMs / (double) totalWrites));
+    }
+
+    protected void benchmarkRead(long totalReads) {
+        long read = 0;
+        long crrNano = System.nanoTime();
+        Muid muid;
+        while (true) {
+            for (EntityUrlData entity : registered) {
+                if (read++ >= totalReads) {
+                    break;
+                }
+
+                // resolve MUID
+                muid =
+                        resolveMuid(generateUrl(entity), entity.getMuid()
+                                .getMuidType());
+
+                if (muid == null) {
+                    System.err.println("failed to resolve MUID ("
+                            + entity.getMuid().getMuidType() + ")");
+                    return;
+                }
+            }
+            if (read >= totalReads) {
+                break;
+            }
+        }
+        crrNano = System.nanoTime() - crrNano;
+        long crrMis = crrNano / 1000;
+        long crrMs = crrMis / 1000;
+        System.out.println("benchmark duration (read): " + crrMs + "ms");
+        System.out.println("per read: " + (crrNano / totalReads) + "ns");
+        System.out.println("reads per second: " + 1000
+                / (crrMs / (double) totalReads));
+    }
+
+    abstract protected void registerMuid(EntityUrlData entity);
+
+    abstract protected Muid resolveMuid(
+            Map<String, String> urlPathVars,
+            MuidType muidType);
+
+    protected void cleanUp() {
+        registered.clear();
     }
 
     protected static EntityUrlData generatedData(short type) {
@@ -109,68 +152,6 @@ public class Benchmark {
         }
 
         throw new UnsupportedOperationException("unknown MUID type");
-    }
-
-    public static void main(String[] args) {
-        short type = 9;
-        EntityUrlMappingManager manager = new EntityUrlMappingManager();
-
-        long totalWrites = 1000000;
-        long crrNano = System.nanoTime();
-        List<EntityUrlData> registered = new LinkedList<EntityUrlData>();
-
-        System.out.println("progress:");
-        for (long write = 0; write < totalWrites; write++) {
-            EntityUrlData entity = generatedData(type);
-            registered.add(entity);
-            manager.registerMuid(entity);
-
-            type -= 1;
-            if (type == -1) {
-                type = 9;
-            }
-
-            if (write % (totalWrites / 10) == 0 && write != 0) {
-                System.out.println((write / (double) totalWrites * 100) + "%");
-            }
-        }
-        crrNano = System.nanoTime() - crrNano;
-        long crrMis = crrNano / 1000;
-        long crrMs = crrMis / 1000;
-        System.out.println("benchmark duration (write): " + crrMs + "ms");
-        System.out.println("per write: " + (crrMis / totalWrites) + "µs");
-        System.out.println("writes per second: " + 1000
-                / (crrMs / (double) totalWrites));
-
-        long totalReads = 10000000;
-        long read = 0;
-        crrNano = System.nanoTime();
-        Muid muid;
-        while (true) {
-            for (EntityUrlData entity : registered) {
-                if (read++ >= totalReads) {
-                    break;
-                }
-                muid =
-                        manager.resolveMuid(generateUrl(entity), entity
-                                .getMuid().getMuidType());
-                if (muid == null) {
-                    System.err.println("failed to resolve MUID ("
-                            + entity.getMuid().getMuidType() + ")");
-                    return;
-                }
-            }
-            if (read >= totalReads) {
-                break;
-            }
-        }
-        crrNano = System.nanoTime() - crrNano;
-        crrMis = crrNano / 1000;
-        crrMs = crrMis / 1000;
-        System.out.println("benchmark duration (read): " + crrMs + "ms");
-        System.out.println("per read: " + (crrNano / totalReads) + "ns");
-        System.out.println("reads per second: " + 1000
-                / (crrMs / (double) totalReads));
     }
 
     protected static Map<String, String> generateUrl(EntityUrlData entity) {
