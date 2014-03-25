@@ -43,6 +43,8 @@ server for URL mapping to entities
 >per read: 1968ns  
 >reads per second: 508078.44731226505  
 
+The server was stopped and restarted, making it load all mappings from disk.
+
 #### Write (restore from disk)
 >total number: 500,000  
 >benchmark duration (restart): 31348ms  
@@ -54,3 +56,4 @@ server for URL mapping to entities
 >benchmark duration (read): 13263ms  
 >per read: 2652ns  
 >reads per second: 376988.61494382867  
+
