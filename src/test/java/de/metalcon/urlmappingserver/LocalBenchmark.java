@@ -8,22 +8,43 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 public class LocalBenchmark extends Benchmark {
 
-    protected EntityUrlMappingManager manager;
+    protected UrlMappingServerConfig CONFIG = new UrlMappingServerConfig(
+            "test.url-mapping-server-config.txt");
+
+    protected UrlMappingServer server;
+
+    protected EntityUrlMappingManager mappingManager;
 
     public LocalBenchmark() {
-        manager = new EntityUrlMappingManager();
+        server = new UrlMappingServer(CONFIG);
+        mappingManager = server.getMappingManager();
+    }
+
+    @Override
+    protected void benchmark() {
+        benchmarkWrite(1000000);
+        benchmarkRead(10000000);
+
+        server.stop();
+        server.cleanUp();
+
+        server = new UrlMappingServer(CONFIG);
+        server.loadFromDatabase();
+        mappingManager = server.getMappingManager();
+
+        benchmarkRead(10000000);
     }
 
     @Override
     protected void registerMuid(EntityUrlData entity) {
-        manager.registerMuid(entity);
+        mappingManager.registerMuid(entity);
     }
 
     @Override
     protected Muid resolveMuid(
             Map<String, String> urlPathVars,
             MuidType muidType) {
-        return manager.resolveMuid(urlPathVars, muidType);
+        return mappingManager.resolveMuid(urlPathVars, muidType);
     }
 
 }
