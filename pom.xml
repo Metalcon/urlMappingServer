@@ -26,6 +26,10 @@
     <api.version>0.1.0</api.version>
     <!-- version of logging tool -->
     <slf4j.version>1.7.5</slf4j.version>
+    <!-- version of levelDB -->
+    <leveldb.version>1.7</leveldb.version>
+    <!-- version of ZMQ worker -->
+    <zmq.worker.version>0.1.0</zmq.worker.version>
   </properties>
 
   <dependencies>
@@ -48,10 +52,17 @@
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
+    <!-- database for persistence -->
+    <dependency>
+      <groupId>org.fusesource.leveldbjni</groupId>
+      <artifactId>leveldbjni-all</artifactId>
+      <version>${leveldb.version}</version>
+    </dependency>
+    <!-- ZMQ communicator to middleware -->
     <dependency>
       <groupId>de.metalcon</groupId>
       <artifactId>zmq-worker</artifactId>
-      <version>0.1.0</version>
+      <version>${zmq.worker.version}</version>
     </dependency>
   </dependencies>
 </project>
