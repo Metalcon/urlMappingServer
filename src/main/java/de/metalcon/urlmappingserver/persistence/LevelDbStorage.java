@@ -55,6 +55,7 @@ public class LevelDbStorage implements PersistentStorage {
         // value: MUID
         MUID_BUFFER.putLong(entity.getMuid().getValue());
         byte[] value = MUID_BUFFER.array();
+        MUID_BUFFER.clear();
 
         // key: MUID type [+ parent MUID] + mapping
         byte[] key;
@@ -79,28 +80,88 @@ public class LevelDbStorage implements PersistentStorage {
     public UrlMappingData restoreMappings() {
         Map<Muid, Set<String>> mappingsOfEntity =
                 new HashMap<Muid, Set<String>>();
+        Map<Muid, Map<String, Muid>> mappingsOfRecordsOfBand =
+                new HashMap<Muid, Map<String, Muid>>();
+        Map<Muid, Map<String, Muid>> mappingsOfTracksOfRecord =
+                new HashMap<Muid, Map<String, Muid>>();
         DBIterator iterator = db.iterator();
 
         try {
+            byte[] baMuidType = new byte[2];
             short muidType;
-            Set<String> mappings;
+            byte[] baMuidParent = new byte[8];
+            Muid muidParent = null;
+            Set<String> currentMappings;
+            Map<String, Muid> mappingLink;
             Muid muid;
 
+            int arrayCursor;
             for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
-                muidType =
+                arrayCursor = 0;
+                byte[] key = iterator.peekNext().getKey();
 
-                BUFFER.put(iterator.peekNext().getValue());
-                BUFFER.flip();
+                // extract MUID type
+                System.arraycopy(key, arrayCursor, baMuidType, 0,
+                        baMuidType.length);
+                arrayCursor += baMuidType.length;
+                MUID_TYPE_BUFFER.put(baMuidType);
+                MUID_TYPE_BUFFER.flip();
+                muidType = MUID_TYPE_BUFFER.getShort();
+                MUID_TYPE_BUFFER.clear();
 
-                muid = new Muid(BUFFER.getLong());
-
-                mappings = mappingsOfEntity.get(muid);
-                if (mappings == null) {
-                    mappings = new LinkedHashSet<String>();
-                    mappingsOfEntity.put(muid, mappings);
+                if (muidType == MuidType.RECORD.getRawIdentifier()
+                        || muidType == MuidType.TRACK.getRawIdentifier()) {
+                    // extract parental MUID
+                    System.arraycopy(key, arrayCursor, baMuidParent, 0,
+                            baMuidParent.length);
+                    arrayCursor += baMuidParent.length;
+                    MUID_BUFFER.put(baMuidParent);
+                    MUID_BUFFER.flip();
+                    muidParent = new Muid(MUID_BUFFER.getLong());
+                    MUID_BUFFER.clear();
                 }
 
-                mappings.add(mapping);
+                // extract mapping
+                byte[] baMapping = new byte[key.length - arrayCursor];
+                System.arraycopy(key, arrayCursor, baMapping, 0,
+                        baMapping.length);
+                String mapping = asString(baMapping);
+
+                // deserialize MUID
+                MUID_BUFFER.put(iterator.peekNext().getValue());
+                MUID_BUFFER.flip();
+                muid = new Muid(MUID_BUFFER.getLong());
+                MUID_BUFFER.clear();
+
+                // add links between mappings
+                if (muidType == MuidType.RECORD.getRawIdentifier()) {
+                    // band -> record [mapping -> MUID]
+                    mappingLink = mappingsOfRecordsOfBand.get(muidParent);
+                    if (mappingLink == null) {
+                        mappingLink = new HashMap<String, Muid>();
+                        mappingsOfRecordsOfBand.put(muidParent, mappingLink);
+                    }
+
+                    mappingLink.put(mapping, muid);
+                } else if (muidType == MuidType.TRACK.getRawIdentifier()) {
+                    // record -> track [mapping -> MUID]
+                    mappingLink = mappingsOfTracksOfRecord.get(muidParent);
+                    if (mappingLink == null) {
+                        mappingLink = new HashMap<String, Muid>();
+                        mappingsOfTracksOfRecord.put(muidParent, mappingLink);
+                    }
+
+                    mappingLink.put(mapping, muid);
+                } else {
+                    // add simple URL mapping [MUID -> mapping]
+                    currentMappings = mappingsOfEntity.get(muid);
+                    if (currentMappings == null) {
+                        currentMappings = new LinkedHashSet<String>();
+                        mappingsOfEntity.put(muid, currentMappings);
+                    }
+
+                    currentMappings.add(mapping);
+                }
             }
         } finally {
             try {
@@ -111,7 +172,8 @@ public class LevelDbStorage implements PersistentStorage {
             }
         }
 
-        return mappingsOfEntity;
+        return new UrlMappingData(mappingsOfEntity, mappingsOfRecordsOfBand,
+                mappingsOfTracksOfRecord);
     }
 
     protected static byte[] buildKey(
@@ -135,8 +197,10 @@ public class LevelDbStorage implements PersistentStorage {
         ByteBuffer keyBuffer = ByteBuffer.wrap(key);
 
         keyBuffer.put(MUID_TYPE_BUFFER.array());
+        MUID_TYPE_BUFFER.clear();
         if (muidParent != null) {
             keyBuffer.put(MUID_BUFFER.array());
+            MUID_BUFFER.clear();
         }
         keyBuffer.put(baMapping);
 

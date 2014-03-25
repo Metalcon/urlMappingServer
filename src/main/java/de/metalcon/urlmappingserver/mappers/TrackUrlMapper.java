@@ -45,6 +45,32 @@ public class TrackUrlMapper extends EntityUrlMapper {
         mappingsToTracksOfRecords = new HashMap<Muid, Map<String, Muid>>();
     }
 
+    public void setMappingsToTracksOfRecords(
+            Map<Muid, Map<String, Muid>> mappingsToTracksOfRecords) {
+        this.mappingsToTracksOfRecords = mappingsToTracksOfRecords;
+
+        // iterate over all records
+        Map<String, Muid> mappingToTrack;
+        Set<String> trackMappings;
+        Muid muidTrack;
+        for (Muid recordMuid : mappingsToTracksOfRecords.keySet()) {
+            mappingToTrack = mappingsToTracksOfRecords.get(recordMuid);
+
+            // iterate over all track mappings for this record
+            for (String trackMapping : mappingToTrack.keySet()) {
+                muidTrack = mappingToTrack.get(trackMapping);
+
+                trackMappings = mappingsOfEntities.get(muidTrack);
+                if (trackMappings == null) {
+                    trackMappings = createEmptyMappingSet();
+                    mappingsOfEntities.put(muidTrack, trackMappings);
+                }
+
+                trackMappings.add(trackMapping);
+            }
+        }
+    }
+
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
         TrackUrlData trackUrlData = (TrackUrlData) entityUrlData;

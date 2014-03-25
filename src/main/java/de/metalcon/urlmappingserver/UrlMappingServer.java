@@ -104,7 +104,9 @@ public class UrlMappingServer {
 
         // start ZMQ communication
         worker = new ZMQWorker(config.endpoint, requestHandler, CONTEXT);
-        worker.start();
+        if (!worker.start()) {
+            throw new IllegalStateException("failed to start worker");
+        }
     }
 
     /**
@@ -145,6 +147,7 @@ public class UrlMappingServer {
             e.printStackTrace();
             System.err.println("failed to close database");
         }
+        CONTEXT = null;
     }
 
     protected static ZMQ.Context initZmqContext(int numThreads) {

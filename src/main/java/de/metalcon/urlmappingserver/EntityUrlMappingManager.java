@@ -1,7 +1,6 @@
 package de.metalcon.urlmappingserver;
 
 import java.util.Map;
-import java.util.Set;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
@@ -17,6 +16,7 @@ import de.metalcon.urlmappingserver.mappers.TrackUrlMapper;
 import de.metalcon.urlmappingserver.mappers.UserUrlMapper;
 import de.metalcon.urlmappingserver.mappers.VenueUrlMapper;
 import de.metalcon.urlmappingserver.persistence.PersistentStorage;
+import de.metalcon.urlmappingserver.persistence.UrlMappingData;
 
 /**
  * URL mapping manager for all Metalcon entities
@@ -152,11 +152,18 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
             return;
         }
 
-        Map<Muid, Set<String>> mappingsOfEntity =
-                persistentStorage.restoreMappings();
-        for (Muid muid : mappingsOfEntity.keySet()) {
-            for (String mapping : mappingsOfEntity.get(muid)) {
-                registerMuid();
+        UrlMappingData persistenceData = persistentStorage.restoreMappings();
+        recordMapper.setMappingsOfRecordsOfBand(persistenceData
+                .getMappingsOfRecordsOfBand());
+        trackMapper.setMappingsToTracksOfRecords(persistenceData
+                .getMappingsOfTracksOfRecord());
+
+        EntityUrlMapper mapper;
+        for (Muid muid : persistenceData.getMappingsOfEntity().keySet()) {
+            mapper = getMapper(muid.getMuidType());
+            for (String mapping : persistenceData.getMappingsOfEntity().get(
+                    muid)) {
+                mapper.registerMapping(mapping, muid);
             }
         }
     }

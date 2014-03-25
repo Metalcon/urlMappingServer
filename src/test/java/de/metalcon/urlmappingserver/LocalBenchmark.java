@@ -22,8 +22,8 @@ public class LocalBenchmark extends Benchmark {
 
     @Override
     protected void benchmark() {
-        benchmarkWrite(1000000);
-        benchmarkRead(10000000);
+        benchmarkWrite(10000);
+        benchmarkRead(100000);
 
         server.stop();
         server.cleanUp();
@@ -32,7 +32,7 @@ public class LocalBenchmark extends Benchmark {
         server.loadFromDatabase();
         mappingManager = server.getMappingManager();
 
-        benchmarkRead(10000000);
+        benchmarkRead(100000);
     }
 
     @Override
@@ -45,6 +45,10 @@ public class LocalBenchmark extends Benchmark {
             Map<String, String> urlPathVars,
             MuidType muidType) {
         return mappingManager.resolveMuid(urlPathVars, muidType);
+    }
+
+    public static void main(String[] args) {
+        new LocalBenchmark().benchmark();
     }
 
 }

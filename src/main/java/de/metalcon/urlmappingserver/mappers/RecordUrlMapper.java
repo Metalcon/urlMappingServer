@@ -54,6 +54,32 @@ public class RecordUrlMapper extends EntityUrlMapper {
         return mappingsToRecordsOfBands;
     }
 
+    public void setMappingsOfRecordsOfBand(
+            Map<Muid, Map<String, Muid>> mappingsOfRecordsOfBand) {
+        mappingsToRecordsOfBands = mappingsOfRecordsOfBand;
+
+        // iterate over all bands
+        Map<String, Muid> mappingToRecord;
+        Set<String> recordMappings;
+        Muid muidRecord;
+        for (Muid bandMuid : mappingsOfRecordsOfBand.keySet()) {
+            mappingToRecord = mappingsOfRecordsOfBand.get(bandMuid);
+
+            // iterate over all record mappings for this band
+            for (String recordMapping : mappingToRecord.keySet()) {
+                muidRecord = mappingToRecord.get(recordMapping);
+
+                recordMappings = mappingsOfEntities.get(muidRecord);
+                if (recordMappings == null) {
+                    recordMappings = createEmptyMappingSet();
+                    mappingsOfEntities.put(muidRecord, recordMappings);
+                }
+
+                recordMappings.add(recordMapping);
+            }
+        }
+    }
+
     /**
      * @return all mappings of a record
      */
