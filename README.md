@@ -2,6 +2,14 @@
 
 server for URL mapping to entities
 
+## Dependency
+
+    <dependency>
+      <groupId>de.metalcon</groupId>
+      <artifactId>url-mapping-server</artifactId>
+      <version>0.2.0</version>
+    </dependency>
+
 ### Benchmark
 
 [The benchmark](src/test/java/de/metalcon/urlmappingserver/Benchmark.java) was executed with 2GB memory for the Java VM.
