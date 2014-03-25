@@ -12,7 +12,7 @@ server for URL mapping to entities
 
 ## Benchmark
 
-[The benchmark](src/test/java/de/metalcon/urlmappingserver/Benchmark.java) was executed with 2GB memory for the Java VM.
+[The benchmark](src/test/java/de/metalcon/urlmappingserver/LocalBenchmark.java) was executed with 2GB memory for the Java VM.
 
 ### Benchmark without persistence layer
 
