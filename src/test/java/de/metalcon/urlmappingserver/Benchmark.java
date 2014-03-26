@@ -135,12 +135,30 @@ public abstract class Benchmark {
             case INSTRUMENT:
                 return new InstrumentUrlData(muid, name);
             case RECORD:
+                // 10% of all records are collections
+                if ((ID / 10) % 10 == 9) {
+                    return new RecordUrlData(muid, name, null,
+                            1914 + (int) (ID % 100));
+                }
                 return new RecordUrlData(muid, name,
                         (BandUrlData) generatedData(MuidType.BAND
                                 .getRawIdentifier()), 1914 + (int) (ID % 100));
             case TOUR:
                 return new TourUrlData(muid, name, 1914 + (int) (ID % 100));
             case TRACK:
+                // 10% of all tracks have unknown record
+                //                if ((ID / 10) % 10 == 2) {
+                //                    return new TrackUrlData(muid, name,
+                //                            (BandUrlData) generatedData(MuidType.BAND
+                //                                    .getRawIdentifier()), null,
+                //                            1 + (int) (ID % 30));
+                //                }
+                // 10% of all tracks have unknown record and unknown band
+                //                if ((ID / 10) % 10 == 5) {
+                //                    return new TrackUrlData(muid, name, null, null,
+                //                            1 + (int) (ID % 30));
+                //                }
+                // 10% of remaining 80% of all records have unknown band
                 return new TrackUrlData(muid, name, null,
                         (RecordUrlData) generatedData(MuidType.RECORD
                                 .getRawIdentifier()), 1 + (int) (ID % 30));
@@ -158,8 +176,10 @@ public abstract class Benchmark {
 
     protected static Map<String, String> generateUrl(EntityUrlData entity) {
         Map<String, String> pathVars = new HashMap<String, String>();
-
         String mapping = entity.getName() + "-" + entity.getMuid();
+
+        BandUrlData band;
+        RecordUrlData record;
         switch (entity.getMuid().getMuidType()) {
 
             case BAND:
@@ -183,7 +203,7 @@ public abstract class Benchmark {
                 break;
 
             case RECORD:
-                BandUrlData band = ((RecordUrlData) entity).getBand();
+                band = ((RecordUrlData) entity).getBand();
                 if (!band.hasEmptyMuid()) {
                     pathVars.put("pathBand",
                             band.getName() + "-" + band.getMuid());
@@ -198,11 +218,20 @@ public abstract class Benchmark {
                 break;
 
             case TRACK:
-                RecordUrlData record = ((TrackUrlData) entity).getRecord();
-                pathVars.put("pathBand", record.getBand().getName() + "-"
-                        + record.getBand().getMuid());
-                pathVars.put("pathRecord",
-                        record.getName() + "-" + record.getMuid());
+                record = ((TrackUrlData) entity).getRecord();
+                band = record.getBand();
+                if (!band.hasEmptyMuid()) {
+                    pathVars.put("pathBand",
+                            band.getName() + "-" + band.getMuid());
+                } else {
+                    pathVars.put("pathBand", "_");
+                }
+                if (!record.hasEmptyMuid()) {
+                    pathVars.put("pathRecord",
+                            record.getName() + "-" + record.getMuid());
+                } else {
+                    pathVars.put("pathRecord", "_");
+                }
                 pathVars.put("pathTrack", mapping);
                 break;
 

@@ -55,10 +55,11 @@ public class LocalBenchmark extends Benchmark {
     protected void benchmarkWithoutPersistence() {
         mappingManager = new EntityUrlMappingManager();
 
-        int totalWrites = 100000 * 5;
-        int totalReads = totalWrites * 10;
+        int totalWrites = 100000 * 1;
+        int totalReads = totalWrites * 100;
 
         benchmarkWrite(totalWrites);
+        benchmarkRead(totalReads);
         benchmarkRead(totalReads);
 
         server.stop();
