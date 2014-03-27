@@ -8,6 +8,7 @@ import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
+import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
 
@@ -46,12 +47,25 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     /**
-     * access to record mapping for track mapper
+     * check if a record is registered
      * 
-     * @return all (mappings to records) of a band
+     * @param record
+     *            record to be searched for
+     * @return true - if record is registered
      */
-    public Map<Muid, Map<String, Muid>> getMappingsToRecordsOfBands() {
-        return mappingsToRecordsOfBands;
+    public boolean checkForRecord(RecordUrlData record) {
+        if (!record.hasEmptyMuid()) {
+            // MUID is unique -> must exist
+            return mappingsOfEntities.containsKey(record.getMuid());
+        } else {
+            // if MUID empty we have to check if existing for this band
+            BandUrlData band = record.getBand();
+            if (mappingsToRecordsOfBands.containsKey(band.getMuid())) {
+                return mappingsToRecordsOfBands.get(band.getMuid())
+                        .containsKey(Muid.EMPTY_MUID);
+            }
+            return false;
+        }
     }
 
     public void setMappingsOfRecordsOfBand(

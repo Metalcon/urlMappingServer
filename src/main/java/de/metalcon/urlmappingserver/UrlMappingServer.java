@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.fusesource.leveldbjni.JniDBFactory;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
-import org.zeromq.ZMQ;
+import org.zeromq.ZContext;
 
 import de.metalcon.urlmappingserver.persistence.LevelDbStorage;
 import de.metalcon.urlmappingserver.persistence.PersistentStorage;
@@ -30,7 +30,7 @@ public class UrlMappingServer {
     /**
      * ZeroMQ context to get sockets from
      */
-    protected static ZMQ.Context CONTEXT = null;
+    protected static ZContext CONTEXT = null;
 
     /**
      * ZeroMQ worker listening for requests
@@ -150,9 +150,9 @@ public class UrlMappingServer {
         CONTEXT = null;
     }
 
-    protected static ZMQ.Context initZmqContext(int numThreads) {
+    protected static ZContext initZmqContext(int numThreads) {
         System.out.println("ZMQ threads: " + numThreads);
-        return ZMQ.context(numThreads);
+        return new ZContext(numThreads);
     }
 
     protected static DB loadDatabase(String databasePath) {

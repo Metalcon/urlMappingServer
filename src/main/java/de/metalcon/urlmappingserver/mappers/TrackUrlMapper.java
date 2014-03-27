@@ -77,12 +77,15 @@ public class TrackUrlMapper extends EntityUrlMapper {
         TrackUrlData trackUrlData = (TrackUrlData) entityUrlData;
 
         // register record if not registered yet
-        Muid record = trackUrlData.getRecord().getMuid();
-        if (!recordMapper.getMappingsOfRecord().containsKey(record)) {
+        if (!recordMapper.checkForRecord(trackUrlData.getRecord())) {
             recordMapper.registerMuid(trackUrlData.getRecord());
         }
+        //        if (!recordMapper.getMappingsOfRecord().containsKey(record)) {
+        //            recordMapper.registerMuid(trackUrlData.getRecord());
+        //        }
 
         // switch into track mapping
+        Muid record = trackUrlData.getRecord().getMuid();
         mappingToEntity = mappingsToTracksOfRecords.get(record);
         if (mappingToEntity == null) {
             mappingToEntity = new HashMap<String, Muid>();

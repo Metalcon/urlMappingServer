@@ -29,7 +29,7 @@
     <!-- version of levelDB -->
     <leveldb.version>1.7</leveldb.version>
     <!-- version of ZMQ worker -->
-    <zmq.worker.version>0.2.0</zmq.worker.version>
+    <zmq.worker.version>0.2.1</zmq.worker.version>
   </properties>
 
   <dependencies>

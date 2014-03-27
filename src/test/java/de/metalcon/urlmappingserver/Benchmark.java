@@ -43,15 +43,15 @@ public abstract class Benchmark {
         System.out.println("progress:");
         for (long write = 0; write < totalWrites; write++) {
             EntityUrlData entity = generatedData(type);
-            registered.add(entity);
-
-            // register MUID
-            registerMuid(entity);
-
             type -= 1;
             if (type == -1) {
                 type = 9;
             }
+
+            registered.add(entity);
+
+            // register MUID
+            registerMuid(entity);
 
             if (write % (totalWrites / 10) == 0 && write != 0) {
                 System.out.println((write / (double) totalWrites * 100) + "%");
@@ -81,7 +81,6 @@ public abstract class Benchmark {
                 muid =
                         resolveMuid(generateUrl(entity), entity.getMuid()
                                 .getMuidType());
-
                 if (muid == null) {
                     System.err.println("failed to resolve MUID ("
                             + entity.getMuid().getMuidType() + ")");
@@ -146,12 +145,12 @@ public abstract class Benchmark {
             case TOUR:
                 return new TourUrlData(muid, name, 1914 + (int) (ID % 100));
             case TRACK:
+                // FIXME debugging: all tracks have unknown record
                 // 10% of all tracks have unknown record
                 //                if ((ID / 10) % 10 == 2) {
-                //                    return new TrackUrlData(muid, name,
-                //                            (BandUrlData) generatedData(MuidType.BAND
-                //                                    .getRawIdentifier()), null,
-                //                            1 + (int) (ID % 30));
+                return new TrackUrlData(muid, name,
+                        (BandUrlData) generatedData(MuidType.BAND
+                                .getRawIdentifier()), null, 1 + (int) (ID % 30));
                 //                }
                 // 10% of all tracks have unknown record and unknown band
                 //                if ((ID / 10) % 10 == 5) {
@@ -159,9 +158,9 @@ public abstract class Benchmark {
                 //                            1 + (int) (ID % 30));
                 //                }
                 // 10% of remaining 80% of all records have unknown band
-                return new TrackUrlData(muid, name, null,
-                        (RecordUrlData) generatedData(MuidType.RECORD
-                                .getRawIdentifier()), 1 + (int) (ID % 30));
+                //                return new TrackUrlData(muid, name, null,
+                //                        (RecordUrlData) generatedData(MuidType.RECORD
+                //                                .getRawIdentifier()), 1 + (int) (ID % 30));
             case USER:
                 return new UserUrlData(muid, String.valueOf(ID),
                         String.valueOf(ID));
