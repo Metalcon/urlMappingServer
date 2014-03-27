@@ -55,14 +55,14 @@ public class RecordUrlMapper extends EntityUrlMapper {
      */
     public boolean checkForRecord(RecordUrlData record) {
         if (!record.hasEmptyMuid()) {
-            // MUID is unique -> must exist
+            // MUID is unique across all bands -> must exist
             return mappingsOfEntities.containsKey(record.getMuid());
         } else {
-            // if MUID empty we have to check if existing for this band
+            // if MUID empty we have to check if existing for this band in specific
             BandUrlData band = record.getBand();
             if (mappingsToRecordsOfBands.containsKey(band.getMuid())) {
                 return mappingsToRecordsOfBands.get(band.getMuid())
-                        .containsKey(Muid.EMPTY_MUID);
+                        .containsKey(EMPTY_ENTITY);
             }
             return false;
         }
@@ -100,12 +100,12 @@ public class RecordUrlMapper extends EntityUrlMapper {
         RecordUrlData recordUrlData = (RecordUrlData) entityUrlData;
 
         // register band if not registered yet
-        Muid band = recordUrlData.getBand().getMuid();
         if (!bandMapper.checkForBand(recordUrlData.getBand())) {
             bandMapper.registerMuid(recordUrlData.getBand());
         }
 
         // switch into record mapping
+        Muid band = recordUrlData.getBand().getMuid();
         mappingToEntity = mappingsToRecordsOfBands.get(band);
         if (mappingToEntity == null) {
             mappingToEntity = new HashMap<String, Muid>();
@@ -147,11 +147,16 @@ public class RecordUrlMapper extends EntityUrlMapper {
             Muid band = resolveOtherMuid(url, MuidType.BAND);
             if (band != null) {
                 // resolve record
-                Map<String, Muid> mappingToEntity =
-                        mappingsToRecordsOfBands.get(band);
-                if (mappingToEntity != null) {
-                    return mappingToEntity.get(recordMapping);
+                if (mappingsToRecordsOfBands.containsKey(band)) {
+                    return mappingsToRecordsOfBands.get(band)
+                            .get(recordMapping);
+                } else {
+                    System.err.println("record " + recordMapping + " not found"
+                            + " [" + band + "]");
                 }
+            } else {
+                System.err.println("band not resolved [" + url.get("pathBand")
+                        + "]");
             }
             return null;
         }

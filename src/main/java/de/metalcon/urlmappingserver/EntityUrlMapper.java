@@ -152,7 +152,20 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
         if (type == muidType) {
             String mapping = getPathVar(url, urlPathVarName);
-            return mappingToEntity.get(mapping);
+            Muid entity = mappingToEntity.get(mapping);
+            if (entity != null) {
+                return entity;
+            } else {
+                String mValue =
+                        mapping.substring(mapping.indexOf(WORD_SEPARATOR) + 1);
+                System.err.println("entity not resolved\n" + "mapping: "
+                        + mapping + " [" + mValue + "]");
+                Muid mEnt = new Muid(mValue);
+                System.err.println(mappingToEntity.containsKey(mEnt) + ", "
+                        + mappingsOfEntities.containsKey(mEnt));
+                System.err.println(mappingsOfEntities.get(mEnt));
+                return null;
+            }
         }
         throw new IllegalArgumentException("mapper handles muid type \""
                 + getMuidType() + "\" only (was: \"" + type + "\")");

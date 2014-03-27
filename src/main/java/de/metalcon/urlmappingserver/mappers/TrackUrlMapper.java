@@ -80,9 +80,6 @@ public class TrackUrlMapper extends EntityUrlMapper {
         if (!recordMapper.checkForRecord(trackUrlData.getRecord())) {
             recordMapper.registerMuid(trackUrlData.getRecord());
         }
-        //        if (!recordMapper.getMappingsOfRecord().containsKey(record)) {
-        //            recordMapper.registerMuid(trackUrlData.getRecord());
-        //        }
 
         // switch into track mapping
         Muid record = trackUrlData.getRecord().getMuid();

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
@@ -21,6 +22,8 @@ import de.metalcon.urlmappingserver.api.requests.registration.UserUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.VenueUrlData;
 
 public abstract class Benchmark {
+
+    protected static Random RAND = new Random();
 
     protected static long ID = 1;
 
@@ -39,7 +42,6 @@ public abstract class Benchmark {
     protected void benchmarkWrite(long totalWrites) {
         short type = 9;
         long crrNano = System.nanoTime();
-        long skipped = 0;
 
         System.out.println("progress:");
         for (long write = 0; write < totalWrites; write++) {
@@ -49,7 +51,6 @@ public abstract class Benchmark {
                 type = 9;
             }
             if (entity == null) {
-                skipped += 1;
                 continue;
             }
 
@@ -62,7 +63,6 @@ public abstract class Benchmark {
                 System.out.println((write / (double) totalWrites * 100) + "%");
             }
         }
-        System.out.println(skipped + " skipped");
         crrNano = System.nanoTime() - crrNano;
         long crrMis = crrNano / 1000;
         long crrMs = crrMis / 1000;
@@ -79,6 +79,11 @@ public abstract class Benchmark {
         Muid muid;
         System.out.println("reading from " + registered.size());
 
+        long trackWoBand = 0;
+        long trackWoRecord = 0;
+        long trackAno = 0;
+
+        Map<String, String> url;
         while (true) {
             for (EntityUrlData entity : registered) {
                 if (read % (totalReads / 10) == 0 && read != 0) {
@@ -90,19 +95,43 @@ public abstract class Benchmark {
                 }
 
                 // resolve MUID
-                muid =
-                        resolveMuid(generateUrl(entity), entity.getMuid()
-                                .getMuidType());
+                url = generateUrl(entity);
+                muid = resolveMuid(url, entity.getMuid().getMuidType());
+
+                if (entity instanceof TrackUrlData) {
+                    TrackUrlData track = (TrackUrlData) entity;
+                    if (track.getRecord().hasEmptyMuid()) {
+                        if (track.getRecord().getBand().hasEmptyMuid()) {
+                            trackAno += 1;
+                        } else {
+                            trackWoRecord += 1;
+                        }
+                    } else {
+                        if (track.getRecord().getBand().hasEmptyMuid()) {
+                            trackWoBand += 1;
+                        }
+                    }
+                }
                 if (muid == null) {
                     System.err.println("failed to resolve MUID ("
-                            + entity.getMuid().getMuidType() + ")");
-                    return;
+                            + entity.getMuid().getMuidType() + ") from ");
+                    for (String pathVar : url.keySet()) {
+                        System.out.println(pathVar + " = " + url.get(pathVar));
+                    }
+                    if (read > (totalReads / 10)) {
+                        return;
+                    }
                 }
             }
             if (read >= totalReads) {
                 break;
             }
         }
+
+        System.out.println(trackWoBand + " tracks without band");
+        System.out.println(trackWoRecord + " tracks without record");
+        System.out.println(trackAno + " tracks with neither band nor record");
+
         crrNano = System.nanoTime() - crrNano;
         long crrMis = crrNano / 1000;
         long crrMs = crrMis / 1000;
@@ -147,7 +176,7 @@ public abstract class Benchmark {
                 return new InstrumentUrlData(muid, name);
             case RECORD:
                 // 10% of all records are collections
-                if ((ID / 10) % 10 == 9) {
+                if (RAND.nextInt(100) < 10) {
                     return new RecordUrlData(muid, name, null,
                             1914 + (int) (ID % 100));
                 }
@@ -157,23 +186,22 @@ public abstract class Benchmark {
             case TOUR:
                 return new TourUrlData(muid, name, 1914 + (int) (ID % 100));
             case TRACK:
-                // FIXME debugging: all tracks have unknown record
                 // 10% of all tracks have unknown record
-                //                if ((ID / 10) % 10 == 2) {
-                //                return new TrackUrlData(muid, name,
-                //                        (BandUrlData) generatedData(MuidType.BAND
-                //                                .getRawIdentifier()), null, 1 + (int) (ID % 30));
-                //                }
+                if (RAND.nextInt(100) < 10) {
+                    return new TrackUrlData(muid, name,
+                            (BandUrlData) generatedData(MuidType.BAND
+                                    .getRawIdentifier()), null,
+                            1 + (int) (ID % 30));
+                }
                 // 10% of all tracks have unknown record and unknown band
-                //                if ((ID / 10) % 10 == 5) {
-                //                    return new TrackUrlData(muid, name, null, null,
-                //                            1 + (int) (ID % 30));
-                //                }
+                if (RAND.nextInt(100) < 10) {
+                    return new TrackUrlData(muid, name, null, null,
+                            1 + (int) (ID % 30));
+                }
                 // 10% of remaining 80% of all records have unknown band
-                //                return new TrackUrlData(muid, name, null,
-                //                        (RecordUrlData) generatedData(MuidType.RECORD
-                //                                .getRawIdentifier()), 1 + (int) (ID % 30));
-                return null;
+                return new TrackUrlData(muid, name, null,
+                        (RecordUrlData) generatedData(MuidType.RECORD
+                                .getRawIdentifier()), 1 + (int) (ID % 30));
             case USER:
                 return new UserUrlData(muid, String.valueOf(ID),
                         String.valueOf(ID));
