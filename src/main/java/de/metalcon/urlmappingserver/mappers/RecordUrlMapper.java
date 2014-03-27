@@ -95,20 +95,13 @@ public class RecordUrlMapper extends EntityUrlMapper {
         }
     }
 
-    /**
-     * @return all mappings of a record
-     */
-    public Map<Muid, Set<String>> getMappingsOfRecord() {
-        return mappingsOfEntities;
-    }
-
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
         RecordUrlData recordUrlData = (RecordUrlData) entityUrlData;
 
         // register band if not registered yet
         Muid band = recordUrlData.getBand().getMuid();
-        if (!bandMapper.getMappingsOfBand().containsKey(band)) {
+        if (!bandMapper.checkForBand(recordUrlData.getBand())) {
             bandMapper.registerMuid(recordUrlData.getBand());
         }
 

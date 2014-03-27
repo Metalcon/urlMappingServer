@@ -1,12 +1,10 @@
 package de.metalcon.urlmappingserver.mappers;
 
-import java.util.Map;
-import java.util.Set;
-
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
+import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 /**
@@ -29,10 +27,15 @@ public class BandUrlMapper extends EntityUrlMapper {
     }
 
     /**
-     * @return all mappings of a band
+     * check if a band is registered
+     * 
+     * @param band
+     *            band URL information
+     * @return true - if the band is registered and thus can be resolved<br>
+     *         false otherwise
      */
-    public Map<Muid, Set<String>> getMappingsOfBand() {
-        return mappingsOfEntities;
+    public boolean checkForBand(BandUrlData band) {
+        return mappingsOfEntities.containsKey(band.getMuid());
     }
 
     @Override
