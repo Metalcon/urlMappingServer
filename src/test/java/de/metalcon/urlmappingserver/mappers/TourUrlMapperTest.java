@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
+import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
 import de.metalcon.urlmappingserver.api.requests.registration.TourUrlData;
 
@@ -16,13 +16,14 @@ public class TourUrlMapperTest extends EntityUrlMapperTest {
     protected static final int VALID_YEAR = 2014;
 
     protected static final TourUrlData TOUR = new TourUrlData(
-            Muid.create(MuidType.TOUR), VALID_NAME, VALID_YEAR);
+            MuidFactory.generateMuid(MuidType.TOUR), VALID_NAME, VALID_YEAR);
 
     protected static final TourUrlData SIMILAR_TOUR = new TourUrlData(
-            Muid.create(MuidType.TOUR), TOUR.getName(), TOUR.getYear());
+            MuidFactory.generateMuid(MuidType.TOUR), TOUR.getName(),
+            TOUR.getYear());
 
     protected static final TourUrlData TOUR_WITHOUT_YEAR = new TourUrlData(
-            Muid.create(MuidType.TOUR), TOUR.getName(), 0);
+            MuidFactory.generateMuid(MuidType.TOUR), TOUR.getName(), 0);
 
     protected String mappingYear;
 

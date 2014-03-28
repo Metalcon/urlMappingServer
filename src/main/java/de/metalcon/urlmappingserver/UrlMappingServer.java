@@ -80,6 +80,13 @@ public class UrlMappingServer {
         server.cleanUp();
     }
 
+    /**
+     * start URL mapping server<br>
+     * has its own ZMQ worker thread
+     * 
+     * @param config
+     *            URL mapping server configuration object
+     */
     public UrlMappingServer(
             UrlMappingServerConfig config) {
         if (CONTEXT != null) {

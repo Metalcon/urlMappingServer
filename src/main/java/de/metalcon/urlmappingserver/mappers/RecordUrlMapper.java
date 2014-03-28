@@ -150,13 +150,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
                 if (mappingsToRecordsOfBands.containsKey(band)) {
                     return mappingsToRecordsOfBands.get(band)
                             .get(recordMapping);
-                } else {
-                    System.err.println("record " + recordMapping + " not found"
-                            + " [" + band + "]");
                 }
-            } else {
-                System.err.println("band not resolved [" + url.get("pathBand")
-                        + "]");
             }
             return null;
         }

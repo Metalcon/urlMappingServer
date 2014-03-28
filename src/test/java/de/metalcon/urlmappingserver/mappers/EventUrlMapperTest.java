@@ -8,8 +8,8 @@ import java.util.Date;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
+import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
 import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EventUrlData;
@@ -25,31 +25,33 @@ public class EventUrlMapperTest extends EntityUrlMapperTest {
     protected static Date VALID_DATE = new Date(CRR_MS - CRR_MS % 1000);
 
     protected static CityUrlData VALID_CITY = new CityUrlData(
-            Muid.create(MuidType.CITY), VALID_NAME);
+            MuidFactory.generateMuid(MuidType.CITY), VALID_NAME);
 
-    protected static VenueUrlData VALID_VENUE = new VenueUrlData(
-            Muid.create(MuidType.VENUE), VALID_NAME, new CityUrlData(
-                    Muid.create(MuidType.CITY), VALID_NAME));
+    protected static VenueUrlData VALID_VENUE =
+            new VenueUrlData(MuidFactory.generateMuid(MuidType.VENUE),
+                    VALID_NAME,
+                    new CityUrlData(MuidFactory.generateMuid(MuidType.CITY),
+                            VALID_NAME));
 
     protected static final EventUrlData EVENT = new EventUrlData(
-            Muid.create(MuidType.EVENT), VALID_NAME, VALID_DATE, VALID_CITY,
-            VALID_VENUE);
+            MuidFactory.generateMuid(MuidType.EVENT), VALID_NAME, VALID_DATE,
+            VALID_CITY, VALID_VENUE);
 
     protected static final EventUrlData SIMILAR_EVENT = new EventUrlData(
-            Muid.create(MuidType.EVENT), EVENT.getName(), EVENT.getDate(),
-            EVENT.getCity(), EVENT.getVenue());
+            MuidFactory.generateMuid(MuidType.EVENT), EVENT.getName(),
+            EVENT.getDate(), EVENT.getCity(), EVENT.getVenue());
 
     protected static final EventUrlData EVENT_WITHOUT_DATE = new EventUrlData(
-            Muid.create(MuidType.EVENT), EVENT.getName(), null,
+            MuidFactory.generateMuid(MuidType.EVENT), EVENT.getName(), null,
             EVENT.getCity(), EVENT.getVenue());
 
     protected static final EventUrlData EVENT_WITHOUT_CITY = new EventUrlData(
-            Muid.create(MuidType.EVENT), EVENT.getName(), EVENT.getDate(),
-            null, EVENT.getVenue());
+            MuidFactory.generateMuid(MuidType.EVENT), EVENT.getName(),
+            EVENT.getDate(), null, EVENT.getVenue());
 
     protected static final EventUrlData EVENT_WITHOUT_VENUE = new EventUrlData(
-            Muid.create(MuidType.EVENT), EVENT.getName(), EVENT.getDate(),
-            EVENT.getCity(), null);
+            MuidFactory.generateMuid(MuidType.EVENT), EVENT.getName(),
+            EVENT.getDate(), EVENT.getCity(), null);
 
     protected String mappingDate;
 

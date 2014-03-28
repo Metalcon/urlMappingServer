@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
+import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
@@ -21,38 +22,41 @@ import de.metalcon.urlmappingserver.api.requests.registration.TrackUrlData;
 public class TrackUrlMapperTest extends EntityUrlMapperTest {
 
     protected static final BandUrlData VALID_BAND = new BandUrlData(
-            Muid.create(MuidType.BAND), VALID_NAME);
+            MuidFactory.generateMuid(MuidType.BAND), VALID_NAME);
 
     protected static final RecordUrlData VALID_RECORD = new RecordUrlData(
-            Muid.create(MuidType.RECORD), VALID_NAME, new BandUrlData(
-                    Muid.create(MuidType.BAND), VALID_BAND.getName()), 2014);
+            MuidFactory.generateMuid(MuidType.RECORD), VALID_NAME,
+            new BandUrlData(MuidFactory.generateMuid(MuidType.BAND),
+                    VALID_BAND.getName()), 2014);
 
     protected static final RecordUrlData RECORD_WITHOUT_BAND =
-            new RecordUrlData(Muid.create(MuidType.RECORD), VALID_NAME, null,
-                    2014);
+            new RecordUrlData(MuidFactory.generateMuid(MuidType.RECORD),
+                    VALID_NAME, null, 2014);
 
     protected static final TrackUrlData TRACK = new TrackUrlData(
-            Muid.create(MuidType.TRACK), VALID_NAME, null, VALID_RECORD, 2014);
+            MuidFactory.generateMuid(MuidType.TRACK), VALID_NAME, null,
+            VALID_RECORD, 2014);
 
     protected static final TrackUrlData SIMILAR_TRACK = new TrackUrlData(
-            Muid.create(MuidType.TRACK), TRACK.getName(), null,
+            MuidFactory.generateMuid(MuidType.TRACK), TRACK.getName(), null,
             TRACK.getRecord(), TRACK.getTrackNumber());
 
     protected static final TrackUrlData TRACK_WITHOUT_BAND = new TrackUrlData(
-            Muid.create(MuidType.TRACK), TRACK.getName(), null,
+            MuidFactory.generateMuid(MuidType.TRACK), TRACK.getName(), null,
             RECORD_WITHOUT_BAND, TRACK.getTrackNumber());
 
     protected static final TrackUrlData TRACK_WITHOUT_BAND_AND_RECORD =
-            new TrackUrlData(Muid.create(MuidType.TRACK), TRACK.getName(),
-                    null, null, TRACK.getTrackNumber());
+            new TrackUrlData(MuidFactory.generateMuid(MuidType.TRACK),
+                    TRACK.getName(), null, null, TRACK.getTrackNumber());
 
     protected static final TrackUrlData TRACK_WITHOUT_RECORD =
-            new TrackUrlData(Muid.create(MuidType.TRACK), TRACK.getName(),
-                    TRACK.getRecord().getBand(), null, TRACK.getTrackNumber());
+            new TrackUrlData(MuidFactory.generateMuid(MuidType.TRACK),
+                    TRACK.getName(), TRACK.getRecord().getBand(), null,
+                    TRACK.getTrackNumber());
 
     protected static final TrackUrlData TRACK_WITHOUT_TRACK_NUMBER =
-            new TrackUrlData(Muid.create(MuidType.TRACK), TRACK.getName(),
-                    null, TRACK.getRecord(), 0);
+            new TrackUrlData(MuidFactory.generateMuid(MuidType.TRACK),
+                    TRACK.getName(), null, TRACK.getRecord(), 0);
 
     protected static final EntityUrlMappingManager MANAGER =
             new EntityUrlMappingManager();

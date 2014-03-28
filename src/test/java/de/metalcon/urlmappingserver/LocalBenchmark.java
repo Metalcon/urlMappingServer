@@ -22,7 +22,7 @@ public class LocalBenchmark extends Benchmark {
 
     @Override
     protected void benchmark() {
-        int totalWrites = 100000 * 5;
+        int totalWrites = 100000 * 10;
         int totalReads = totalWrites * 1;
 
         benchmarkWrite(totalWrites);
@@ -56,7 +56,7 @@ public class LocalBenchmark extends Benchmark {
     protected void benchmarkWithoutPersistence() {
         mappingManager = new EntityUrlMappingManager();
 
-        int totalWrites = 100000 * 1;
+        int totalWrites = 100000 * 5;
         int totalReads = totalWrites * 10;
 
         benchmarkWrite(totalWrites);

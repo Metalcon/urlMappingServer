@@ -9,6 +9,7 @@ import java.util.Random;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
+import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -43,6 +44,10 @@ public abstract class Benchmark {
         short type = 9;
         long crrNano = System.nanoTime();
 
+        long trackWoBand = 0;
+        long trackWoRecord = 0;
+        long trackAno = 0;
+
         System.out.println("progress:");
         for (long write = 0; write < totalWrites; write++) {
             EntityUrlData entity = generatedData(type);
@@ -59,10 +64,30 @@ public abstract class Benchmark {
             // register MUID
             registerMuid(entity);
 
+            if (entity instanceof TrackUrlData) {
+                TrackUrlData track = (TrackUrlData) entity;
+                if (track.getRecord().hasEmptyMuid()) {
+                    if (track.getRecord().getBand().hasEmptyMuid()) {
+                        trackAno += 1;
+                    } else {
+                        trackWoRecord += 1;
+                    }
+                } else {
+                    if (track.getRecord().getBand().hasEmptyMuid()) {
+                        trackWoBand += 1;
+                    }
+                }
+            }
+
             if (write % (totalWrites / 10) == 0 && write != 0) {
                 System.out.println((write / (double) totalWrites * 100) + "%");
             }
         }
+        System.out.println(trackWoBand + " tracks without band");
+        System.out.println(trackWoRecord + " tracks without record");
+        System.out.println(trackAno + " tracks with neither band nor record");
+        System.out.println();
+
         crrNano = System.nanoTime() - crrNano;
         long crrMis = crrNano / 1000;
         long crrMs = crrMis / 1000;
@@ -79,10 +104,6 @@ public abstract class Benchmark {
         Muid muid;
         System.out.println("reading from " + registered.size());
 
-        long trackWoBand = 0;
-        long trackWoRecord = 0;
-        long trackAno = 0;
-
         Map<String, String> url;
         while (true) {
             for (EntityUrlData entity : registered) {
@@ -98,39 +119,19 @@ public abstract class Benchmark {
                 url = generateUrl(entity);
                 muid = resolveMuid(url, entity.getMuid().getMuidType());
 
-                if (entity instanceof TrackUrlData) {
-                    TrackUrlData track = (TrackUrlData) entity;
-                    if (track.getRecord().hasEmptyMuid()) {
-                        if (track.getRecord().getBand().hasEmptyMuid()) {
-                            trackAno += 1;
-                        } else {
-                            trackWoRecord += 1;
-                        }
-                    } else {
-                        if (track.getRecord().getBand().hasEmptyMuid()) {
-                            trackWoBand += 1;
-                        }
-                    }
-                }
                 if (muid == null) {
                     System.err.println("failed to resolve MUID ("
                             + entity.getMuid().getMuidType() + ") from ");
                     for (String pathVar : url.keySet()) {
                         System.out.println(pathVar + " = " + url.get(pathVar));
                     }
-                    if (read > (totalReads / 10)) {
-                        return;
-                    }
+                    return;
                 }
             }
             if (read >= totalReads) {
                 break;
             }
         }
-
-        System.out.println(trackWoBand + " tracks without band");
-        System.out.println(trackWoRecord + " tracks without record");
-        System.out.println(trackAno + " tracks with neither band nor record");
 
         crrNano = System.nanoTime() - crrNano;
         long crrMis = crrNano / 1000;
@@ -154,7 +155,7 @@ public abstract class Benchmark {
 
     protected static EntityUrlData generatedData(short type) {
         MuidType muidType = MuidType.parseShort(type);
-        Muid muid = Muid.create(muidType);
+        Muid muid = MuidFactory.generateMuid(muidType);
         String name = "id" + ID;
         ID += 1;
 

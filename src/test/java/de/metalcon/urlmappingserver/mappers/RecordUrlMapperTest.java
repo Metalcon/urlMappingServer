@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
+import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
@@ -19,22 +20,23 @@ import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
 public class RecordUrlMapperTest extends EntityUrlMapperTest {
 
     protected static final BandUrlData VALID_BAND = new BandUrlData(
-            Muid.create(MuidType.BAND), VALID_NAME);
+            MuidFactory.generateMuid(MuidType.BAND), VALID_NAME);
 
     public static final RecordUrlData RECORD = new RecordUrlData(
-            Muid.create(MuidType.RECORD), VALID_NAME, VALID_BAND, 2014);
+            MuidFactory.generateMuid(MuidType.RECORD), VALID_NAME, VALID_BAND,
+            2014);
 
     protected static final RecordUrlData SIMILAR_RECORD = new RecordUrlData(
-            Muid.create(MuidType.RECORD), RECORD.getName(), RECORD.getBand(),
-            RECORD.getReleaseYear());
+            MuidFactory.generateMuid(MuidType.RECORD), RECORD.getName(),
+            RECORD.getBand(), RECORD.getReleaseYear());
 
     protected static final RecordUrlData RECORD_WITHOUT_BAND =
-            new RecordUrlData(Muid.create(MuidType.RECORD), RECORD.getName(),
-                    null, RECORD.getReleaseYear());
+            new RecordUrlData(MuidFactory.generateMuid(MuidType.RECORD),
+                    RECORD.getName(), null, RECORD.getReleaseYear());
 
     protected static final RecordUrlData RECORD_WITHOUT_RELEASE_YEAR =
-            new RecordUrlData(Muid.create(MuidType.RECORD), RECORD.getName(),
-                    RECORD.getBand(), 0);
+            new RecordUrlData(MuidFactory.generateMuid(MuidType.RECORD),
+                    RECORD.getName(), RECORD.getBand(), 0);
 
     protected static final EntityUrlMappingManager MANAGER =
             new EntityUrlMappingManager();

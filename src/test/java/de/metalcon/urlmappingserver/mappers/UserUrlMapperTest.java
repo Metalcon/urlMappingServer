@@ -5,8 +5,8 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.BeforeClass;
 
-import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
+import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.UserUrlData;
@@ -16,11 +16,12 @@ public class UserUrlMapperTest extends EntityUrlMapperTest {
     protected static final String VALID_LAST_NAME = "Testarum";
 
     protected static final UserUrlData USER = new UserUrlData(
-            Muid.create(MuidType.USER), VALID_NAME, VALID_LAST_NAME);
+            MuidFactory.generateMuid(MuidType.USER), VALID_NAME,
+            VALID_LAST_NAME);
 
-    protected static final UserUrlData SIMILAR_USER =
-            new UserUrlData(Muid.create(MuidType.USER), USER.getFirstName(),
-                    USER.getLastName());
+    protected static final UserUrlData SIMILAR_USER = new UserUrlData(
+            MuidFactory.generateMuid(MuidType.USER), USER.getFirstName(),
+            USER.getLastName());
 
     @BeforeClass
     public static void beforeClass() {
