@@ -5,45 +5,39 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import de.metalcon.domain.Muid;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver2.EntityUrlMapperTest;
 
 public abstract class ResolveUrlTest extends EntityUrlMapperTest {
 
+    /**
+     * no mapping for entity available if not registered yet
+     */
     @Test
     public void testNotRegistered() {
         entity = getEntityFull();
-        assertNull(resolveUrl(entity.getMuid()));
+        assertNull(resolveUrl(entity));
     }
 
+    /**
+     * register entity so that main mapping is ID mapping and check this
+     */
     @Test
-    public void testShortestMappingName() {
+    public void testShortestMappingId() {
         entity = getEntityFull();
         registerEntity(entity);
-        checkMappingName(entity);
+        checkMappingId(entity);
     }
 
-    @Test
-    public void testShortedMappingId() {
-        entity = getEntityFull();
-        registerEntity(entity);
-        EntityUrlData identical = getEntityFull();
-        registerEntity(identical);
-        checkMappingId(identical);
-        checkMappingName(entity);
-    }
-
+    /**
+     * check if main mapping for entity is ID mapping
+     */
     protected void checkMappingId(EntityUrlData entity) {
-        assertEquals(getMappingId(entity), resolveUrl(entity.getMuid()));
+        assertEquals(getMappingId(entity), resolveUrl(entity));
     }
 
-    protected void checkMappingName(EntityUrlData entity) {
-        assertEquals(getMappingName(entity), resolveUrl(entity.getMuid()));
-    }
-
-    protected String resolveUrl(Muid muid) {
-        return mapper.resolveUrl(muid);
+    protected String resolveUrl(EntityUrlData entity) {
+        return mapper.resolveUrl(entity.getMuid());
     }
 
 }
