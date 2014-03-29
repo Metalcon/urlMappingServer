@@ -8,8 +8,6 @@ import de.metalcon.urlmappingserver2.mappers.ResolveMuidTest;
 
 public class ResolveMuidBandTest extends ResolveMuidTest {
 
-    protected BandUrlData band;
-
     @Override
     protected MuidType getMuidType() {
         return MuidType.BAND;
