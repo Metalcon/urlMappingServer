@@ -6,7 +6,6 @@ import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
-import de.metalcon.urlmappingserver.api.requests.registration.TourUrlData;
 
 /**
  * mapper for tour entities
@@ -29,16 +28,17 @@ public class TourUrlMapper extends EntityUrlMapper {
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        Set<String> newMappingsForTour = super.createMapping(entityUrlData);
-        TourUrlData tourUrlData = (TourUrlData) entityUrlData;
-
-        // add mapping: /<tour year>-<tour name>
-        int year = tourUrlData.getYear();
-        if (year != 0) {
-            String sYear = String.valueOf(year);
-            newMappingsForTour.add(sYear + WORD_SEPARATOR
-                    + convertToUrlText(tourUrlData.getName()));
+        if (entityUrlData.getMuid().getMuidType() != muidType) {
+            throw new IllegalArgumentException("mapper handles muid type \""
+                    + getMuidType() + "\" only (was: \""
+                    + entityUrlData.getMuid().getMuidType() + "\")");
         }
+
+        Set<String> newMappingsForTour = createEmptyMappingSet();
+
+        // add mapping: /<muid>
+        String uniqueMapping = entityUrlData.getMuid().toString();
+        newMappingsForTour.add(uniqueMapping);
 
         return newMappingsForTour;
     }

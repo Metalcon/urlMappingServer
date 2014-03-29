@@ -185,7 +185,7 @@ public abstract class Benchmark {
                         (BandUrlData) generatedData(MuidType.BAND
                                 .getRawIdentifier()), 1914 + (int) (ID % 100));
             case TOUR:
-                return new TourUrlData(muid, name, 1914 + (int) (ID % 100));
+                return new TourUrlData(muid);
             case TRACK:
                 // 10% of all tracks have unknown record
                 if (RAND.nextInt(100) < 10) {

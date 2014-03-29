@@ -59,7 +59,7 @@ public abstract class EntityUrlMapperTest {
 
     @Test
     public void testName() {
-        checkForEntityMapping(ENTITY.getName());
+        checkForEntityMapping(generateMappingName(ENTITY));
     }
 
     @Test
@@ -105,6 +105,10 @@ public abstract class EntityUrlMapperTest {
 
     protected static String generateMappingUnique(EntityUrlData entity) {
         return entity.getName() + WORD_SEPARATOR + entity.getMuid();
+    }
+
+    protected static String generateMappingName(EntityUrlData entity) {
+        return entity.getName();
     }
 
     protected static MuidType getInvalidMuidType(MuidType validMuidType) {
