@@ -59,7 +59,7 @@ public abstract class EntityUrlMapperTest {
 
     @Test
     public void testName() {
-        checkForEntityMapping(ENTITY.getName());
+        checkForEntityMapping(generateMappingName(ENTITY));
     }
 
     @Test
