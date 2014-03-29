@@ -4,9 +4,9 @@ import de.metalcon.domain.MuidType;
 import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.InstrumentUrlData;
-import de.metalcon.urlmappingserver2.mappers.ResolveMuidTest;
+import de.metalcon.urlmappingserver2.mappers.ResolveMuidNamedEntityTest;
 
-public class ResolveMuidInstrumentTest extends ResolveMuidTest {
+public class ResolveMuidInstrumentTest extends ResolveMuidNamedEntityTest {
 
     @Override
     protected MuidType getMuidType() {
