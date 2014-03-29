@@ -158,6 +158,16 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
                 + getMuidType() + "\" only (was: \"" + type + "\")");
     }
 
+    @Override
+    public String resolveUrl(Muid muid) {
+        Set<String> mappingsOfEntity = mappingsOfEntities.get(muid);
+        if (mappingsOfEntity != null) {
+            // TODO internal server error if empty?
+            return mappingsOfEntity.iterator().next();
+        }
+        return null;
+    }
+
     /**
      * register unregistered mappings for an entity
      * 

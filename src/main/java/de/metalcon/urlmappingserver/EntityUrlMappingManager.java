@@ -134,7 +134,6 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
                 throw new UnsupportedOperationException(
                         "unknown entity type \"" + muidType.getIdentifier()
                                 + "\"");
-
         }
     }
 
@@ -146,6 +145,11 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
         return getMapper(type).resolveMuid(url, type);
+    }
+
+    @Override
+    public String resolveUrl(Muid muid) {
+        return getMapper(muid.getMuidType()).resolveUrl(muid);
     }
 
     public void loadFromDatabase() {

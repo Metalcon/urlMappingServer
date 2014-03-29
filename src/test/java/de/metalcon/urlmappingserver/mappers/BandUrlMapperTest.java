@@ -1,5 +1,6 @@
 package de.metalcon.urlmappingserver.mappers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -32,6 +33,12 @@ public class BandUrlMapperTest extends EntityUrlMapperTest {
         assertNull(resolveMapping(EMPTY_ENTITY));
         mapper.registerMuid(new BandUrlData());
         assertNotNull(resolveMapping(EMPTY_ENTITY));
+    }
+
+    @Test
+    public void testResolveUrl() {
+        assertEquals(generateMappingName(BAND),
+                mapper.resolveUrl(BAND.getMuid()));
     }
 
 }

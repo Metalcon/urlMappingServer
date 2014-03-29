@@ -107,6 +107,10 @@ public abstract class EntityUrlMapperTest {
         return entity.getName() + WORD_SEPARATOR + entity.getMuid();
     }
 
+    protected static String generateMappingName(EntityUrlData entity) {
+        return entity.getName();
+    }
+
     protected static MuidType getInvalidMuidType(MuidType validMuidType) {
         short typeIdentifier = (short) (validMuidType.getRawIdentifier() + 1);
         if (typeIdentifier == 10) {

@@ -34,4 +34,13 @@ public interface MetalconUrlMapper {
      */
     Muid resolveMuid(Map<String, String> url, MuidType type);
 
+    /**
+     * resolve an URL for a MUID
+     * 
+     * @param muid
+     *            MUID to get the URL for
+     * @return URL registered for this MUID
+     */
+    String resolveUrl(Muid muid);
+
 }
