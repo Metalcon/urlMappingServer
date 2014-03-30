@@ -32,7 +32,7 @@ public abstract class ResolveUrlNamedEntityTest extends ResolveUrlTest {
      * check if main mapping for entity is name mapping
      */
     protected void checkMappingName(EntityUrlData entity) {
-        checkMainMapping(entity, getMappingName(entity));
+        checkMainMapping(entity, FACTORY.getMappingName(entity));
     }
 
 }

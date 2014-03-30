@@ -44,7 +44,7 @@ public class ResolveMuidVenueTest extends ResolveMuidNamedEntityTest {
     public void testNotRegistered() {
         super.testNotRegistered();
         assertNull(resolveMuid(entity,
-                getMappingCityName((VenueUrlData) entity)));
+                VENUE_FACTORY.getMappingCityName((VenueUrlData) entity)));
     }
 
     @Override
@@ -62,12 +62,7 @@ public class ResolveMuidVenueTest extends ResolveMuidNamedEntityTest {
      * check if a venue is accessible via its city name mapping
      */
     protected void checkMappingCityName(VenueUrlData venue) {
-        checkForMapping(venue, getMappingCityName(venue));
-    }
-
-    protected String getMappingCityName(VenueUrlData venue) {
-        return getMappingName(venue) + WORD_SEPARATOR
-                + getMappingName(venue.getCity());
+        checkForMapping(venue, VENUE_FACTORY.getMappingCityName(venue));
     }
 
 }

@@ -9,7 +9,7 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 public class GenreFactory extends EntityFactory {
 
     public GenreFactory() {
-        super(MuidType.GENRE);
+        super("pathGenre", MuidType.GENRE);
     }
 
     @Override

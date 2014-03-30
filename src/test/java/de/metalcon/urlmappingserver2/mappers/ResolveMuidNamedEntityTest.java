@@ -11,7 +11,7 @@ public abstract class ResolveMuidNamedEntityTest extends ResolveMuidTest {
     @Override
     public void testNotRegistered() {
         super.testNotRegistered();
-        assertNull(resolveMuid(entity, getMappingName(entity)));
+        assertNull(resolveMuid(entity, FACTORY.getMappingName(entity)));
     }
 
     /**
@@ -34,7 +34,7 @@ public abstract class ResolveMuidNamedEntityTest extends ResolveMuidTest {
      * check if an entity is accessible via its shorter name mapping
      */
     protected void checkMappingName(EntityUrlData entity) {
-        checkForMapping(entity, getMappingName(entity));
+        checkForMapping(entity, FACTORY.getMappingName(entity));
     }
 
 }

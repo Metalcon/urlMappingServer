@@ -9,7 +9,7 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 public class CityFactory extends EntityFactory {
 
     public CityFactory() {
-        super(MuidType.CITY);
+        super("pathCity", MuidType.CITY);
     }
 
     @Override

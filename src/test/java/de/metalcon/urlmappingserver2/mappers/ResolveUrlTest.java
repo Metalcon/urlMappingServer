@@ -33,7 +33,7 @@ public abstract class ResolveUrlTest extends EntityUrlMapperTest {
      * check if main mapping for entity is ID mapping
      */
     protected void checkMappingId(EntityUrlData entity) {
-        checkMainMapping(entity, getMappingId(entity));
+        checkMainMapping(entity, FACTORY.getMappingId(entity));
     }
 
     /**

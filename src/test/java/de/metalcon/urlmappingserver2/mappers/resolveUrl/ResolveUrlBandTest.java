@@ -14,7 +14,7 @@ public class ResolveUrlBandTest extends ResolveUrlNamedEntityTest {
     public void testEmptyMuid() {
         entity = BAND_FACTORY.getBandWoMuid();
         mapper.registerMuid(entity);
-        checkMainMapping(entity, EMPTY_ENTITY);
+        checkMainMapping(entity, BAND_FACTORY.getMappingId(entity));
     }
 
     @Override

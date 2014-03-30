@@ -2,9 +2,6 @@ package de.metalcon.urlmappingserver2;
 
 import static org.junit.Assert.assertNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 
@@ -16,11 +13,6 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 
 public abstract class EntityUrlMapperTest {
-
-    protected static final String EMPTY_ENTITY = EntityUrlMapper.EMPTY_ENTITY;
-
-    protected static final String WORD_SEPARATOR =
-            EntityUrlMapper.WORD_SEPARATOR;
 
     protected static final String VALID_NAME = "Testy";
 
@@ -60,26 +52,12 @@ public abstract class EntityUrlMapperTest {
      * check if entity not registered yet, then register
      */
     protected void registerEntity(EntityUrlData entity) {
-        assertNull(resolveMuid(entity, getMappingId(entity)));
+        assertNull(resolveMuid(entity, FACTORY.getMappingId(entity)));
         mapper.registerMuid(entity);
     }
 
     protected Muid resolveMuid(EntityUrlData entity, String mapping) {
-        return mapper.resolveMuid(getUrl(entity, mapping), TYPE);
-    }
-
-    protected Map<String, String> getUrl(EntityUrlData entity, String mapping) {
-        Map<String, String> url = new HashMap<String, String>();
-        url.put(mapper.getUrlPathVarName(), mapping);
-        return url;
-    }
-
-    protected String getMappingId(EntityUrlData entity) {
-        return getMappingName(entity) + WORD_SEPARATOR + entity.getMuid();
-    }
-
-    protected String getMappingName(EntityUrlData entity) {
-        return EntityUrlMapper.convertToUrlText(entity.getName());
+        return mapper.resolveMuid(FACTORY.getUrl(entity, mapping), TYPE);
     }
 
     private static MuidType getInvalidMuidType(MuidType validType) {

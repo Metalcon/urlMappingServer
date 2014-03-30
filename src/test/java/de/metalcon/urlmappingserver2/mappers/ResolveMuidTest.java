@@ -18,7 +18,9 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
     public void testMuidInvalid() {
         entity = FACTORY.getEntityFull();
         registerEntity(entity);
-        mapper.resolveMuid(getUrl(entity, getMappingId(entity)), INVALID_TYPE);
+        mapper.resolveMuid(
+                FACTORY.getUrl(entity, FACTORY.getMappingId(entity)),
+                INVALID_TYPE);
     }
 
     /**
@@ -27,7 +29,7 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
     @Test
     public void testNotRegistered() {
         entity = FACTORY.getEntityFull();
-        assertNull(resolveMuid(entity, getMappingId(entity)));
+        assertNull(resolveMuid(entity, FACTORY.getMappingId(entity)));
     }
 
     /**
@@ -85,14 +87,14 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
      * check if an entity is accessible via all the mappings created for it
      */
     protected void checkAllMappings(EntityUrlData entity) {
-        checkForMapping(entity, getMappingId(entity));
+        checkForMapping(entity, FACTORY.getMappingId(entity));
     }
 
     /**
      * check if an entity is accessible via its ID mapping
      */
     protected void checkMappingId(EntityUrlData entity) {
-        checkForMapping(entity, getMappingId(entity));
+        checkForMapping(entity, FACTORY.getMappingId(entity));
     }
 
     /**

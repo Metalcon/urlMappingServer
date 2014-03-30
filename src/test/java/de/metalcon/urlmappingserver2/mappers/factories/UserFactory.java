@@ -9,7 +9,7 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 public class UserFactory extends EntityFactory {
 
     public UserFactory() {
-        super(MuidType.USER);
+        super("pathUser", MuidType.USER);
     }
 
     @Override

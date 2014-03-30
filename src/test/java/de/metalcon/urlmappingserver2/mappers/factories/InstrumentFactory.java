@@ -9,7 +9,7 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 public class InstrumentFactory extends EntityFactory {
 
     public InstrumentFactory() {
-        super(MuidType.INSTRUMENT);
+        super("pathInstrument", MuidType.INSTRUMENT);
     }
 
     @Override

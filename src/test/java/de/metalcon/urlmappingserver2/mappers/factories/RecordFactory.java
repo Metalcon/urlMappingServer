@@ -1,6 +1,7 @@
 package de.metalcon.urlmappingserver2.mappers.factories;
 
 import java.util.Calendar;
+import java.util.Map;
 
 import de.metalcon.domain.MuidType;
 import de.metalcon.testing.MuidFactory;
@@ -15,8 +16,28 @@ public class RecordFactory extends EntityFactory {
 
     public RecordFactory(
             BandFactory bandFactory) {
-        super(MuidType.RECORD);
+        super("pathRecord", MuidType.RECORD);
         this.bandFactory = bandFactory;
+    }
+
+    @Override
+    public String getMappingId(EntityUrlData entity) {
+        if (!entity.hasEmptyMuid()) {
+            return super.getMappingId(entity);
+        }
+        return EMPTY_ENTITY;
+    }
+
+    @Override
+    public Map<String, String> getUrl(EntityUrlData entity, String mapping) {
+        RecordUrlData record = (RecordUrlData) entity;
+        BandUrlData band = record.getBand();
+
+        Map<String, String> url =
+                bandFactory.getUrl(band, bandFactory.getMappingId(band));
+        url.put(urlPathVarName, mapping);
+
+        return url;
     }
 
     @Override

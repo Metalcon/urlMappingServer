@@ -9,7 +9,13 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 public class TourFactory extends EntityFactory {
 
     public TourFactory() {
-        super(MuidType.TOUR);
+        super("pathTour", MuidType.TOUR);
+    }
+
+    @Override
+    public String getMappingId(EntityUrlData entity) {
+        // the only tour mapping: MUID
+        return entity.getMuid().toString();
     }
 
     @Override

@@ -9,7 +9,13 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 public class EventFactory extends EntityFactory {
 
     public EventFactory() {
-        super(MuidType.EVENT);
+        super("pathEvent", MuidType.EVENT);
+    }
+
+    @Override
+    public String getMappingId(EntityUrlData entity) {
+        // the only event mapping: MUID
+        return entity.getMuid().toString();
     }
 
     @Override

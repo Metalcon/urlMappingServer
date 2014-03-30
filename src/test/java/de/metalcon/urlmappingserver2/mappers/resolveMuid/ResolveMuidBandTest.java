@@ -14,7 +14,7 @@ public class ResolveMuidBandTest extends ResolveMuidNamedEntityTest {
     public void testEmptyMuid() {
         entity = BAND_FACTORY.getBandWoMuid();
         mapper.registerMuid(entity);
-        checkForMapping(entity, EMPTY_ENTITY);
+        checkForMapping(entity, BAND_FACTORY.getMappingId(entity));
     }
 
     @Override

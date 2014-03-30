@@ -13,8 +13,13 @@ public class VenueFactory extends EntityFactory {
 
     public VenueFactory(
             CityFactory cityFactory) {
-        super(MuidType.VENUE);
+        super("pathVenue", MuidType.VENUE);
         this.cityFactory = cityFactory;
+    }
+
+    public String getMappingCityName(VenueUrlData venue) {
+        return getMappingName(venue) + WORD_SEPARATOR
+                + cityFactory.getMappingName(venue.getCity());
     }
 
     @Override

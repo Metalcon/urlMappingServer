@@ -34,10 +34,4 @@ public class ResolveUrlTourTest extends ResolveUrlTest {
         return TOUR_FACTORY;
     }
 
-    @Override
-    protected String getMappingId(EntityUrlData entity) {
-        // the only tour mapping: MUID
-        return entity.getMuid().toString();
-    }
-
 }

@@ -52,12 +52,7 @@ public class ResolveUrlVenueTest extends ResolveUrlNamedEntityTest {
      * check if main mapping for venue is city name mapping
      */
     protected void checkMappingCityName(VenueUrlData venue) {
-        checkMainMapping(venue, getMappingCityName(venue));
-    }
-
-    protected String getMappingCityName(VenueUrlData venue) {
-        return getMappingName(venue) + WORD_SEPARATOR
-                + getMappingName(venue.getCity());
+        checkMainMapping(venue, VENUE_FACTORY.getMappingCityName(venue));
     }
 
 }

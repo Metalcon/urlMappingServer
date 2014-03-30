@@ -34,10 +34,4 @@ public class ResolveUrlEventTest extends ResolveUrlTest {
         return EVENT_FACTORY;
     }
 
-    @Override
-    protected String getMappingId(EntityUrlData entity) {
-        // the only event mapping: MUID
-        return entity.getMuid().toString();
-    }
-
 }

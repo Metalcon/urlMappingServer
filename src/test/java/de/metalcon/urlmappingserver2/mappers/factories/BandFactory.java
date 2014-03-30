@@ -9,21 +9,23 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 public class BandFactory extends EntityFactory {
 
     public BandFactory() {
-        super(MuidType.BAND);
+        super("pathBand", MuidType.BAND);
     }
 
-    /**
-     * create unique band
-     */
+    @Override
+    public String getMappingId(EntityUrlData entity) {
+        if (!entity.hasEmptyMuid()) {
+            return super.getMappingId(entity);
+        }
+        return EMPTY_ENTITY;
+    }
+
     @Override
     public EntityUrlData getEntityFull() {
         return new BandUrlData(MuidFactory.generateMuid(getMuidType()), "band"
                 + crrEntityId++);
     }
 
-    /**
-     * create copy of another band
-     */
     @Override
     public EntityUrlData getEntityIdentical(EntityUrlData entity) {
         return new BandUrlData(MuidFactory.generateMuid(getMuidType()),
