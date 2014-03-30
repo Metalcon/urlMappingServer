@@ -16,6 +16,8 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 public abstract class EntityUrlMapperTest {
 
+    protected static final String EMPTY_ENTITY = EntityUrlMapper.EMPTY_ENTITY;
+
     protected static final String WORD_SEPARATOR =
             EntityUrlMapper.WORD_SEPARATOR;
 

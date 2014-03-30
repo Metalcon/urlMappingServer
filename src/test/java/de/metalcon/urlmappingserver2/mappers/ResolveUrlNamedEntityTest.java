@@ -1,7 +1,5 @@
 package de.metalcon.urlmappingserver2.mappers;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -33,7 +31,7 @@ public abstract class ResolveUrlNamedEntityTest extends ResolveUrlTest {
      * check if main mapping for entity is name mapping
      */
     protected void checkMappingName(EntityUrlData entity) {
-        assertEquals(getMappingName(entity), resolveUrl(entity));
+        checkMainMapping(entity, getMappingName(entity));
     }
 
 }
