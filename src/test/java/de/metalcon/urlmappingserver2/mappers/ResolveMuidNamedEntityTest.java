@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
-import de.metalcon.urlmappingserver.api.requests.registration.UserUrlData;
 
 public abstract class ResolveMuidNamedEntityTest extends ResolveMuidTest {
 
@@ -21,9 +20,6 @@ public abstract class ResolveMuidNamedEntityTest extends ResolveMuidTest {
     @Test
     public void testMappingName() {
         entity = FACTORY.getEntityFull();
-        if (entity instanceof UserUrlData) {
-            System.out.println(entity.getName());
-        }
         registerEntity(entity);
         checkMappingName(entity);
     }
