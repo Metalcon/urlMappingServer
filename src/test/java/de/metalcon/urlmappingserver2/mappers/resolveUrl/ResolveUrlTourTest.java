@@ -5,13 +5,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.metalcon.domain.MuidType;
-import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
-import de.metalcon.urlmappingserver.api.requests.registration.TourUrlData;
+import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 import de.metalcon.urlmappingserver2.mappers.ResolveUrlTest;
+import de.metalcon.urlmappingserver2.mappers.factories.TourFactory;
 
 public class ResolveUrlTourTest extends ResolveUrlTest {
+
+    protected static TourFactory TOUR_FACTORY = new TourFactory();
 
     /**
      * if multiple tours registered their main mapping is ID mapping
@@ -20,7 +21,7 @@ public class ResolveUrlTourTest extends ResolveUrlTest {
     public void testMultipleRegistered() {
         List<EntityUrlData> tours = new LinkedList<EntityUrlData>();
         for (int i = 0; i < 10; i++) {
-            tours.add(getEntityFull());
+            tours.add(TOUR_FACTORY.getEntityFull());
         }
         for (EntityUrlData tour : tours) {
             registerEntity(tour);
@@ -29,27 +30,14 @@ public class ResolveUrlTourTest extends ResolveUrlTest {
     }
 
     @Override
-    protected MuidType getInstanceMuidType() {
-        return getMuidType();
-    }
-
-    @Override
-    protected EntityUrlData getEntityFull() {
-        return getTour();
+    protected EntityFactory getFactory() {
+        return TOUR_FACTORY;
     }
 
     @Override
     protected String getMappingId(EntityUrlData entity) {
         // the only tour mapping: MUID
         return entity.getMuid().toString();
-    }
-
-    protected static MuidType getMuidType() {
-        return MuidType.TOUR;
-    }
-
-    public static TourUrlData getTour() {
-        return new TourUrlData(MuidFactory.generateMuid(getMuidType()));
     }
 
 }

@@ -5,13 +5,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.metalcon.domain.MuidType;
-import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
-import de.metalcon.urlmappingserver.api.requests.registration.EventUrlData;
+import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 import de.metalcon.urlmappingserver2.mappers.ResolveUrlTest;
+import de.metalcon.urlmappingserver2.mappers.factories.EventFactory;
 
 public class ResolveUrlEventTest extends ResolveUrlTest {
+
+    protected static EventFactory EVENT_FACTORY = new EventFactory();
 
     /**
      * if multiple events registered their main mapping is ID mapping
@@ -20,7 +21,7 @@ public class ResolveUrlEventTest extends ResolveUrlTest {
     public void testMultipleRegistered() {
         List<EntityUrlData> events = new LinkedList<EntityUrlData>();
         for (int i = 0; i < 10; i++) {
-            events.add(getEntityFull());
+            events.add(EVENT_FACTORY.getEntityFull());
         }
         for (EntityUrlData event : events) {
             registerEntity(event);
@@ -29,27 +30,14 @@ public class ResolveUrlEventTest extends ResolveUrlTest {
     }
 
     @Override
-    protected MuidType getInstanceMuidType() {
-        return getMuidType();
-    }
-
-    @Override
-    protected EntityUrlData getEntityFull() {
-        return getEvent();
+    protected EntityFactory getFactory() {
+        return EVENT_FACTORY;
     }
 
     @Override
     protected String getMappingId(EntityUrlData entity) {
         // the only event mapping: MUID
         return entity.getMuid().toString();
-    }
-
-    protected static MuidType getMuidType() {
-        return MuidType.EVENT;
-    }
-
-    public static EventUrlData getEvent() {
-        return new EventUrlData(MuidFactory.generateMuid(getMuidType()));
     }
 
 }
