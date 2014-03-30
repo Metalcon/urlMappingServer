@@ -71,11 +71,11 @@ public abstract class EntityUrlMapperTest {
     }
 
     protected String getMappingId(EntityUrlData entity) {
-        return entity.getName() + WORD_SEPARATOR + entity.getMuid();
+        return getMappingName(entity) + WORD_SEPARATOR + entity.getMuid();
     }
 
     protected String getMappingName(EntityUrlData entity) {
-        return entity.getName();
+        return entity.getName().replace(" ", "-");
     }
 
     private static MuidType getInvalidMuidType(MuidType validType) {
