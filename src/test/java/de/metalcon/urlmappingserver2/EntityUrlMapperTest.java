@@ -14,8 +14,6 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 
 public abstract class EntityUrlMapperTest {
 
-    protected static final String VALID_NAME = "Testy";
-
     protected static boolean READY = false;
 
     protected static EntityFactory FACTORY;
