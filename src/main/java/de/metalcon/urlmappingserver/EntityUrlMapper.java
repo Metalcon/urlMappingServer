@@ -258,7 +258,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            text to be converted
      * @return valid URL text
      */
-    protected static String convertToUrlText(String text) {
+    public static String convertToUrlText(String text) {
         String urlText = text;
         // Remove non letter characters. (http://stackoverflow.com/questions/1611979/remove-all-non-word-characters-from-a-string-in-java-leaving-accented-charact)
         urlText = urlText.replaceAll("[^\\p{L}\\p{Nd} ]", "");

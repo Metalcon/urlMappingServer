@@ -79,7 +79,7 @@ public abstract class EntityUrlMapperTest {
     }
 
     protected String getMappingName(EntityUrlData entity) {
-        return entity.getName().replace(" ", "-");
+        return EntityUrlMapper.convertToUrlText(entity.getName());
     }
 
     private static MuidType getInvalidMuidType(MuidType validType) {
