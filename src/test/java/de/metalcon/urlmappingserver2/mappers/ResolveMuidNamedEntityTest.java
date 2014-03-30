@@ -11,7 +11,7 @@ public abstract class ResolveMuidNamedEntityTest extends ResolveMuidTest {
     @Override
     public void testNotRegistered() {
         super.testNotRegistered();
-        assertNull(resolveMuid(getMappingName(entity)));
+        assertNull(resolveMuid(entity, getMappingName(entity)));
     }
 
     /**

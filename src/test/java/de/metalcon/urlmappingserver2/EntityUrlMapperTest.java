@@ -60,15 +60,15 @@ public abstract class EntityUrlMapperTest {
      * check if entity not registered yet, then register
      */
     protected void registerEntity(EntityUrlData entity) {
-        assertNull(resolveMuid(getMappingId(entity)));
+        assertNull(resolveMuid(entity, getMappingId(entity)));
         mapper.registerMuid(entity);
     }
 
-    protected Muid resolveMuid(String mapping) {
-        return mapper.resolveMuid(getUrl(mapping), TYPE);
+    protected Muid resolveMuid(EntityUrlData entity, String mapping) {
+        return mapper.resolveMuid(getUrl(entity, mapping), TYPE);
     }
 
-    protected Map<String, String> getUrl(String mapping) {
+    protected Map<String, String> getUrl(EntityUrlData entity, String mapping) {
         Map<String, String> url = new HashMap<String, String>();
         url.put(mapper.getUrlPathVarName(), mapping);
         return url;

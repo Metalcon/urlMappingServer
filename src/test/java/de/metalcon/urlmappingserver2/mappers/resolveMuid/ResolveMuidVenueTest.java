@@ -43,7 +43,8 @@ public class ResolveMuidVenueTest extends ResolveMuidNamedEntityTest {
     @Override
     public void testNotRegistered() {
         super.testNotRegistered();
-        assertNull(resolveMuid(getMappingCityName((VenueUrlData) entity)));
+        assertNull(resolveMuid(entity,
+                getMappingCityName((VenueUrlData) entity)));
     }
 
     @Override
