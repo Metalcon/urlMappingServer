@@ -1,7 +1,5 @@
 package de.metalcon.urlmappingserver2.mappers.resolveUrl;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class ResolveUrlTourTest extends ResolveUrlTest {
         }
         for (EntityUrlData tour : tours) {
             registerEntity(tour);
-            assertEquals(getMappingId(tour), resolveUrl(tour));
+            checkMappingId(tour);
         }
     }
 
