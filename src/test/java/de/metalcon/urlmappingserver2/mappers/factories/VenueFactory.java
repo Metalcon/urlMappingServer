@@ -30,9 +30,19 @@ public class VenueFactory extends EntityFactory {
                 venue.getName(), venue.getCity());
     }
 
+    public VenueUrlData getVenueSameName(VenueUrlData venue) {
+        return new VenueUrlData(MuidFactory.generateMuid(getMuidType()),
+                venue.getName(), getCity());
+    }
+
     public VenueUrlData getVenueWoCity() {
         VenueUrlData venue = (VenueUrlData) getEntityFull();
         return new VenueUrlData(venue.getMuid(), venue.getName(), null);
+    }
+
+    public VenueUrlData getVenueWoCity(VenueUrlData venue) {
+        return new VenueUrlData(MuidFactory.generateMuid(getMuidType()),
+                venue.getName(), null);
     }
 
     protected CityUrlData getCity() {

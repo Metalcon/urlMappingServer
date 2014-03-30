@@ -20,10 +20,11 @@ public abstract class ResolveUrlNamedEntityTest extends ResolveUrlTest {
     public void testShortestMappingId() {
         entity = FACTORY.getEntityFull();
         registerEntity(entity);
-        checkMappingName(entity);
 
         EntityUrlData identical = FACTORY.getEntityIdentical(entity);
         registerEntity(identical);
+
+        checkMappingName(entity);
         checkMappingId(identical);
     }
 

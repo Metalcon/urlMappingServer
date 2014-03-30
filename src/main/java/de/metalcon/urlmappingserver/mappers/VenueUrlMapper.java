@@ -30,8 +30,12 @@ public class VenueUrlMapper extends EntityUrlMapper {
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        Set<String> newMappingsForVenue = super.createMapping(entityUrlData);
+        Set<String> newMappingsForVenue = createEmptyMappingSet();
         VenueUrlData venueUrlData = (VenueUrlData) entityUrlData;
+
+        // add mapping: /<venue name>
+        String nameMapping = convertToUrlText(entityUrlData.getName());
+        newMappingsForVenue.add(nameMapping);
 
         // add mapping: /<venue name>-<city name>
         CityUrlData cityUrlData = venueUrlData.getCity();
@@ -39,6 +43,11 @@ public class VenueUrlMapper extends EntityUrlMapper {
             newMappingsForVenue.add(convertToUrlText(venueUrlData.getName())
                     + WORD_SEPARATOR + convertToUrlText(cityUrlData.getName()));
         }
+
+        // add mapping: /<venue name>-<muid>
+        String uniqueMapping =
+                nameMapping + WORD_SEPARATOR + entityUrlData.getMuid();
+        newMappingsForVenue.add(uniqueMapping);
 
         return newMappingsForVenue;
     }
