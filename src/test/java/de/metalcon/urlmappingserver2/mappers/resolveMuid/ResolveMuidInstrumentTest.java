@@ -18,13 +18,19 @@ public class ResolveMuidInstrumentTest extends ResolveMuidNamedEntityTest {
         return getInstrument();
     }
 
+    @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        return new InstrumentUrlData(MuidFactory.generateMuid(getMuidType()),
+                entity.getName());
+    }
+
     protected static MuidType getMuidType() {
         return MuidType.INSTRUMENT;
     }
 
     public static InstrumentUrlData getInstrument() {
         return new InstrumentUrlData(MuidFactory.generateMuid(getMuidType()),
-                VALID_NAME);
+                "instrument" + CRR_ENTITY_ID++);
     }
 
 }

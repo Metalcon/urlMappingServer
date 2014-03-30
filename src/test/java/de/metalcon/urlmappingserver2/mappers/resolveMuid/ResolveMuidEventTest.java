@@ -19,6 +19,11 @@ public class ResolveMuidEventTest extends ResolveMuidTest {
     }
 
     @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        return getEvent();
+    }
+
+    @Override
     protected String getMappingId(EntityUrlData entity) {
         // the only event mapping: MUID
         return entity.getMuid().toString();

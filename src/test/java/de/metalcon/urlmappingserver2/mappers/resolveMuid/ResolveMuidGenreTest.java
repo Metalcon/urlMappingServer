@@ -18,13 +18,19 @@ public class ResolveMuidGenreTest extends ResolveMuidNamedEntityTest {
         return getGenre();
     }
 
+    @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        return new GenreUrlData(MuidFactory.generateMuid(getMuidType()),
+                entity.getName());
+    }
+
     protected static MuidType getMuidType() {
         return MuidType.GENRE;
     }
 
     public static GenreUrlData getGenre() {
         return new GenreUrlData(MuidFactory.generateMuid(getMuidType()),
-                VALID_NAME);
+                "genre" + CRR_ENTITY_ID++);
     }
 
 }

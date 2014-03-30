@@ -8,8 +8,6 @@ import de.metalcon.urlmappingserver2.mappers.ResolveMuidNamedEntityTest;
 
 public class ResolveMuidUserTest extends ResolveMuidNamedEntityTest {
 
-    protected static final String VALID_LAST_NAME = "Testarum";
-
     @Override
     protected MuidType getInstanceMuidType() {
         return getMuidType();
@@ -20,13 +18,20 @@ public class ResolveMuidUserTest extends ResolveMuidNamedEntityTest {
         return getUser();
     }
 
+    @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        UserUrlData user = (UserUrlData) entity;
+        return new UserUrlData(MuidFactory.generateMuid(getMuidType()),
+                user.getFirstName(), user.getLastName());
+    }
+
     protected static MuidType getMuidType() {
         return MuidType.USER;
     }
 
     public static UserUrlData getUser() {
         return new UserUrlData(MuidFactory.generateMuid(getMuidType()),
-                VALID_NAME, VALID_LAST_NAME);
+                VALID_NAME, "user" + CRR_ENTITY_ID++);
     }
 
 }

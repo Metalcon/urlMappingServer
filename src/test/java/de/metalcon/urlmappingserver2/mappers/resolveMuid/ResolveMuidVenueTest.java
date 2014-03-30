@@ -1,5 +1,7 @@
 package de.metalcon.urlmappingserver2.mappers.resolveMuid;
 
+import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
 
 import de.metalcon.domain.MuidType;
@@ -37,6 +39,12 @@ public class ResolveMuidVenueTest extends ResolveMuidNamedEntityTest {
     }
 
     @Override
+    public void testNotRegistered() {
+        super.testNotRegistered();
+        assertNull(resolveMuid(getMappingCityName((VenueUrlData) entity)));
+    }
+
+    @Override
     protected MuidType getInstanceMuidType() {
         return getMuidType();
     }
@@ -44,6 +52,13 @@ public class ResolveMuidVenueTest extends ResolveMuidNamedEntityTest {
     @Override
     protected EntityUrlData getEntityFull() {
         return getVenue();
+    }
+
+    @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        VenueUrlData venue = (VenueUrlData) entity;
+        return new VenueUrlData(MuidFactory.generateMuid(getMuidType()),
+                venue.getName(), venue.getCity());
     }
 
     @Override
@@ -66,12 +81,12 @@ public class ResolveMuidVenueTest extends ResolveMuidNamedEntityTest {
 
     public static VenueUrlData getVenue() {
         return new VenueUrlData(MuidFactory.generateMuid(getMuidType()),
-                VALID_NAME, getCity());
+                "venue" + CRR_ENTITY_ID++, getCity());
     }
 
     protected static VenueUrlData getVenueWoCity() {
-        return new VenueUrlData(MuidFactory.generateMuid(getMuidType()),
-                VALID_NAME, null);
+        VenueUrlData venue = getVenue();
+        return new VenueUrlData(venue.getMuid(), venue.getName(), null);
     }
 
     protected static MuidType getMuidType() {

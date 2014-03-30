@@ -19,6 +19,11 @@ public class ResolveMuidTourTest extends ResolveMuidTest {
     }
 
     @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        return getTour();
+    }
+
+    @Override
     protected String getMappingId(EntityUrlData entity) {
         // the only tour mapping: MUID
         return entity.getMuid().toString();

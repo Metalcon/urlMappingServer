@@ -18,13 +18,19 @@ public class ResolveMuidCityTest extends ResolveMuidNamedEntityTest {
         return getCity();
     }
 
+    @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        return new CityUrlData(MuidFactory.generateMuid(getMuidType()),
+                entity.getName());
+    }
+
     protected static MuidType getMuidType() {
         return MuidType.CITY;
     }
 
     public static CityUrlData getCity() {
-        return new CityUrlData(MuidFactory.generateMuid(getMuidType()),
-                VALID_NAME);
+        return new CityUrlData(MuidFactory.generateMuid(getMuidType()), "city"
+                + CRR_ENTITY_ID++);
     }
 
 }

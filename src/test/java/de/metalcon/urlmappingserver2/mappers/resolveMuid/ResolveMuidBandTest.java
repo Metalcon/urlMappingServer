@@ -27,13 +27,19 @@ public class ResolveMuidBandTest extends ResolveMuidNamedEntityTest {
         return getBand();
     }
 
+    @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        return new BandUrlData(MuidFactory.generateMuid(getMuidType()),
+                entity.getName());
+    }
+
     protected static MuidType getMuidType() {
         return MuidType.BAND;
     }
 
     public static BandUrlData getBand() {
-        return new BandUrlData(MuidFactory.generateMuid(getMuidType()),
-                VALID_NAME);
+        return new BandUrlData(MuidFactory.generateMuid(getMuidType()), "band"
+                + CRR_ENTITY_ID++);
     }
 
     protected static BandUrlData getBandWoMuid() {

@@ -29,6 +29,8 @@ public abstract class EntityUrlMapperTest {
 
     protected static MuidType INVALID_TYPE;
 
+    protected static int CRR_ENTITY_ID;
+
     // static
     // ----------
     // scope
@@ -44,6 +46,7 @@ public abstract class EntityUrlMapperTest {
         if (!READY) {
             TYPE = getInstanceMuidType();
             INVALID_TYPE = getInvalidMuidType(TYPE);
+            CRR_ENTITY_ID = 1;
             READY = true;
         }
         manager = new EntityUrlMappingManager();
@@ -53,6 +56,8 @@ public abstract class EntityUrlMapperTest {
     abstract protected MuidType getInstanceMuidType();
 
     abstract protected EntityUrlData getEntityFull();
+
+    abstract protected EntityUrlData getIdentical(EntityUrlData entity);
 
     /**
      * check if entity not registered yet, then register

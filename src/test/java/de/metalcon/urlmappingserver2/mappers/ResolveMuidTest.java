@@ -41,7 +41,33 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
     }
 
     /**
-     * if multiple entities registered, they all have to be accessible
+     * register entity and check if accessible via all the mappings created
+     */
+    @Test
+    public void testAllMappings() {
+        entity = getEntityFull();
+        registerEntity(entity);
+        checkAllMappings(entity);
+    }
+
+    /**
+     * if identical entity registered, the first has to be accessible via all
+     * its mappings and the second one via ID mapping only
+     */
+    @Test
+    public void testIdenticalRegistered() {
+        entity = getEntityFull();
+        registerEntity(entity);
+        EntityUrlData identical = getIdentical(entity);
+        registerEntity(identical);
+
+        checkAllMappings(entity);
+        checkMappingId(identical);
+    }
+
+    /**
+     * if multiple entities registered, they all have to be accessible via all
+     * their mappings
      */
     @Test
     public void testMultipleRegistered() {
@@ -51,18 +77,8 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
         }
         for (EntityUrlData entity : entities) {
             registerEntity(entity);
-            assertEquals(entity.getMuid(), resolveMuid(getMappingId(entity)));
+            checkAllMappings(entity);
         }
-    }
-
-    /**
-     * register entity and check if accessible via all the mappings created
-     */
-    @Test
-    public void testAllMappings() {
-        entity = getEntityFull();
-        registerEntity(entity);
-        checkAllMappings(entity);
     }
 
     /**

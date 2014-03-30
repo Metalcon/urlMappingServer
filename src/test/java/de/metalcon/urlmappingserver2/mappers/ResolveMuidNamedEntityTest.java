@@ -24,24 +24,10 @@ public abstract class ResolveMuidNamedEntityTest extends ResolveMuidTest {
         checkMappingName(entity);
     }
 
-    /**
-     * shorter name mapping must not be overridden by later entity registrations
-     * with same name - new entity accessible via ID mapping only
-     */
-    @Test
-    public void testMappingNameNoOverride() {
-        entity = getEntityFull();
-        registerEntity(entity);
-        EntityUrlData identical = getEntityFull();
-        registerEntity(identical);
-        checkMappingId(identical);
-        checkAllMappings(entity);
-    }
-
     @Override
     protected void checkAllMappings(EntityUrlData entity) {
         super.checkAllMappings(entity);
-        checkForMapping(entity, getMappingName(entity));
+        checkMappingName(entity);
     }
 
     /**
