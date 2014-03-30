@@ -25,7 +25,7 @@ public abstract class EntityUrlMapperTest {
 
     protected static boolean READY = false;
 
-    protected static MuidType TYPE;
+    private static MuidType TYPE;
 
     protected static MuidType INVALID_TYPE;
 
@@ -42,7 +42,7 @@ public abstract class EntityUrlMapperTest {
     @Before
     public void setUp() {
         if (!READY) {
-            TYPE = getMuidType();
+            TYPE = getInstanceMuidType();
             INVALID_TYPE = getInvalidMuidType(TYPE);
             READY = true;
         }
@@ -50,7 +50,7 @@ public abstract class EntityUrlMapperTest {
         mapper = manager.getMapper(TYPE);
     }
 
-    abstract protected MuidType getMuidType();
+    abstract protected MuidType getInstanceMuidType();
 
     abstract protected EntityUrlData getEntityFull();
 

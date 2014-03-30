@@ -9,8 +9,8 @@ import de.metalcon.urlmappingserver2.mappers.ResolveMuidTest;
 public class ResolveMuidTourTest extends ResolveMuidTest {
 
     @Override
-    protected MuidType getMuidType() {
-        return MuidType.TOUR;
+    protected MuidType getInstanceMuidType() {
+        return getMuidType();
     }
 
     @Override
@@ -24,8 +24,12 @@ public class ResolveMuidTourTest extends ResolveMuidTest {
         return entity.getMuid().toString();
     }
 
+    protected static MuidType getMuidType() {
+        return MuidType.TOUR;
+    }
+
     public static TourUrlData getTour() {
-        return new TourUrlData(MuidFactory.generateMuid(TYPE));
+        return new TourUrlData(MuidFactory.generateMuid(getMuidType()));
     }
 
 }

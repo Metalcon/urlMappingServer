@@ -11,8 +11,8 @@ public class ResolveMuidUserTest extends ResolveMuidNamedEntityTest {
     protected static final String VALID_LAST_NAME = "Testarum";
 
     @Override
-    protected MuidType getMuidType() {
-        return MuidType.USER;
+    protected MuidType getInstanceMuidType() {
+        return getMuidType();
     }
 
     @Override
@@ -20,9 +20,13 @@ public class ResolveMuidUserTest extends ResolveMuidNamedEntityTest {
         return getUser();
     }
 
+    protected static MuidType getMuidType() {
+        return MuidType.USER;
+    }
+
     public static UserUrlData getUser() {
-        return new UserUrlData(MuidFactory.generateMuid(TYPE), VALID_NAME,
-                VALID_LAST_NAME);
+        return new UserUrlData(MuidFactory.generateMuid(getMuidType()),
+                VALID_NAME, VALID_LAST_NAME);
     }
 
 }

@@ -13,6 +13,14 @@ import de.metalcon.urlmappingserver2.EntityUrlMapperTest;
 
 public abstract class ResolveMuidTest extends EntityUrlMapperTest {
 
+    @Test(
+            expected = IllegalArgumentException.class)
+    public void testMuidInvalid() {
+        entity = getEntityFull();
+        registerEntity(entity);
+        mapper.resolveMuid(getUrl(getMappingId(entity)), INVALID_TYPE);
+    }
+
     /**
      * entities are not accessible via any mapping if not registered yet
      */
@@ -48,7 +56,7 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
     }
 
     /**
-     * register an entity and check if accessible via all the mappings created
+     * register entity and check if accessible via all the mappings created
      */
     @Test
     public void testAllMappings() {

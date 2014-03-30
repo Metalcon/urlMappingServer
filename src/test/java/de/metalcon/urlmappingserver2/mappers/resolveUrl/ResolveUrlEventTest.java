@@ -29,8 +29,8 @@ public class ResolveUrlEventTest extends ResolveUrlTest {
     }
 
     @Override
-    protected MuidType getMuidType() {
-        return MuidType.EVENT;
+    protected MuidType getInstanceMuidType() {
+        return getMuidType();
     }
 
     @Override
@@ -44,8 +44,12 @@ public class ResolveUrlEventTest extends ResolveUrlTest {
         return entity.getMuid().toString();
     }
 
+    protected static MuidType getMuidType() {
+        return MuidType.EVENT;
+    }
+
     public static EventUrlData getEvent() {
-        return new EventUrlData(MuidFactory.generateMuid(TYPE));
+        return new EventUrlData(MuidFactory.generateMuid(getMuidType()));
     }
 
 }

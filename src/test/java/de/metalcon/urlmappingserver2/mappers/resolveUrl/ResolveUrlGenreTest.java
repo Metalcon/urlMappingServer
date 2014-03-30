@@ -9,8 +9,8 @@ import de.metalcon.urlmappingserver2.mappers.ResolveUrlNamedEntityTest;
 public class ResolveUrlGenreTest extends ResolveUrlNamedEntityTest {
 
     @Override
-    protected MuidType getMuidType() {
-        return MuidType.GENRE;
+    protected MuidType getInstanceMuidType() {
+        return getMuidType();
     }
 
     @Override
@@ -18,8 +18,13 @@ public class ResolveUrlGenreTest extends ResolveUrlNamedEntityTest {
         return getGenre();
     }
 
+    protected static MuidType getMuidType() {
+        return MuidType.GENRE;
+    }
+
     public static GenreUrlData getGenre() {
-        return new GenreUrlData(MuidFactory.generateMuid(TYPE), VALID_NAME);
+        return new GenreUrlData(MuidFactory.generateMuid(getMuidType()),
+                VALID_NAME);
     }
 
 }

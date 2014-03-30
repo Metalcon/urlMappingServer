@@ -15,7 +15,7 @@ public abstract class ResolveMuidNamedEntityTest extends ResolveMuidTest {
     }
 
     /**
-     * register an entity and check if accessible via shorter name mapping
+     * register entity and check if accessible via shorter name mapping
      */
     @Test
     public void testMappingName() {

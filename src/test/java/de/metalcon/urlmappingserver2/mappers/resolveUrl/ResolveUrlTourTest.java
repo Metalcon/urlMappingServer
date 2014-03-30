@@ -29,8 +29,8 @@ public class ResolveUrlTourTest extends ResolveUrlTest {
     }
 
     @Override
-    protected MuidType getMuidType() {
-        return MuidType.TOUR;
+    protected MuidType getInstanceMuidType() {
+        return getMuidType();
     }
 
     @Override
@@ -44,8 +44,12 @@ public class ResolveUrlTourTest extends ResolveUrlTest {
         return entity.getMuid().toString();
     }
 
+    protected static MuidType getMuidType() {
+        return MuidType.TOUR;
+    }
+
     public static TourUrlData getTour() {
-        return new TourUrlData(MuidFactory.generateMuid(TYPE));
+        return new TourUrlData(MuidFactory.generateMuid(getMuidType()));
     }
 
 }

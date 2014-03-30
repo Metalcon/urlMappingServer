@@ -9,8 +9,8 @@ import de.metalcon.urlmappingserver2.mappers.ResolveMuidNamedEntityTest;
 public class ResolveMuidCityTest extends ResolveMuidNamedEntityTest {
 
     @Override
-    protected MuidType getMuidType() {
-        return MuidType.CITY;
+    protected MuidType getInstanceMuidType() {
+        return getMuidType();
     }
 
     @Override
@@ -18,8 +18,13 @@ public class ResolveMuidCityTest extends ResolveMuidNamedEntityTest {
         return getCity();
     }
 
+    protected static MuidType getMuidType() {
+        return MuidType.CITY;
+    }
+
     public static CityUrlData getCity() {
-        return new CityUrlData(MuidFactory.generateMuid(TYPE), VALID_NAME);
+        return new CityUrlData(MuidFactory.generateMuid(getMuidType()),
+                VALID_NAME);
     }
 
 }

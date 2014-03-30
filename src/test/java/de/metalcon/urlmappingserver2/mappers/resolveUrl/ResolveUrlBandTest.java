@@ -18,8 +18,8 @@ public class ResolveUrlBandTest extends ResolveUrlNamedEntityTest {
     }
 
     @Override
-    protected MuidType getMuidType() {
-        return MuidType.BAND;
+    protected MuidType getInstanceMuidType() {
+        return getMuidType();
     }
 
     @Override
@@ -27,8 +27,13 @@ public class ResolveUrlBandTest extends ResolveUrlNamedEntityTest {
         return getBand();
     }
 
+    protected static MuidType getMuidType() {
+        return MuidType.BAND;
+    }
+
     public static BandUrlData getBand() {
-        return new BandUrlData(MuidFactory.generateMuid(TYPE), VALID_NAME);
+        return new BandUrlData(MuidFactory.generateMuid(getMuidType()),
+                VALID_NAME);
     }
 
     protected static BandUrlData getBandWoMuid() {
