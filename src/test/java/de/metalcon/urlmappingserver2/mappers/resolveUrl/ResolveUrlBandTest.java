@@ -7,8 +7,11 @@ import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver2.mappers.ResolveUrlNamedEntityTest;
+import de.metalcon.urlmappingserver2.mappers.factories.BandFactory;
 
 public class ResolveUrlBandTest extends ResolveUrlNamedEntityTest {
+
+    protected static BandFactory FACTORY = new BandFactory();
 
     @Test
     public void testEmptyMuid() {
@@ -27,8 +30,14 @@ public class ResolveUrlBandTest extends ResolveUrlNamedEntityTest {
         return getBand();
     }
 
+    @Override
+    protected EntityUrlData getIdentical(EntityUrlData entity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     protected static MuidType getMuidType() {
-        return MuidType.BAND;
+        return FACTORY.getMuidType();
     }
 
     public static BandUrlData getBand() {

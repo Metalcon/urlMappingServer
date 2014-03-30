@@ -13,6 +13,7 @@ import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
+import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 
 public abstract class EntityUrlMapperTest {
 
@@ -25,11 +26,11 @@ public abstract class EntityUrlMapperTest {
 
     protected static boolean READY = false;
 
+    protected static EntityFactory FACTORY;
+
     private static MuidType TYPE;
 
     protected static MuidType INVALID_TYPE;
-
-    protected static int CRR_ENTITY_ID;
 
     // static
     // ----------
@@ -44,20 +45,16 @@ public abstract class EntityUrlMapperTest {
     @Before
     public void setUp() {
         if (!READY) {
-            TYPE = getInstanceMuidType();
+            FACTORY = getFactory();
+            TYPE = FACTORY.getMuidType();
             INVALID_TYPE = getInvalidMuidType(TYPE);
-            CRR_ENTITY_ID = 1;
             READY = true;
         }
         manager = new EntityUrlMappingManager();
         mapper = manager.getMapper(TYPE);
     }
 
-    abstract protected MuidType getInstanceMuidType();
-
-    abstract protected EntityUrlData getEntityFull();
-
-    abstract protected EntityUrlData getIdentical(EntityUrlData entity);
+    abstract protected EntityFactory getFactory();
 
     /**
      * check if entity not registered yet, then register

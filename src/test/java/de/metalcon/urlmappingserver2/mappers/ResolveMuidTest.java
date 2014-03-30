@@ -16,7 +16,7 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
     @Test(
             expected = IllegalArgumentException.class)
     public void testMuidInvalid() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         registerEntity(entity);
         mapper.resolveMuid(getUrl(getMappingId(entity)), INVALID_TYPE);
     }
@@ -26,7 +26,7 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
      */
     @Test
     public void testNotRegistered() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         assertNull(resolveMuid(getMappingId(entity)));
     }
 
@@ -35,7 +35,7 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
      */
     @Test
     public void testMappingId() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         registerEntity(entity);
         checkMappingId(entity);
     }
@@ -45,7 +45,7 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
      */
     @Test
     public void testAllMappings() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         registerEntity(entity);
         checkAllMappings(entity);
     }
@@ -56,9 +56,9 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
      */
     @Test
     public void testIdenticalRegistered() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         registerEntity(entity);
-        EntityUrlData identical = getIdentical(entity);
+        EntityUrlData identical = FACTORY.getEntityIdentical(entity);
         registerEntity(identical);
 
         checkAllMappings(entity);
@@ -73,7 +73,7 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
     public void testMultipleRegistered() {
         List<EntityUrlData> entities = new LinkedList<EntityUrlData>();
         for (int i = 0; i < 10; i++) {
-            entities.add(getEntityFull());
+            entities.add(FACTORY.getEntityFull());
         }
         for (EntityUrlData entity : entities) {
             registerEntity(entity);

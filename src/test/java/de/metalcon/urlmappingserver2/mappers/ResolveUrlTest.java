@@ -15,7 +15,7 @@ public abstract class ResolveUrlTest extends EntityUrlMapperTest {
      */
     @Test
     public void testNotRegistered() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         assertNull(resolveUrl(entity));
     }
 
@@ -24,7 +24,7 @@ public abstract class ResolveUrlTest extends EntityUrlMapperTest {
      */
     @Test
     public void testShortestMappingId() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         registerEntity(entity);
         checkMappingId(entity);
     }

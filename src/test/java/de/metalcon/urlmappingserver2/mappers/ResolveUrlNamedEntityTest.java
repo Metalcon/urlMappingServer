@@ -11,18 +11,18 @@ public abstract class ResolveUrlNamedEntityTest extends ResolveUrlTest {
      */
     @Test
     public void testShortestMappingName() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         registerEntity(entity);
         checkMappingName(entity);
     }
 
     @Override
     public void testShortestMappingId() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         registerEntity(entity);
         checkMappingName(entity);
 
-        EntityUrlData identical = getEntityFull();
+        EntityUrlData identical = FACTORY.getEntityIdentical(entity);
         registerEntity(identical);
         checkMappingId(identical);
     }

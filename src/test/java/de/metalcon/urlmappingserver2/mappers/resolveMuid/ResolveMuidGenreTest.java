@@ -1,36 +1,16 @@
 package de.metalcon.urlmappingserver2.mappers.resolveMuid;
 
-import de.metalcon.domain.MuidType;
-import de.metalcon.testing.MuidFactory;
-import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
-import de.metalcon.urlmappingserver.api.requests.registration.GenreUrlData;
+import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 import de.metalcon.urlmappingserver2.mappers.ResolveMuidNamedEntityTest;
+import de.metalcon.urlmappingserver2.mappers.factories.GenreFactory;
 
 public class ResolveMuidGenreTest extends ResolveMuidNamedEntityTest {
 
-    @Override
-    protected MuidType getInstanceMuidType() {
-        return getMuidType();
-    }
+    protected static GenreFactory GENRE_FACTORY = new GenreFactory();
 
     @Override
-    protected EntityUrlData getEntityFull() {
-        return getGenre();
-    }
-
-    @Override
-    protected EntityUrlData getIdentical(EntityUrlData entity) {
-        return new GenreUrlData(MuidFactory.generateMuid(getMuidType()),
-                entity.getName());
-    }
-
-    protected static MuidType getMuidType() {
-        return MuidType.GENRE;
-    }
-
-    public static GenreUrlData getGenre() {
-        return new GenreUrlData(MuidFactory.generateMuid(getMuidType()),
-                "genre" + CRR_ENTITY_ID++);
+    protected EntityFactory getFactory() {
+        return GENRE_FACTORY;
     }
 
 }

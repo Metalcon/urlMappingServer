@@ -19,7 +19,7 @@ public abstract class ResolveMuidNamedEntityTest extends ResolveMuidTest {
      */
     @Test
     public void testMappingName() {
-        entity = getEntityFull();
+        entity = FACTORY.getEntityFull();
         registerEntity(entity);
         checkMappingName(entity);
     }
