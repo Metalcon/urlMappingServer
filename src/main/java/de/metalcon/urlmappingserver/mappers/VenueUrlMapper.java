@@ -34,7 +34,7 @@ public class VenueUrlMapper extends EntityUrlMapper {
         VenueUrlData venueUrlData = (VenueUrlData) entityUrlData;
 
         // add mapping: /<venue name>
-        String nameMapping = convertToUrlText(entityUrlData.getName());
+        String nameMapping = convertToUrlText(venueUrlData.getName());
         newMappingsForVenue.add(nameMapping);
 
         // add mapping: /<venue name>-<city name>
@@ -46,7 +46,7 @@ public class VenueUrlMapper extends EntityUrlMapper {
 
         // add mapping: /<venue name>-<muid>
         String uniqueMapping =
-                nameMapping + WORD_SEPARATOR + entityUrlData.getMuid();
+                nameMapping + WORD_SEPARATOR + venueUrlData.getMuid();
         newMappingsForVenue.add(uniqueMapping);
 
         return newMappingsForVenue;

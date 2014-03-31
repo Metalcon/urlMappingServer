@@ -19,7 +19,17 @@ public abstract class ResolveUrlRecordTest extends ResolveUrlNamedEntityTest {
      * this
      */
     @Test
-    abstract public void testShortestMappingReleaseYear();
+    public void testShortestMappingReleaseYear() {
+        record = (RecordUrlData) RECORD_FACTORY.getEntityFull();
+        registerEntity(record);
+
+        RecordUrlData recordWithSameName =
+                RECORD_FACTORY.getRecordSameName(record);
+        registerEntity(recordWithSameName);
+
+        checkMappingName(record);
+        checkMappingReleaseYear(recordWithSameName);
+    }
 
     /**
      * register record so that main mapping would be release year mapping but is

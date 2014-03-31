@@ -1,34 +1,28 @@
 package de.metalcon.urlmappingserver2.mappers.resolveUrl.record;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 
-import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
 import de.metalcon.urlmappingserver2.mappers.resolveUrl.ResolveUrlRecordTest;
 
-public class ResolveUrlRecordSameBandTest extends ResolveUrlRecordTest {
-
-    protected static BandUrlData BAND;
+public class ResolveUrlRecordWoBandTest extends ResolveUrlRecordTest {
 
     @BeforeClass
     public static void beforeClass() {
-        RECORD_FACTORY.setUseSameParent(true);
-        RECORD_FACTORY.setUseEmptyParent(false);
+        RECORD_FACTORY.setUseSameParent(false);
+        RECORD_FACTORY.setUseEmptyParent(true);
     }
 
     @Override
     protected void registerEntity(EntityUrlData entity) {
         super.registerEntity(entity);
 
-        // bands equal always
+        // band is empty
         RecordUrlData record = (RecordUrlData) entity;
-        if (BAND == null) {
-            BAND = record.getBand();
-        }
-        assertEquals(BAND, record.getBand());
+        assertTrue(record.getBand().hasEmptyMuid());
     }
 
 }
