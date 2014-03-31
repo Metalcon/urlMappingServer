@@ -61,7 +61,7 @@ public abstract class ResolveMuidTest extends EntityUrlMapperTest {
         entity = FACTORY.getEntityFull();
         registerEntity(entity);
         EntityUrlData identical = FACTORY.getEntityIdentical(entity);
-        registerEntity(identical);
+        mapper.registerMuid(identical);
 
         checkAllMappings(entity);
         checkMappingId(identical);
