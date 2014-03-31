@@ -20,12 +20,15 @@ public class RecordFactory extends EntityFactory {
 
     protected BandUrlData band = null;
 
+    protected int releaseYear;
+
     public RecordFactory(
             BandFactory bandFactory) {
         super("pathRecord", MuidType.RECORD);
         useSameParent = false;
         useEmptyParent = false;
         this.bandFactory = bandFactory;
+        releaseYear = Calendar.getInstance().get(Calendar.YEAR);
     }
 
     public boolean usesSameParent() {
@@ -86,6 +89,14 @@ public class RecordFactory extends EntityFactory {
     }
 
     /**
+     * create record having the same name like another record
+     */
+    public RecordUrlData getRecordSameName(RecordUrlData record) {
+        return new RecordUrlData(MuidFactory.generateMuid(getMuidType()),
+                record.getName(), getBand(), getReleaseYear());
+    }
+
+    /**
      * create record without a MUID ("empty")
      */
     public RecordUrlData getRecordWoMuid() {
@@ -99,6 +110,14 @@ public class RecordFactory extends EntityFactory {
         RecordUrlData record = (RecordUrlData) getEntityFull();
         return new RecordUrlData(record.getMuid(), record.getName(),
                 record.getBand(), 0);
+    }
+
+    /**
+     * create copy of another record but remove release year
+     */
+    public RecordUrlData getRecordWoReleaseYear(RecordUrlData record) {
+        return new RecordUrlData(MuidFactory.generateMuid(getMuidType()),
+                record.getName(), record.getBand(), 0);
     }
 
     protected BandUrlData getBand() {
@@ -115,7 +134,7 @@ public class RecordFactory extends EntityFactory {
     }
 
     protected int getReleaseYear() {
-        return Calendar.getInstance().get(Calendar.YEAR);
+        return releaseYear++;
     }
 
 }
