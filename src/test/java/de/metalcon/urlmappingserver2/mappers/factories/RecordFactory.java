@@ -12,12 +12,44 @@ import de.metalcon.urlmappingserver2.mappers.EntityFactory;
 
 public class RecordFactory extends EntityFactory {
 
+    protected boolean useSameParent;
+
+    protected boolean useEmptyParent;
+
     protected BandFactory bandFactory;
+
+    protected BandUrlData band = null;
 
     public RecordFactory(
             BandFactory bandFactory) {
         super("pathRecord", MuidType.RECORD);
+        useSameParent = false;
+        useEmptyParent = false;
         this.bandFactory = bandFactory;
+    }
+
+    public boolean usesSameParent() {
+        return useSameParent;
+    }
+
+    public void setUseSameParent(boolean useSameParent) {
+        this.useSameParent = useSameParent;
+        if (!useSameParent) {
+            band = null;
+        }
+    }
+
+    public boolean usesEmptyParent() {
+        return useEmptyParent;
+    }
+
+    public void setUseEmptyParent(boolean useEmptyParent) {
+        this.useEmptyParent = useEmptyParent;
+    }
+
+    public String getMappingReleaseYear(RecordUrlData record) {
+        return record.getReleaseYear() + WORD_SEPARATOR
+                + getMappingName(record);
     }
 
     @Override
@@ -60,8 +92,26 @@ public class RecordFactory extends EntityFactory {
         return new RecordUrlData(getBand());
     }
 
+    /**
+     * create record without release year
+     */
+    public RecordUrlData getRecordWoReleaseYear() {
+        RecordUrlData record = (RecordUrlData) getEntityFull();
+        return new RecordUrlData(record.getMuid(), record.getName(),
+                record.getBand(), 0);
+    }
+
     protected BandUrlData getBand() {
-        return (BandUrlData) bandFactory.getEntityFull();
+        if (!useEmptyParent) {
+            if (useSameParent) {
+                if (band == null) {
+                    band = (BandUrlData) bandFactory.getEntityFull();
+                }
+                return band;
+            }
+            return (BandUrlData) bandFactory.getEntityFull();
+        }
+        return bandFactory.getBandWoMuid();
     }
 
     protected int getReleaseYear() {
