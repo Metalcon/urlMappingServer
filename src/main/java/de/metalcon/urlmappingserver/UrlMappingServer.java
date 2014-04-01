@@ -3,15 +3,17 @@ package de.metalcon.urlmappingserver;
 import java.io.File;
 import java.io.IOException;
 
+import net.hh.request_dispatcher.server.RequestHandler;
+
 import org.fusesource.leveldbjni.JniDBFactory;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
-import org.zeromq.ZContext;
 
+import de.metalcon.api.responses.Response;
+import de.metalcon.urlmappingserver.api.requests.UrlMappingRequest;
 import de.metalcon.urlmappingserver.persistence.LevelDbStorage;
 import de.metalcon.urlmappingserver.persistence.PersistentStorage;
-import de.metalcon.zmqworker.ZMQRequestHandler;
-import de.metalcon.zmqworker.ZMQWorker;
+import de.metalcon.zmqworker.Server;
 
 /**
  * launcher for URL mapping server
@@ -19,7 +21,7 @@ import de.metalcon.zmqworker.ZMQWorker;
  * @author sebschlicht
  * 
  */
-public class UrlMappingServer {
+public class UrlMappingServer extends Server<UrlMappingRequest> {
 
     /**
      * default value for configuration file path
@@ -28,14 +30,9 @@ public class UrlMappingServer {
             "url-mapping-server-config.txt";
 
     /**
-     * ZeroMQ context to get sockets from
+     * URL mapping server configuration
      */
-    protected static ZContext CONTEXT = null;
-
-    /**
-     * ZeroMQ worker listening for requests
-     */
-    protected ZMQWorker worker;
+    protected UrlMappingServerConfig config;
 
     /**
      * levelDB to make mappings persistent
@@ -75,13 +72,11 @@ public class UrlMappingServer {
             return;
         }
 
-        UrlMappingServer server = new UrlMappingServer(config);
-        server.waitForShutdown();
-        server.cleanUp();
+        new UrlMappingServer(config);
     }
 
     /**
-     * start URL mapping server<br>
+     * creates and startes URL mapping server<br>
      * has its own ZMQ worker thread
      * 
      * @param config
@@ -89,12 +84,7 @@ public class UrlMappingServer {
      */
     public UrlMappingServer(
             UrlMappingServerConfig config) {
-        if (CONTEXT != null) {
-            throw new IllegalStateException("URL mapping server is running");
-        }
-
-        // initialize ZMQ context
-        CONTEXT = initZmqContext(config.num_zmq_threads);
+        super(config);
 
         // load database
         levelDb = loadDatabase(config.database_path);
@@ -106,14 +96,11 @@ public class UrlMappingServer {
         // initialize request handler
         PersistentStorage persistentStorage = new LevelDbStorage(levelDb);
         mappingManager = new EntityUrlMappingManager(persistentStorage);
-        ZMQRequestHandler requestHandler =
+        RequestHandler<UrlMappingRequest, Response> requestHandler =
                 new UrlMappingRequestHandler(mappingManager);
 
         // start ZMQ communication
-        worker = new ZMQWorker(config.endpoint, requestHandler, CONTEXT);
-        if (!worker.start()) {
-            throw new IllegalStateException("failed to start worker");
-        }
+        start(requestHandler);
     }
 
     /**
@@ -131,35 +118,21 @@ public class UrlMappingServer {
     }
 
     /**
-     * stop the server and wait for its shutdown
+     * stop server and close database if open
      */
-    public void stop() {
-        worker.stop();
-    }
+    @Override
+    public void close() {
+        super.close();
 
-    /**
-     * wait for the server to shutdown
-     */
-    public void waitForShutdown() {
-        worker.waitForShutdown();
-    }
-
-    /**
-     * clean up server after shutdown
-     */
-    public void cleanUp() {
-        try {
-            levelDb.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("failed to close database");
+        if (levelDb != null) {
+            try {
+                levelDb.close();
+                levelDb = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("failed to close database");
+            }
         }
-        CONTEXT = null;
-    }
-
-    protected static ZContext initZmqContext(int numThreads) {
-        System.out.println("ZMQ threads: " + numThreads);
-        return new ZContext(numThreads);
     }
 
     protected static DB loadDatabase(String databasePath) {
