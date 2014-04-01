@@ -1,6 +1,5 @@
 package de.metalcon.urlmappingserver;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -165,12 +164,7 @@ public abstract class Benchmark {
             case CITY:
                 return new CityUrlData(muid, name);
             case EVENT:
-                return new EventUrlData(muid, name, new Date(
-                        System.currentTimeMillis()),
-                        (CityUrlData) generatedData(MuidType.CITY
-                                .getRawIdentifier()),
-                        (VenueUrlData) generatedData(MuidType.VENUE
-                                .getRawIdentifier()));
+                return new EventUrlData(muid);
             case GENRE:
                 return new GenreUrlData(muid, name);
             case INSTRUMENT:

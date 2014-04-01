@@ -8,7 +8,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>url-mapping-server</artifactId>
-  <version>0.2.2</version>
+  <version>0.2.3</version>
 
   <repositories>
     <!-- Metalcon repository to resolve dependencies from -->
@@ -23,14 +23,26 @@
     <junit.version>4.9</junit.version>
 
     <!-- version of server API -->
-    <api.version>0.2.0</api.version>
+    <api.version>0.3.0</api.version>
     <!-- version of logging tool -->
     <slf4j.version>1.7.5</slf4j.version>
     <!-- version of levelDB -->
     <leveldb.version>1.7</leveldb.version>
     <!-- version of ZMQ worker -->
-    <zmq.worker.version>0.2.1</zmq.worker.version>
+    <zmq.worker.version>0.3.2</zmq.worker.version>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+        <forkMode>pertest</forkMode>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <!-- testing framework -->

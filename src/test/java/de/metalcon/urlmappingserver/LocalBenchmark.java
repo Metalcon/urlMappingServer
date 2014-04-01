@@ -28,8 +28,7 @@ public class LocalBenchmark extends Benchmark {
         benchmarkWrite(totalWrites);
         benchmarkRead(totalReads);
 
-        server.stop();
-        server.cleanUp();
+        server.close();
 
         // benchmark restart
         long crrNano = System.nanoTime();
@@ -48,8 +47,7 @@ public class LocalBenchmark extends Benchmark {
         mappingManager = server.getMappingManager();
         benchmarkRead(totalReads);
 
-        server.stop();
-        server.cleanUp();
+        server.close();
         cleanUp();
     }
 
@@ -63,8 +61,7 @@ public class LocalBenchmark extends Benchmark {
         benchmarkRead(totalReads);
         benchmarkRead(totalReads);
 
-        server.stop();
-        server.cleanUp();
+        server.close();
     }
 
     @Override

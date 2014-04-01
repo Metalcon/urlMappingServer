@@ -1,6 +1,7 @@
 package de.metalcon.urlmappingserver;
 
 import de.metalcon.utils.Config;
+import de.metalcon.zmqworker.ZmqConfig;
 
 /**
  * configuration object for URL mapping server
@@ -8,7 +9,7 @@ import de.metalcon.utils.Config;
  * @author sebschlicht
  * 
  */
-public class UrlMappingServerConfig extends Config {
+public class UrlMappingServerConfig extends Config implements ZmqConfig {
 
     private static final long serialVersionUID = 8052135476445780765L;
 
@@ -37,5 +38,15 @@ public class UrlMappingServerConfig extends Config {
      * database path for levelDB
      */
     public String database_path;
+
+    @Override
+    public int getNumIOThreads() {
+        return num_zmq_threads;
+    }
+
+    @Override
+    public String getEndpoint() {
+        return endpoint;
+    }
 
 }

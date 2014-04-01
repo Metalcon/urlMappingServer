@@ -1,18 +1,22 @@
 package de.metalcon.urlmappingserver;
 
+import net.hh.request_dispatcher.server.RequestHandler;
 import de.metalcon.api.responses.Response;
 import de.metalcon.api.responses.SuccessResponse;
 import de.metalcon.api.responses.errors.UsageErrorResponse;
 import de.metalcon.domain.Muid;
 import de.metalcon.exceptions.MetalconRuntimeException;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRegistrationRequest;
+import de.metalcon.urlmappingserver.api.requests.UrlMappingRequest;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingResolveRequest;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.responses.MuidResolvedResponse;
 import de.metalcon.urlmappingserver.api.responses.UnknownMuidResponse;
-import de.metalcon.zmqworker.ZMQRequestHandler;
 
-public class UrlMappingRequestHandler implements ZMQRequestHandler {
+public class UrlMappingRequestHandler implements
+        RequestHandler<UrlMappingRequest, Response> {
+
+    private static final long serialVersionUID = -6731628161635337159L;
 
     private EntityUrlMappingManager urlMappingManager;
 
@@ -22,7 +26,7 @@ public class UrlMappingRequestHandler implements ZMQRequestHandler {
     }
 
     @Override
-    public Response handleRequest(Object request) {
+    public Response handleRequest(UrlMappingRequest request) {
         if (request instanceof UrlMappingRegistrationRequest) {
             return handleRegistrationRequest((UrlMappingRegistrationRequest) request);
         } else if (request instanceof UrlMappingResolveRequest) {
@@ -58,4 +62,5 @@ public class UrlMappingRequestHandler implements ZMQRequestHandler {
         }
         return new UnknownMuidResponse();
     }
+
 }

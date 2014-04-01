@@ -89,18 +89,25 @@ public class TrackUrlMapper extends EntityUrlMapper {
             mappingsToTracksOfRecords.put(record, mappingToEntity);
         }
 
-        Set<String> newMappingsForTrack = super.createMapping(entityUrlData);
+        Set<String> newMappingsForTrack = createEmptyMappingSet();
+
+        // add mapping: /<track name>
+        String nameMapping = convertToUrlText(trackUrlData.getName());
+        newMappingsForTrack.add(nameMapping);
 
         int trackNumber = trackUrlData.getTrackNumber();
         if (trackNumber != 0) {
             String sTrackNumber = formatTrackNumber(trackNumber);
 
-            // add mapping:/<band>/<record>/<track number>
-            newMappingsForTrack.add(sTrackNumber);
-            // add mapping: /<band>/<record>/<track number>-<track name>
+            // add mapping: /<track number>-<track name>
             newMappingsForTrack.add(sTrackNumber + WORD_SEPARATOR
                     + convertToUrlText(trackUrlData.getName()));
         }
+
+        // add mapping: /<track name>-<muid>
+        String uniqueMapping =
+                nameMapping + WORD_SEPARATOR + trackUrlData.getMuid();
+        newMappingsForTrack.add(uniqueMapping);
 
         return newMappingsForTrack;
     }

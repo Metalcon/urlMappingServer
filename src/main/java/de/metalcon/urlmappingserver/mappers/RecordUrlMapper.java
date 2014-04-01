@@ -113,8 +113,11 @@ public class RecordUrlMapper extends EntityUrlMapper {
         }
 
         if (!recordUrlData.hasEmptyMuid()) {
-            Set<String> newMappingsForRecord =
-                    super.createMapping(entityUrlData);
+            Set<String> newMappingsForRecord = createEmptyMappingSet();
+
+            // add mapping: /<record name>
+            String nameMapping = convertToUrlText(recordUrlData.getName());
+            newMappingsForRecord.add(nameMapping);
 
             // add mapping: /<band>/<release year>-<record name>
             int releaseYear = recordUrlData.getReleaseYear();
@@ -123,6 +126,11 @@ public class RecordUrlMapper extends EntityUrlMapper {
                 newMappingsForRecord.add(sReleaseYear + WORD_SEPARATOR
                         + convertToUrlText(recordUrlData.getName()));
             }
+
+            // add mapping: /<record name>-<muid>
+            String uniqueMapping =
+                    nameMapping + WORD_SEPARATOR + recordUrlData.getMuid();
+            newMappingsForRecord.add(uniqueMapping);
 
             return newMappingsForRecord;
         }
