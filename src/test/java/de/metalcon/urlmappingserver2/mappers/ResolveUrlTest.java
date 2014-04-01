@@ -30,6 +30,12 @@ public abstract class ResolveUrlTest extends EntityUrlMapperTest {
     }
 
     /**
+     * register multiple entities and check if mappings correct
+     */
+    @Test
+    abstract public void testMultipleRegistered();
+
+    /**
      * check if main mapping for entity is ID mapping
      */
     protected void checkMappingId(EntityUrlData entity) {

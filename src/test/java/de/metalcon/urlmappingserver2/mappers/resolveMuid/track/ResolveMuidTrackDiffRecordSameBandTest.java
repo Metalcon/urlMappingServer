@@ -27,8 +27,8 @@ public class ResolveMuidTrackDiffRecordSameBandTest extends
         // records never equal, bands always equal
         TrackUrlData track = (TrackUrlData) entity;
         if (!RUNNING) {
-            RUNNING = true;
             BAND = track.getRecord().getBand();
+            RUNNING = true;
         } else {
             assertNotSame(RECORD.getMuid(), track.getRecord().getMuid());
             assertEquals(BAND, track.getRecord().getBand());

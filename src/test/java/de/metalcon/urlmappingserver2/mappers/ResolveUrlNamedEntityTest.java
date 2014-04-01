@@ -28,6 +28,15 @@ public abstract class ResolveUrlNamedEntityTest extends ResolveUrlTest {
         checkMappingId(identical);
     }
 
+    @Override
+    public void testMultipleRegistered() {
+        for (int i = 0; i < 10; i++) {
+            entity = FACTORY.getEntityFull();
+            registerEntity(entity);
+            checkMappingName(entity);
+        }
+    }
+
     /**
      * check if main mapping for entity is name mapping
      */

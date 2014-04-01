@@ -26,11 +26,11 @@ public class ResolveMuidTrackEmptyRecordSameBandTest extends
 
         // records always empty, bands always equal
         TrackUrlData track = (TrackUrlData) entity;
+        assertTrue(track.getRecord().hasEmptyMuid());
         if (!RUNNING) {
-            RUNNING = true;
             BAND = track.getRecord().getBand();
+            RUNNING = true;
         } else {
-            assertTrue(track.getRecord().hasEmptyMuid());
             assertEquals(BAND, track.getRecord().getBand());
         }
     }
