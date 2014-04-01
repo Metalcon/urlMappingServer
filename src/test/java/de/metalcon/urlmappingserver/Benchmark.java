@@ -27,16 +27,34 @@ public abstract class Benchmark {
 
     protected static long ID = 1;
 
+    protected UrlMappingServerConfig CONFIG = new UrlMappingServerConfig(
+            "test.url-mapping-server-config.txt");
+
+    protected UrlMappingServer server;
+
+    protected EntityUrlMappingManager mappingManager;
+
     protected List<EntityUrlData> registered;
 
     public Benchmark() {
+        server = new UrlMappingServer(CONFIG);
+        mappingManager = server.getMappingManager();
         registered = new LinkedList<EntityUrlData>();
     }
 
-    protected void benchmark() {
-        benchmarkWrite(1000000);
-        benchmarkRead(10000000);
-        cleanUp();
+    protected void registerMuid(EntityUrlData entity) {
+        mappingManager.registerMuid(entity);
+    }
+
+    protected Muid resolveMuid(
+            Map<String, String> urlPathVars,
+            MuidType muidType) {
+        return mappingManager.resolveMuid(urlPathVars, muidType);
+    }
+
+    protected void benchmark(int numWrites, int numReads) {
+        benchmarkWrite(numWrites);
+        benchmarkRead(numReads);
     }
 
     protected void benchmarkWrite(long totalWrites) {
@@ -142,14 +160,9 @@ public abstract class Benchmark {
                 / (crrMs / (double) totalReads));
     }
 
-    abstract protected void registerMuid(EntityUrlData entity);
-
-    abstract protected Muid resolveMuid(
-            Map<String, String> urlPathVars,
-            MuidType muidType);
-
     protected void cleanUp() {
         registered.clear();
+        server.close();
     }
 
     protected static EntityUrlData generatedData(short type) {
@@ -226,7 +239,7 @@ public abstract class Benchmark {
                 break;
 
             case EVENT:
-                pathVars.put("pathEvent", mapping);
+                pathVars.put("pathEvent", entity.getMuid().toString());
                 break;
 
             case GENRE:
@@ -249,7 +262,7 @@ public abstract class Benchmark {
                 break;
 
             case TOUR:
-                pathVars.put("pathTour", mapping);
+                pathVars.put("pathTour", entity.getMuid().toString());
                 break;
 
             case TRACK:
