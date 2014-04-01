@@ -98,6 +98,26 @@ public class TrackFactory extends EntityFactory {
                 track.getName(), band, record, track.getTrackNumber());
     }
 
+    public TrackUrlData getTrackSameName(TrackUrlData track) {
+        RecordUrlData record = getRecord();
+        BandUrlData band = !record.hasEmptyMuid() ? null : record.getBand();
+        if (band != null) {
+            record = null;
+        }
+        return new TrackUrlData(MuidFactory.generateMuid(getMuidType()),
+                track.getName(), band, record, getTrackNumber());
+    }
+
+    public TrackUrlData getTrackSameNameWoTrackNumber(TrackUrlData track) {
+        RecordUrlData record = getRecord();
+        BandUrlData band = !record.hasEmptyMuid() ? null : record.getBand();
+        if (band != null) {
+            record = null;
+        }
+        return new TrackUrlData(MuidFactory.generateMuid(getMuidType()),
+                track.getName(), band, record, 0);
+    }
+
     public RecordUrlData getRecord() {
         if (!useEmptyParent) {
             if (useSameParent) {

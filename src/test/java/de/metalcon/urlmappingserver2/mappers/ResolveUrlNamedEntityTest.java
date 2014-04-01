@@ -22,7 +22,7 @@ public abstract class ResolveUrlNamedEntityTest extends ResolveUrlTest {
         registerEntity(entity);
 
         EntityUrlData identical = FACTORY.getEntityIdentical(entity);
-        registerEntity(identical);
+        mapper.registerMuid(identical);
 
         checkMappingName(entity);
         checkMappingId(identical);

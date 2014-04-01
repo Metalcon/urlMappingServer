@@ -32,6 +32,18 @@
     <zmq.worker.version>0.2.1</zmq.worker.version>
   </properties>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+        <forkMode>pertest</forkMode>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <!-- testing framework -->
     <dependency>
