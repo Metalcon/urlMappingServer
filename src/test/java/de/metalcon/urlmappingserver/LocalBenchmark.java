@@ -27,11 +27,7 @@ public class LocalBenchmark extends Benchmark {
         return mappingManager.resolveMuid(urlPathVars, muidType);
     }
 
-    @Override
-    protected void benchmark(int numWrites, int numReads) {
-        super.benchmark(numWrites, numReads);
-        cleanUp();
-
+    protected void loadFromDatabase(int numWrites, int numReads) {
         // benchmark restart
         long crrNano = System.nanoTime();
 
@@ -48,7 +44,6 @@ public class LocalBenchmark extends Benchmark {
 
         mappingManager = server.getMappingManager();
         benchmarkRead(numReads);
-        cleanUp();
     }
 
     protected void benchmarkWithoutPersistence(int numWrites, int numReads) {
@@ -58,11 +53,15 @@ public class LocalBenchmark extends Benchmark {
     }
 
     public static void main(String[] args) {
-        int numWrites = 100000 * 1;
+        int numWrites = 10000 * 1;
         int numReads = numWrites * 10;
 
-        new LocalBenchmark().benchmark(numWrites, numReads);
+        LocalBenchmark benchmark = new LocalBenchmark();
+        //        benchmark.benchmark(numWrites, numReads);
+        benchmark.loadFromDatabase(numWrites, numReads);
+        //        new LocalBenchmark().benchmark(numWrites, numReads);
         //        new LocalBenchmark().benchmarkWithoutPersistence(numWrites, numReads);
+        benchmark.cleanUp();
     }
 
 }

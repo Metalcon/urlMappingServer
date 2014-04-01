@@ -90,8 +90,7 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
         // load database
         levelDb = loadDatabase(config.database_path);
         if (levelDb == null) {
-            System.err.println("failed to load database");
-            return;
+            throw new IllegalStateException("failed to load database");
         }
 
         // initialize request handler
@@ -121,8 +120,7 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
         // load database
         levelDb = loadDatabase(config.database_path);
         if (levelDb == null) {
-            System.err.println("failed to load database");
-            return;
+            throw new IllegalStateException("failed to load database");
         }
 
         // initialize request handler
@@ -158,6 +156,7 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
             try {
                 levelDb.close();
                 levelDb = null;
+                System.out.println("database shutted down");
             } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println("failed to close database");

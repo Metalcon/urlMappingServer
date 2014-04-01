@@ -154,7 +154,11 @@ public abstract class Benchmark {
 
     protected void cleanUp() {
         registered.clear();
-        server.close();
+        try {
+            server.close();
+        } catch (RuntimeException e) {
+            // server shutted down
+        }
         System.out.println("closed");
     }
 

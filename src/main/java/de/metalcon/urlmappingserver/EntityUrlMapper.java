@@ -22,6 +22,11 @@ import de.metalcon.urlmappingserver.persistence.PersistentStorage;
 public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
     /**
+     * URL path separator
+     */
+    public static String PATH_SEPARATOR = "/";
+
+    /**
      * word separator in URL mappings
      */
     public static String WORD_SEPARATOR = "-";

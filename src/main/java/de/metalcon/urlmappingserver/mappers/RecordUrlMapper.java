@@ -31,6 +31,12 @@ public class RecordUrlMapper extends EntityUrlMapper {
     protected Map<Muid, Map<String, Muid>> mappingsToRecordsOfBands;
 
     /**
+     * parent of a record<br>
+     * record -> band
+     */
+    protected Map<Muid, Muid> parentalBand;
+
+    /**
      * create mapper for record entities
      * 
      * @param manager
@@ -44,6 +50,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
         super(manager, MuidType.RECORD, true, "pathRecord");
         this.bandMapper = bandMapper;
         mappingsToRecordsOfBands = new HashMap<Muid, Map<String, Muid>>();
+        parentalBand = new HashMap<Muid, Muid>();
     }
 
     /**
@@ -83,6 +90,9 @@ public class RecordUrlMapper extends EntityUrlMapper {
             // iterate over all record mappings for this band
             for (String recordMapping : mappingsToRecord.keySet()) {
                 muidRecord = mappingsToRecord.get(recordMapping);
+                if (muidRecord.getID() != 0) {
+                    parentalBand.put(muidBand, muidRecord);
+                }
 
                 mappingsOfRecord = mappingsOfEntities.get(muidRecord);
                 if (mappingsOfRecord == null) {
@@ -113,6 +123,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
         }
 
         if (!recordUrlData.hasEmptyMuid()) {
+            parentalBand.put(recordUrlData.getMuid(), band);
             Set<String> newMappingsForRecord = createEmptyMappingSet();
 
             // add mapping: /<record name>
@@ -164,6 +175,26 @@ public class RecordUrlMapper extends EntityUrlMapper {
         }
         throw new IllegalArgumentException("mapper handles muid type \""
                 + getMuidType() + "\" only (was: \"" + type + "\")");
+    }
+
+    @Override
+    public String resolveUrl(Muid muid) {
+        if (muid.getMuidType() == MuidType.RECORD) {
+            Muid band = parentalBand.get(muid);
+            if (band != null) {
+                String bandUrl =
+                        manager.getMapper(MuidType.BAND).resolveUrl(band);
+                if (bandUrl != null) {
+                    return bandUrl + PATH_SEPARATOR + super.resolveUrl(muid);
+                }
+                System.err.println("registered parental band not resolved");
+                // TODO throw new IllegalStateException("registered parental band not resolved");
+            }
+            return null;
+        }
+        throw new IllegalArgumentException("mapper handles muid type \""
+                + getMuidType() + "\" only (was: \"" + muid.getMuidType()
+                + "\")");
     }
 
 }
