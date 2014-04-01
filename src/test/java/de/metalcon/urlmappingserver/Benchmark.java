@@ -32,25 +32,17 @@ public abstract class Benchmark {
 
     protected UrlMappingServer server;
 
-    protected EntityUrlMappingManager mappingManager;
-
     protected List<EntityUrlData> registered;
 
     public Benchmark() {
-        server = new UrlMappingServer(CONFIG);
-        mappingManager = server.getMappingManager();
         registered = new LinkedList<EntityUrlData>();
     }
 
-    protected void registerMuid(EntityUrlData entity) {
-        mappingManager.registerMuid(entity);
-    }
+    abstract protected void registerMuid(EntityUrlData entity);
 
-    protected Muid resolveMuid(
+    abstract protected Muid resolveMuid(
             Map<String, String> urlPathVars,
-            MuidType muidType) {
-        return mappingManager.resolveMuid(urlPathVars, muidType);
-    }
+            MuidType muidType);
 
     protected void benchmark(int numWrites, int numReads) {
         benchmarkWrite(numWrites);
@@ -163,6 +155,7 @@ public abstract class Benchmark {
     protected void cleanUp() {
         registered.clear();
         server.close();
+        System.out.println("closed");
     }
 
     protected static EntityUrlData generatedData(short type) {

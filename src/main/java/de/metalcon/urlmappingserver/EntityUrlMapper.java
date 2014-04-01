@@ -181,7 +181,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     protected void registerUnregisteredMappings(
             EntityUrlData entity,
             Set<String> newMappingsForEntity) {
-        if (entity.getMuid() != Muid.EMPTY_MUID) {
+        if (!entity.hasEmptyMuid()) {
             // add further mappings without MUID if not in use yet
             for (String mapping : newMappingsForEntity) {
                 if (!mappingToEntity.containsKey(mapping)) {

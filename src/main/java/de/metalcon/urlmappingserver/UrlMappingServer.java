@@ -8,6 +8,7 @@ import net.hh.request_dispatcher.server.RequestHandler;
 import org.fusesource.leveldbjni.JniDBFactory;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
+import org.zeromq.ZMQ;
 
 import de.metalcon.api.responses.Response;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRequest;
@@ -76,7 +77,7 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
     }
 
     /**
-     * creates and startes URL mapping server<br>
+     * creates and startes URL mapping server living in an own ZMQ context<br>
      * has its own ZMQ worker thread
      * 
      * @param config
@@ -85,6 +86,37 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
     public UrlMappingServer(
             UrlMappingServerConfig config) {
         super(config);
+
+        // load database
+        levelDb = loadDatabase(config.database_path);
+        if (levelDb == null) {
+            System.err.println("failed to load database");
+            return;
+        }
+
+        // initialize request handler
+        PersistentStorage persistentStorage = new LevelDbStorage(levelDb);
+        mappingManager = new EntityUrlMappingManager(persistentStorage);
+        RequestHandler<UrlMappingRequest, Response> requestHandler =
+                new UrlMappingRequestHandler(mappingManager);
+
+        // start ZMQ communication
+        start(requestHandler);
+    }
+
+    /**
+     * creates and startes URL mapping server<br>
+     * has its own ZMQ worker thread
+     * 
+     * @param config
+     *            URL mapping server configuration object
+     * @param context
+     *            ZMQ context the server will live in
+     */
+    public UrlMappingServer(
+            UrlMappingServerConfig config,
+            ZMQ.Context context) {
+        super(config, context);
 
         // load database
         levelDb = loadDatabase(config.database_path);
@@ -122,8 +154,6 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
      */
     @Override
     public void close() {
-        super.close();
-
         if (levelDb != null) {
             try {
                 levelDb.close();
@@ -133,6 +163,7 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
                 System.err.println("failed to close database");
             }
         }
+        super.close();
     }
 
     protected static DB loadDatabase(String databasePath) {
