@@ -35,12 +35,7 @@ public class EventUrlMapper extends EntityUrlMapper {
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        if (entityUrlData.getMuid().getMuidType() != muidType) {
-            throw new IllegalArgumentException("mapper handles muid type \""
-                    + getMuidType() + "\" only (was: \""
-                    + entityUrlData.getMuid().getMuidType() + "\")");
-        }
-
+        checkMuidType(entityUrlData.getMuid().getMuidType());
         Set<String> newMappingsForEvent = createEmptyMappingSet();
 
         // add mapping: /<muid>

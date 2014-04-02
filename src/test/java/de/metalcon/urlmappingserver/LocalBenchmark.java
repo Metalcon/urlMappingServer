@@ -31,7 +31,7 @@ public class LocalBenchmark extends Benchmark {
         // benchmark restart
         long crrNano = System.nanoTime();
 
-        server = new UrlMappingServer(CONFIG);
+        server = new UrlMappingServer(CONFIG, null);
         server.loadFromDatabase();
 
         crrNano = System.nanoTime() - crrNano;
@@ -44,6 +44,7 @@ public class LocalBenchmark extends Benchmark {
 
         mappingManager = server.getMappingManager();
         benchmarkRead(numReads);
+        benchmarkRead(numReads);
     }
 
     protected void benchmarkWithoutPersistence(int numWrites, int numReads) {
@@ -53,16 +54,17 @@ public class LocalBenchmark extends Benchmark {
     }
 
     public static void main(String[] args) {
-        int numWrites = 1000 * 1;
+        int numWrites = 100000 * 5;
         int numReads = numWrites * 10;
 
         LocalBenchmark benchmark = new LocalBenchmark();
         benchmark.benchmark(numWrites, numReads);
-        benchmark.cleanUp();
+        benchmark.server.close();
+
         benchmark.loadFromDatabase(numWrites, numReads);
         //        new LocalBenchmark().benchmark(numWrites, numReads);
         //        new LocalBenchmark().benchmarkWithoutPersistence(numWrites, numReads);
-        benchmark.cleanUp();
+        benchmark.server.close();
     }
 
 }

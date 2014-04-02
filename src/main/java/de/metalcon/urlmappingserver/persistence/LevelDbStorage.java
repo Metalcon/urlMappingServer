@@ -62,7 +62,7 @@ public class LevelDbStorage implements PersistentStorage {
 
         // value: MUID
         MUID_BUFFER.putLong(muidValue);
-        byte[] value = MUID_BUFFER.array();
+        byte[] value = MUID_BUFFER.array().clone();
         MUID_BUFFER.clear();
 
         db.put(key, value);
@@ -72,19 +72,15 @@ public class LevelDbStorage implements PersistentStorage {
     public void saveParent(long muidValue, long muidParentValue) {
         // key: MUID
         MUID_BUFFER.putLong(muidValue);
-        byte[] key = MUID_BUFFER.array();
+        byte[] key = MUID_BUFFER.array().clone();
         MUID_BUFFER.clear();
 
         // value: parental MUID
         MUID_BUFFER.putLong(muidParentValue);
-        byte[] value = MUID_BUFFER.array();
+        byte[] value = MUID_BUFFER.array().clone();
         MUID_BUFFER.clear();
 
         db.put(key, value);
-
-        System.out.println("storing parent: " + muidValue + " -> "
-                + muidParentValue + " [" + new Muid(muidValue).getMuidType()
-                + "]");
     }
 
     @Override
@@ -140,9 +136,6 @@ public class LevelDbStorage implements PersistentStorage {
                 // deserialize MUID
                 muidValue = deserializeMuidValue(value);
                 muid = new Muid(muidValue);
-
-                //                System.out.println("[" + muidType + "] " + muid + " ("
-                //                        + mapping + ") @ " + muidParentValue);
 
                 // check if empty MUID and allowed
                 if (muidType != MuidType.BAND.getRawIdentifier()

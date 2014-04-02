@@ -1,6 +1,7 @@
 package de.metalcon.urlmappingserver.mappers;
 
-import de.metalcon.domain.Muid;
+import java.util.Set;
+
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
@@ -39,19 +40,11 @@ public class BandUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    protected void storeMapping(EntityUrlData entity, String mapping) {
-        // MUID can be empty here, parental MUID remains unset
-        persistentStorage.saveMapping(MuidType.BAND.getRawIdentifier(), entity
-                .getMuid().getValue(), mapping, 0);
-    }
-
-    @Override
-    public void registerMuid(EntityUrlData entityUrlData) {
+    protected Set<String> createMapping(EntityUrlData entityUrlData) {
         if (!entityUrlData.hasEmptyMuid()) {
-            super.registerMuid(entityUrlData);
-        } else {
-            registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
+            return super.createMapping(entityUrlData);
         }
+        return null;
     }
 
 }

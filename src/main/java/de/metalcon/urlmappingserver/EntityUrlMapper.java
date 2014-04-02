@@ -118,6 +118,20 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     }
 
     /**
+     * check if MUID type is matching
+     * 
+     * @param muidType
+     *            MUID type passed
+     * @throws IllegalArgumentException
+     *             if type mismatching
+     */
+    protected void checkMuidType(MuidType muidType) {
+        if (muidType != this.muidType) {
+            throw ExceptionFactory.usageWrongMapper(muidType, this.muidType);
+        }
+    }
+
+    /**
      * create new mappings for the entity
      * 
      * @param entityUrlData
@@ -127,11 +141,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *             if entity type not handled
      */
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        if (entityUrlData.getMuid().getMuidType() != muidType) {
-            throw ExceptionFactory.usageWrongMapper(entityUrlData.getMuid()
-                    .getMuidType(), muidType);
-        }
-
+        checkMuidType(entityUrlData.getMuid().getMuidType());
         Set<String> mapping = createEmptyMappingSet();
 
         // add mapping: /<entity name>
@@ -154,15 +164,14 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        if (type == muidType) {
-            String mapping = getPathVar(url, urlPathVarName);
-            return mappingToEntity.get(mapping);
-        }
-        throw ExceptionFactory.usageWrongMapper(type, muidType);
+        checkMuidType(type);
+        String mapping = getPathVar(url, urlPathVarName);
+        return mappingToEntity.get(mapping);
     }
 
     @Override
     public String resolveUrl(Muid muid) {
+        // TODO check MUID type
         Set<String> mappingsOfEntity = mappingsOfEntities.get(muid);
         if (mappingsOfEntity != null) {
             // TODO internal server error if empty?
@@ -198,8 +207,13 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
             }
         } else if (allowEmptyMuid) {
             registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
+
+            // make mapping persistent
+            if (persistentStorage != null) {
+                storeMapping(entity, EMPTY_ENTITY);
+            }
         } else {
-            throw new IllegalArgumentException("empty MUID not allowed");
+            throw ExceptionFactory.usageEmptyMuidNotAllowed(muidType);
         }
     }
 

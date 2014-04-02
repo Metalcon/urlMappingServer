@@ -78,22 +78,22 @@ public class TrackUrlMapper extends EntityUrlMapper {
             for (String trackMapping : mappingsToTrack.keySet()) {
                 muidTrack = mappingsToTrack.get(trackMapping);
 
-                // register parental record
-                if (muidRecord.getID() != 0) {
-                    parentalRecords.put(muidTrack, muidRecord);
-                } else {
-                    // register parental band
-                    Muid muidBand = parentalBands.get(muidTrack);
-                    if (muidBand != null) {
-                        this.parentalBands.put(muidTrack, muidBand);
-                    }
-                    // else parental band is empty too
-                }
-
                 mappingsOfTrack = mappingsOfEntities.get(muidTrack);
                 if (mappingsOfTrack == null) {
                     mappingsOfTrack = createEmptyMappingSet();
                     mappingsOfEntities.put(muidTrack, mappingsOfTrack);
+
+                    // register parental record
+                    if (muidRecord.getID() != 0) {
+                        parentalRecords.put(muidTrack, muidRecord);
+                    } else {
+                        // register parental band
+                        Muid muidBand = parentalBands.get(muidTrack);
+                        if (muidBand != null) {
+                            this.parentalBands.put(muidTrack, muidBand);
+                        }
+                        // else parental band is empty too
+                    }
                 }
 
                 mappingsOfTrack.add(trackMapping);
@@ -103,6 +103,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
+        checkMuidType(entityUrlData.getMuid().getMuidType());
         TrackUrlData trackUrlData = (TrackUrlData) entityUrlData;
 
         // register record if not registered yet
@@ -169,24 +170,22 @@ public class TrackUrlMapper extends EntityUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        if (type == muidType) {
-            // resolve record
-            Muid record = resolveOtherMuid(url, MuidType.RECORD);
-            if (record != null) {
-                // resolve track        
-                String trackMapping = getPathVar(url, urlPathVarName);
-                Map<String, Muid> mappingToEntity =
-                        mappingsToTracksOfRecords.get(record);
-                if (mappingToEntity != null) {
-                    return mappingToEntity.get(trackMapping);
-                }
+        checkMuidType(type);
 
-                // TODO what error?
+        // resolve record
+        Muid record = resolveOtherMuid(url, MuidType.RECORD);
+        if (record != null) {
+            // resolve track        
+            String trackMapping = getPathVar(url, urlPathVarName);
+            Map<String, Muid> mappingToEntity =
+                    mappingsToTracksOfRecords.get(record);
+            if (mappingToEntity != null) {
+                // may be null if track of another record than specified
+                return mappingToEntity.get(trackMapping);
             }
-            return null;
+            // no tracks for record registered -> hierarchy invalid
         }
-        // wrong MUID type
-        throw ExceptionFactory.usageWrongMapper(type, muidType);
+        return null;
     }
 
     @Override
@@ -226,6 +225,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
             }
         }
         // track is unknown
+        checkMuidType(muidTrack.getMuidType());
         return null;
     }
 

@@ -18,6 +18,12 @@ public class ExceptionFactory {
                 + validType + "\" only (was: \"" + muidType + "\")");
     }
 
+    public static IllegalArgumentException usageEmptyMuidNotAllowed(
+            MuidType type) {
+        return new IllegalArgumentException("empty MUID is not allowed for "
+                + type);
+    }
+
     public static IllegalStateException internalUrlResolveFailed(Muid muid) {
         return new IllegalStateException(
                 "failed to resolve URL of registered MUID " + muid);

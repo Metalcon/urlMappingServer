@@ -30,6 +30,7 @@ public class VenueUrlMapper extends EntityUrlMapper {
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
+        checkMuidType(entityUrlData.getMuid().getMuidType());
         Set<String> newMappingsForVenue = createEmptyMappingSet();
         VenueUrlData venueUrlData = (VenueUrlData) entityUrlData;
 

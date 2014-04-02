@@ -110,6 +110,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
 
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
+        // TODO check MUID type
         RecordUrlData recordUrlData = (RecordUrlData) entityUrlData;
 
         // register band if not registered yet
@@ -164,26 +165,25 @@ public class RecordUrlMapper extends EntityUrlMapper {
 
     @Override
     public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        if (type == muidType) {
-            String recordMapping = getPathVar(url, urlPathVarName);
+        checkMuidType(type);
+        String recordMapping = getPathVar(url, urlPathVarName);
 
-            // resolve band
-            Muid band = resolveOtherMuid(url, MuidType.BAND);
-            if (band != null) {
-                // resolve record
-                if (mappingsToRecordsOfBands.containsKey(band)) {
-                    return mappingsToRecordsOfBands.get(band)
-                            .get(recordMapping);
-                }
+        // resolve band
+        Muid band = resolveOtherMuid(url, MuidType.BAND);
+        if (band != null) {
+            // resolve record
+            if (mappingsToRecordsOfBands.containsKey(band)) {
+                // may be null if record of another band than specified
+                return mappingsToRecordsOfBands.get(band).get(recordMapping);
             }
-            return null;
+            // no record for band registered -> hierarchy invalid
         }
-        throw new IllegalArgumentException("mapper handles muid type \""
-                + getMuidType() + "\" only (was: \"" + type + "\")");
+        return null;
     }
 
     @Override
     public String resolveUrl(Muid muidRecord) {
+        // TODO: check MUID type
         if (mappingsOfEntities.containsKey(muidRecord)) {
             // record was registered
             String urlRecord = super.resolveUrl(muidRecord);
