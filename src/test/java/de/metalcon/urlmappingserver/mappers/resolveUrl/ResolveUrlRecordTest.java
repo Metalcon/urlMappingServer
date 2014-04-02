@@ -2,6 +2,7 @@ package de.metalcon.urlmappingserver.mappers.resolveUrl;
 
 import org.junit.Test;
 
+import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
 import de.metalcon.urlmappingserver.mappers.EntityFactory;
 import de.metalcon.urlmappingserver.mappers.ResolveUrlNamedEntityTest;
@@ -65,6 +66,13 @@ public abstract class ResolveUrlRecordTest extends ResolveUrlNamedEntityTest {
      */
     protected void checkMappingReleaseYear(RecordUrlData record) {
         checkMainMapping(record, RECORD_FACTORY.getMappingReleaseYear(record));
+    }
+
+    @Override
+    protected String resolveUrl(EntityUrlData entity) {
+        String url = super.resolveUrl(entity);
+        System.out.println(url);
+        return url;
     }
 
 }

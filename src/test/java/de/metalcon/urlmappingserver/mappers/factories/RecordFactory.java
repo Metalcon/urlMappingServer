@@ -56,6 +56,14 @@ public class RecordFactory extends EntityFactory {
     }
 
     @Override
+    public String getMappingName(EntityUrlData entity) {
+        if (!entity.hasEmptyMuid()) {
+            return super.getMappingName(entity);
+        }
+        return EMPTY_ENTITY;
+    }
+
+    @Override
     public String getMappingId(EntityUrlData entity) {
         if (!entity.hasEmptyMuid()) {
             return super.getMappingId(entity);

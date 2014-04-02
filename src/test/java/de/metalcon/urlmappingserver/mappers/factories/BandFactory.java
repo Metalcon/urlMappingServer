@@ -21,6 +21,14 @@ public class BandFactory extends EntityFactory {
     }
 
     @Override
+    public String getMappingName(EntityUrlData entity) {
+        if (!entity.hasEmptyMuid()) {
+            return super.getMappingName(entity);
+        }
+        return EMPTY_ENTITY;
+    }
+
+    @Override
     public EntityUrlData getEntityFull() {
         return new BandUrlData(MuidFactory.generateMuid(getMuidType()), "band"
                 + crrEntityId++);

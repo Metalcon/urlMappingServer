@@ -9,6 +9,9 @@ import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 public abstract class EntityFactory {
 
+    protected static final String PATH_SEPARATOR =
+            EntityUrlMapper.PATH_SEPARATOR;
+
     protected static final String EMPTY_ENTITY = EntityUrlMapper.EMPTY_ENTITY;
 
     protected static final String WORD_SEPARATOR =

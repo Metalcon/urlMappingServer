@@ -129,10 +129,11 @@ public class TrackUrlMapper extends EntityUrlMapper {
                 // track has parental band
                 parentalBands.put(trackUrlData.getMuid(), trackUrlData
                         .getRecord().getBand().getMuid());
-                persistentStorage
-                        .saveParent(trackUrlData.getMuid().getValue(),
-                                trackUrlData.getRecord().getBand().getMuid()
-                                        .getValue());
+                if (persistentStorage != null) {
+                    persistentStorage.saveParent(trackUrlData.getMuid()
+                            .getValue(), trackUrlData.getRecord().getBand()
+                            .getMuid().getValue());
+                }
             }
         }
 

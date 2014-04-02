@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.EntityUrlMapperTest;
+import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 public abstract class ResolveMuidTest extends EntityUrlMapperTest {
 
