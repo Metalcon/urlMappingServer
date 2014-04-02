@@ -1,6 +1,5 @@
 package de.metalcon.urlmappingserver.persistence;
 
-
 /**
  * interface for underlying persistent storage
  * 
@@ -14,6 +13,8 @@ public interface PersistentStorage {
             long muidValue,
             String mapping,
             long muidParentValue);
+
+    void saveParent(long muidTrackValue, long muidBandValue);
 
     UrlMappingPersistenceData restoreMappings();
 

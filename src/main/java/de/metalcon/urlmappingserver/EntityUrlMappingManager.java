@@ -180,8 +180,9 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
         recordMapper.setMappingsOfRecordsOfBand(persistenceData
                 .getMappingsOfRecordsOfBand());
         // register mappings and hierarchy for tracks
-        trackMapper.setMappingsToTracksOfRecords(persistenceData
-                .getMappingsOfTracksOfRecord());
+        trackMapper.setMappingsToTracksOfRecords(
+                persistenceData.getMappingsOfTracksOfRecord(),
+                persistenceData.getParentalBands());
     }
 
 }

@@ -8,6 +8,7 @@ import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
+import de.metalcon.urlmappingserver.ExceptionFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.RecordUrlData;
@@ -31,10 +32,10 @@ public class RecordUrlMapper extends EntityUrlMapper {
     protected Map<Muid, Map<String, Muid>> mappingsToRecordsOfBands;
 
     /**
-     * parent of a record<br>
-     * record -> band
+     * parental bands [record -> band]<br>
+     * does not include entry if band is empty
      */
-    protected Map<Muid, Muid> parentalBand;
+    protected Map<Muid, Muid> parentalBands;
 
     /**
      * create mapper for record entities
@@ -50,7 +51,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
         super(manager, MuidType.RECORD, true, "pathRecord");
         this.bandMapper = bandMapper;
         mappingsToRecordsOfBands = new HashMap<Muid, Map<String, Muid>>();
-        parentalBand = new HashMap<Muid, Muid>();
+        parentalBands = new HashMap<Muid, Muid>();
     }
 
     /**
@@ -90,8 +91,10 @@ public class RecordUrlMapper extends EntityUrlMapper {
             // iterate over all record mappings for this band
             for (String recordMapping : mappingsToRecord.keySet()) {
                 muidRecord = mappingsToRecord.get(recordMapping);
+
+                // register parental band
                 if (muidRecord.getID() != 0) {
-                    parentalBand.put(muidBand, muidRecord);
+                    parentalBands.put(muidRecord, muidBand);
                 }
 
                 mappingsOfRecord = mappingsOfEntities.get(muidRecord);
@@ -123,7 +126,9 @@ public class RecordUrlMapper extends EntityUrlMapper {
         }
 
         if (!recordUrlData.hasEmptyMuid()) {
-            parentalBand.put(recordUrlData.getMuid(), band);
+            // register record parent for URL resolves
+            parentalBands.put(recordUrlData.getMuid(), band);
+
             Set<String> newMappingsForRecord = createEmptyMappingSet();
 
             // add mapping: /<record name>
@@ -178,23 +183,27 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    public String resolveUrl(Muid muid) {
-        if (muid.getMuidType() == MuidType.RECORD) {
-            Muid band = parentalBand.get(muid);
-            if (band != null) {
-                String bandUrl =
-                        manager.getMapper(MuidType.BAND).resolveUrl(band);
-                if (bandUrl != null) {
-                    return bandUrl + PATH_SEPARATOR + super.resolveUrl(muid);
+    public String resolveUrl(Muid muidRecord) {
+        if (mappingsOfEntities.containsKey(muidRecord)) {
+            // record was registered
+            String urlRecord = super.resolveUrl(muidRecord);
+
+            Muid muidBand = parentalBands.get(muidRecord);
+            if (muidBand != null) {
+                // record has parental band
+                String urlBand = bandMapper.resolveUrl(muidBand);
+                if (urlBand != null) {
+                    return urlBand + PATH_SEPARATOR + urlRecord;
                 }
-                System.err.println("registered parental band not resolved");
-                // TODO throw new IllegalStateException("registered parental band not resolved");
+                // parental band could not be resolved
+                throw ExceptionFactory.internalUrlResolveFailed(muidBand);
+            } else {
+                // parental band is empty
+                return EMPTY_ENTITY + PATH_SEPARATOR + urlRecord;
             }
-            return null;
         }
-        throw new IllegalArgumentException("mapper handles muid type \""
-                + getMuidType() + "\" only (was: \"" + muid.getMuidType()
-                + "\")");
+        // record is unknown
+        return null;
     }
 
 }

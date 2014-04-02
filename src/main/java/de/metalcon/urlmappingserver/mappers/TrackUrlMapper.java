@@ -8,6 +8,7 @@ import de.metalcon.domain.Muid;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
+import de.metalcon.urlmappingserver.ExceptionFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.TrackUrlData;
 
@@ -30,6 +31,19 @@ public class TrackUrlMapper extends EntityUrlMapper {
     protected Map<Muid, Map<String, Muid>> mappingsToTracksOfRecords;
 
     /**
+     * parental records [track -> record]<br>
+     * does not include entry if record is empty
+     */
+    protected Map<Muid, Muid> parentalRecords;
+
+    /**
+     * parental bands [track -> band]<br>
+     * does not include entry if record not empty<br>
+     * or if band is empty
+     */
+    protected Map<Muid, Muid> parentalBands;
+
+    /**
      * create mapper for track entities
      * 
      * @param manager
@@ -43,10 +57,13 @@ public class TrackUrlMapper extends EntityUrlMapper {
         super(manager, MuidType.TRACK, false, "pathTrack");
         this.recordMapper = recordMapper;
         mappingsToTracksOfRecords = new HashMap<Muid, Map<String, Muid>>();
+        parentalRecords = new HashMap<Muid, Muid>();
+        parentalBands = new HashMap<Muid, Muid>();
     }
 
     public void setMappingsToTracksOfRecords(
-            Map<Muid, Map<String, Muid>> mappingsToTracksOfRecords) {
+            Map<Muid, Map<String, Muid>> mappingsToTracksOfRecords,
+            Map<Muid, Muid> parentalBands) {
         this.mappingsToTracksOfRecords = mappingsToTracksOfRecords;
 
         Map<String, Muid> mappingsToTrack;
@@ -54,12 +71,24 @@ public class TrackUrlMapper extends EntityUrlMapper {
         Muid muidTrack;
 
         // iterate over all records
-        for (Muid recordMuid : mappingsToTracksOfRecords.keySet()) {
-            mappingsToTrack = mappingsToTracksOfRecords.get(recordMuid);
+        for (Muid muidRecord : mappingsToTracksOfRecords.keySet()) {
+            mappingsToTrack = mappingsToTracksOfRecords.get(muidRecord);
 
             // iterate over all track mappings for this record
             for (String trackMapping : mappingsToTrack.keySet()) {
                 muidTrack = mappingsToTrack.get(trackMapping);
+
+                // register parental record
+                if (muidRecord.getID() != 0) {
+                    parentalRecords.put(muidTrack, muidRecord);
+                } else {
+                    // register parental band
+                    Muid muidBand = parentalBands.get(muidTrack);
+                    if (muidBand != null) {
+                        this.parentalBands.put(muidTrack, muidBand);
+                    }
+                    // else parental band is empty too
+                }
 
                 mappingsOfTrack = mappingsOfEntities.get(muidTrack);
                 if (mappingsOfTrack == null) {
@@ -87,6 +116,23 @@ public class TrackUrlMapper extends EntityUrlMapper {
         if (mappingToEntity == null) {
             mappingToEntity = new HashMap<String, Muid>();
             mappingsToTracksOfRecords.put(record, mappingToEntity);
+        }
+
+        // register track parents for URL resolves
+        if (!trackUrlData.getRecord().hasEmptyMuid()) {
+            // track has parental record
+            parentalRecords.put(trackUrlData.getMuid(), record);
+        } else {
+            // parental record is empty
+            if (!trackUrlData.getRecord().getBand().hasEmptyMuid()) {
+                // track has parental band
+                parentalBands.put(trackUrlData.getMuid(), trackUrlData
+                        .getRecord().getBand().getMuid());
+                persistentStorage
+                        .saveParent(trackUrlData.getMuid().getValue(),
+                                trackUrlData.getRecord().getBand().getMuid()
+                                        .getValue());
+            }
         }
 
         Set<String> newMappingsForTrack = createEmptyMappingSet();
@@ -134,11 +180,53 @@ public class TrackUrlMapper extends EntityUrlMapper {
                 if (mappingToEntity != null) {
                     return mappingToEntity.get(trackMapping);
                 }
+
+                // TODO what error?
             }
             return null;
         }
-        throw new IllegalArgumentException("mapper handles muid type \""
-                + getMuidType() + "\" only (was: \"" + type + "\")");
+        // wrong MUID type
+        throw ExceptionFactory.usageWrongMapper(type, muidType);
+    }
+
+    @Override
+    public String resolveUrl(Muid muidTrack) {
+        if (mappingsOfEntities.containsKey(muidTrack)) {
+            // track was registered
+            String urlTrack = super.resolveUrl(muidTrack);
+
+            Muid muidRecord = parentalRecords.get(muidTrack);
+            if (muidRecord != null) {
+                // track has parental record
+                String urlRecord = recordMapper.resolveUrl(muidRecord);
+                if (urlRecord != null) {
+                    return urlRecord + PATH_SEPARATOR + urlTrack;
+                }
+                // parental record could not be resolved
+                throw ExceptionFactory.internalUrlResolveFailed(muidRecord);
+            } else {
+                // parental record is empty
+                Muid muidBand = parentalBands.get(muidTrack);
+                if (muidBand != null) {
+                    // track has parental band
+                    String urlBand =
+                            manager.getMapper(MuidType.BAND).resolveUrl(
+                                    muidBand);
+                    if (urlBand != null) {
+                        return urlBand + PATH_SEPARATOR + EMPTY_ENTITY
+                                + PATH_SEPARATOR + urlTrack;
+                    }
+                    // parental band could not be resolved
+                    throw ExceptionFactory.internalUrlResolveFailed(muidBand);
+                } else {
+                    // parental band is empty too
+                    return EMPTY_ENTITY + PATH_SEPARATOR + EMPTY_ENTITY
+                            + PATH_SEPARATOR + urlTrack;
+                }
+            }
+        }
+        // track is unknown
+        return null;
     }
 
     /**

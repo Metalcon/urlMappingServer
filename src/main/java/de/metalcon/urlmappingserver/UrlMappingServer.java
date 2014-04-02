@@ -130,7 +130,7 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
                 new UrlMappingRequestHandler(mappingManager);
 
         // start ZMQ communication
-        start(requestHandler);
+        //        start(requestHandler);
     }
 
     /**

@@ -128,9 +128,8 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      */
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
         if (entityUrlData.getMuid().getMuidType() != muidType) {
-            throw new IllegalArgumentException("mapper handles muid type \""
-                    + getMuidType() + "\" only (was: \""
-                    + entityUrlData.getMuid().getMuidType() + "\")");
+            throw ExceptionFactory.usageWrongMapper(entityUrlData.getMuid()
+                    .getMuidType(), muidType);
         }
 
         Set<String> mapping = createEmptyMappingSet();
@@ -159,8 +158,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
             String mapping = getPathVar(url, urlPathVarName);
             return mappingToEntity.get(mapping);
         }
-        throw new IllegalArgumentException("mapper handles muid type \""
-                + getMuidType() + "\" only (was: \"" + type + "\")");
+        throw ExceptionFactory.usageWrongMapper(type, muidType);
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.Set;
 import de.metalcon.domain.MuidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
+import de.metalcon.urlmappingserver.ExceptionFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 /**
@@ -29,9 +30,8 @@ public class TourUrlMapper extends EntityUrlMapper {
     @Override
     protected Set<String> createMapping(EntityUrlData entityUrlData) {
         if (entityUrlData.getMuid().getMuidType() != muidType) {
-            throw new IllegalArgumentException("mapper handles muid type \""
-                    + getMuidType() + "\" only (was: \""
-                    + entityUrlData.getMuid().getMuidType() + "\")");
+            throw ExceptionFactory.usageWrongMapper(entityUrlData.getMuid()
+                    .getMuidType(), muidType);
         }
 
         Set<String> newMappingsForTour = createEmptyMappingSet();

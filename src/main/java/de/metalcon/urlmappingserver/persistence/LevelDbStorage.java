@@ -69,6 +69,25 @@ public class LevelDbStorage implements PersistentStorage {
     }
 
     @Override
+    public void saveParent(long muidValue, long muidParentValue) {
+        // key: MUID
+        MUID_BUFFER.putLong(muidValue);
+        byte[] key = MUID_BUFFER.array();
+        MUID_BUFFER.clear();
+
+        // value: parental MUID
+        MUID_BUFFER.putLong(muidParentValue);
+        byte[] value = MUID_BUFFER.array();
+        MUID_BUFFER.clear();
+
+        db.put(key, value);
+
+        System.out.println("storing parent: " + muidValue + " -> "
+                + muidParentValue + " [" + new Muid(muidValue).getMuidType()
+                + "]");
+    }
+
+    @Override
     public UrlMappingPersistenceData restoreMappings() {
         Map<Muid, Set<String>> mappingsOfEntities =
                 new HashMap<Muid, Set<String>>();
@@ -76,12 +95,14 @@ public class LevelDbStorage implements PersistentStorage {
                 new HashMap<Muid, Map<String, Muid>>();
         Map<Muid, Map<String, Muid>> mappingsOfTracksOfRecord =
                 new HashMap<Muid, Map<String, Muid>>();
+        Map<Muid, Muid> parentalBands = new HashMap<Muid, Muid>();
         DBIterator iterator = db.iterator();
 
         try {
             short muidType;
             long muidParentValue;
             Muid muidParent;
+            byte[] value;
             long muidValue;
             Muid muid;
 
@@ -92,21 +113,32 @@ public class LevelDbStorage implements PersistentStorage {
             for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
                 arrayCursor = 0;
                 byte[] key = iterator.peekNext().getKey();
+                value = iterator.peekNext().getValue();
+
+                // parent entry
+                if (key.length == 8) {
+                    muid = new Muid(extractMuid(key, 0));
+                    muidParent = new Muid(extractMuid(value, 0));
+                    if (muidParent.getMuidType() == MuidType.BAND) {
+                        parentalBands.put(muid, muidParent);
+                    }
+
+                    continue;
+                }
 
                 // extract MUID type
                 muidType = extractMuidType(key, arrayCursor);
                 arrayCursor += BA_MUID_TYPE.length;
 
                 // extract parental MUID
-                muidParentValue = extractMuidParent(key, arrayCursor);
+                muidParentValue = extractMuid(key, arrayCursor);
                 arrayCursor += BA_MUID.length;
 
                 // extract mapping
                 String mapping = extractMapping(key, arrayCursor);
 
                 // deserialize MUID
-                muidValue =
-                        deserializeMuidValue(iterator.peekNext().getValue());
+                muidValue = deserializeMuidValue(value);
                 muid = new Muid(muidValue);
 
                 //                System.out.println("[" + muidType + "] " + muid + " ("
@@ -169,7 +201,8 @@ public class LevelDbStorage implements PersistentStorage {
         }
 
         return new UrlMappingPersistenceData(mappingsOfEntities,
-                mappingsOfRecordsOfBand, mappingsOfTracksOfRecord);
+                mappingsOfRecordsOfBand, mappingsOfTracksOfRecord,
+                parentalBands);
     }
 
     protected static short extractMuidType(byte[] key, int arrayCursor) {
@@ -181,7 +214,7 @@ public class LevelDbStorage implements PersistentStorage {
         return muidType;
     }
 
-    protected static long extractMuidParent(byte[] key, int arrayCursor) {
+    protected static long extractMuid(byte[] key, int arrayCursor) {
         System.arraycopy(key, arrayCursor, BA_MUID, 0, BA_MUID.length);
         return deserializeMuidValue(BA_MUID);
     }

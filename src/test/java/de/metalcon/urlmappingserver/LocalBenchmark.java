@@ -11,7 +11,7 @@ public class LocalBenchmark extends Benchmark {
     protected EntityUrlMappingManager mappingManager;
 
     public LocalBenchmark() {
-        server = new UrlMappingServer(CONFIG);
+        server = new UrlMappingServer(CONFIG, null);
         mappingManager = server.getMappingManager();
     }
 
@@ -53,11 +53,12 @@ public class LocalBenchmark extends Benchmark {
     }
 
     public static void main(String[] args) {
-        int numWrites = 10000 * 1;
+        int numWrites = 1000 * 1;
         int numReads = numWrites * 10;
 
         LocalBenchmark benchmark = new LocalBenchmark();
-        //        benchmark.benchmark(numWrites, numReads);
+        benchmark.benchmark(numWrites, numReads);
+        benchmark.cleanUp();
         benchmark.loadFromDatabase(numWrites, numReads);
         //        new LocalBenchmark().benchmark(numWrites, numReads);
         //        new LocalBenchmark().benchmarkWithoutPersistence(numWrites, numReads);

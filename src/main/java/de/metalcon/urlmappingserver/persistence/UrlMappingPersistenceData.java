@@ -19,13 +19,17 @@ public class UrlMappingPersistenceData {
 
     protected Map<Muid, Map<String, Muid>> mappingsOfTracksOfRecord;
 
+    protected Map<Muid, Muid> parentalBands;
+
     public UrlMappingPersistenceData(
             Map<Muid, Set<String>> mappingsOfEntity,
             Map<Muid, Map<String, Muid>> mappingsOfRecordsOfBand,
-            Map<Muid, Map<String, Muid>> mappingsOfTracksOfRecord) {
+            Map<Muid, Map<String, Muid>> mappingsOfTracksOfRecord,
+            Map<Muid, Muid> parentalBands) {
         this.mappingsOfEntity = mappingsOfEntity;
         this.mappingsOfRecordsOfBand = mappingsOfRecordsOfBand;
         this.mappingsOfTracksOfRecord = mappingsOfTracksOfRecord;
+        this.parentalBands = parentalBands;
     }
 
     public Map<Muid, Set<String>> getMappingsOfEntities() {
@@ -38,6 +42,10 @@ public class UrlMappingPersistenceData {
 
     public Map<Muid, Map<String, Muid>> getMappingsOfTracksOfRecord() {
         return mappingsOfTracksOfRecord;
+    }
+
+    public Map<Muid, Muid> getParentalBands() {
+        return parentalBands;
     }
 
 }
