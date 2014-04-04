@@ -1,7 +1,9 @@
 package de.metalcon.urlmappingserver.mappers.resolveUrl;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 
+import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.TrackUrlData;
 import de.metalcon.urlmappingserver.mappers.EntityFactory;
 import de.metalcon.urlmappingserver.mappers.ResolveUrlNamedEntityTest;
@@ -62,4 +64,15 @@ public abstract class ResolveUrlTrackTest extends ResolveUrlNamedEntityTest {
         checkMainMapping(track, TRACK_FACTORY.getMappingTrackNumber(track));
     }
 
+    @Override
+    protected String resolveUrl(EntityUrlData entity) {
+        String url = super.resolveUrl(entity);
+        System.out.println(url);
+        return url;
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        RUNNING = false;
+    }
 }
