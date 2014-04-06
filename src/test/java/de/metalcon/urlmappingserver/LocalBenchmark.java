@@ -3,7 +3,7 @@ package de.metalcon.urlmappingserver;
 import java.util.Map;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 public class LocalBenchmark extends Benchmark {
@@ -23,7 +23,7 @@ public class LocalBenchmark extends Benchmark {
     @Override
     protected Muid resolveMuid(
             Map<String, String> urlPathVars,
-            MuidType muidType) {
+            UidType muidType) {
         return mappingManager.resolveMuid(urlPathVars, muidType);
     }
 

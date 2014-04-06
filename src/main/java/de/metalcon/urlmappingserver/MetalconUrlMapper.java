@@ -3,7 +3,7 @@ package de.metalcon.urlmappingserver;
 import java.util.Map;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
 /**
@@ -32,7 +32,7 @@ public interface MetalconUrlMapper {
      * @return MUID registered for the URL<br>
      *         <b>null</b> if none registered
      */
-    Muid resolveMuid(Map<String, String> url, MuidType type);
+    Muid resolveMuid(Map<String, String> url, UidType type);
 
     /**
      * resolve an URL for a MUID

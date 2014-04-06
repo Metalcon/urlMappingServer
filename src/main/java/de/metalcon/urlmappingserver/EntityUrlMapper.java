@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.persistence.PersistentStorage;
 
@@ -55,7 +55,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     /**
      * type of the entities this mapper handles
      */
-    protected MuidType muidType;
+    protected UidType uidType;
 
     /**
      * empty MUID flag
@@ -82,7 +82,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * 
      * @param manager
      *            URL mapping manager to resolve other MUIDs
-     * @param muidType
+     * @param uidType
      *            type of the entities this mapper handles
      * @param allowEmptyMuid
      *            empty MUID flag
@@ -90,13 +90,13 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            name of the path variable
      */
     public EntityUrlMapper(
-            EntityUrlMappingManager manager,
-            MuidType muidType,
-            boolean allowEmptyMuid,
-            String urlPathVarName) {
+            final EntityUrlMappingManager manager,
+            final UidType uidType,
+            final boolean allowEmptyMuid,
+            final String urlPathVarName) {
         this.manager = manager;
         persistentStorage = manager.getPersistentStorage();
-        this.muidType = muidType;
+        this.uidType = uidType;
         this.allowEmptyMuid = allowEmptyMuid;
         this.urlPathVarName = urlPathVarName;
         mappingsOfEntities = new HashMap<Muid, Set<String>>();
@@ -106,8 +106,8 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     /**
      * @return type of the entities this mapper handles
      */
-    public MuidType getMuidType() {
-        return muidType;
+    public UidType getUidType() {
+        return uidType;
     }
 
     /**
@@ -120,14 +120,14 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     /**
      * check if MUID type is matching
      * 
-     * @param muidType
+     * @param uidType
      *            MUID type passed
      * @throws IllegalArgumentException
      *             if type mismatching
      */
-    protected void checkMuidType(MuidType muidType) {
-        if (muidType != this.muidType) {
-            throw ExceptionFactory.usageWrongMapper(muidType, this.muidType);
+    protected void checkUidType(final UidType uidType) {
+        if (uidType != this.uidType) {
+            throw ExceptionFactory.usageWrongMapper(uidType, this.uidType);
         }
     }
 
@@ -140,8 +140,8 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * @throws IllegalArgumentException
      *             if entity type not handled
      */
-    protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        checkMuidType(entityUrlData.getMuid().getMuidType());
+    protected Set<String> createMapping(final EntityUrlData entityUrlData) {
+        checkUidType(entityUrlData.getMuid().getType());
         Set<String> mapping = createEmptyMappingSet();
 
         // add mapping: /<entity name>
@@ -157,20 +157,20 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
     }
 
     @Override
-    public void registerMuid(EntityUrlData entityUrlData) {
+    public void registerMuid(final EntityUrlData entityUrlData) {
         registerUnregisteredMappings(entityUrlData,
                 createMapping(entityUrlData));
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        checkMuidType(type);
+    public Muid resolveMuid(final Map<String, String> url, final UidType type) {
+        checkUidType(type);
         String mapping = getPathVar(url, urlPathVarName);
         return mappingToEntity.get(mapping);
     }
 
     @Override
-    public String resolveUrl(Muid muid) {
+    public String resolveUrl(final Muid muid) {
         // TODO check MUID type
         Set<String> mappingsOfEntity = mappingsOfEntities.get(muid);
         if (mappingsOfEntity != null) {
@@ -191,8 +191,8 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *             if MUID was empty while empty MUID flag unset
      */
     protected void registerUnregisteredMappings(
-            EntityUrlData entity,
-            Set<String> newMappingsForEntity) {
+            final EntityUrlData entity,
+            final Set<String> newMappingsForEntity) {
         if (!entity.hasEmptyMuid()) {
             // add further mappings without MUID if not in use yet
             for (String mapping : newMappingsForEntity) {
@@ -206,14 +206,14 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
                 }
             }
         } else if (allowEmptyMuid) {
-            registerMapping(EMPTY_ENTITY, Muid.EMPTY_MUID);
+            registerMapping(EMPTY_ENTITY, entity.getMuid());
 
             // make mapping persistent
             if (persistentStorage != null) {
                 storeMapping(entity, EMPTY_ENTITY);
             }
         } else {
-            throw ExceptionFactory.usageEmptyMuidNotAllowed(muidType);
+            throw ExceptionFactory.usageEmptyMuidNotAllowed(uidType);
         }
     }
 
@@ -225,9 +225,10 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * @param mapping
      *            mapping to be made persistent
      */
-    protected void storeMapping(EntityUrlData entity, String mapping) {
+    protected void
+        storeMapping(final EntityUrlData entity, final String mapping) {
         // MUID can not be empty here, parental MUID remains unset
-        persistentStorage.saveMapping(entity.getMuid().getMuidType()
+        persistentStorage.saveMapping(entity.getMuid().getType()
                 .getRawIdentifier(), entity.getMuid().getValue(), mapping, 0);
     }
 
@@ -239,7 +240,7 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * @param muid
      *            MUID the mapping refers to
      */
-    protected void registerMapping(String mapping, Muid muid) {
+    protected void registerMapping(final String mapping, final Muid muid) {
         // get existing mappings of this entity
         Set<String> existingMappingsForEntity = mappingsOfEntities.get(muid);
         if (existingMappingsForEntity == null) {
@@ -264,7 +265,9 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            entity type matching to the MUID
      * @return MUID registered for the URL
      */
-    protected Muid resolveOtherMuid(Map<String, String> url, MuidType type) {
+    protected Muid resolveOtherMuid(
+            final Map<String, String> url,
+            final UidType type) {
         return manager.resolveMuid(url, type);
     }
 
@@ -275,9 +278,10 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      *            text to be converted
      * @return valid URL text
      */
-    public static String convertToUrlText(String text) {
+    public static String convertToUrlText(final String text) {
         String urlText = text;
-        // Remove non letter characters. (http://stackoverflow.com/questions/1611979/remove-all-non-word-characters-from-a-string-in-java-leaving-accented-charact)
+        // Remove non letter characters.
+        // (http://stackoverflow.com/questions/1611979/remove-all-non-word-characters-from-a-string-in-java-leaving-accented-charact)
         urlText = urlText.replaceAll("[^\\p{L}\\p{Nd} ]", "");
         // Convert whitespace to WORD_SEPERATOR
         urlText = urlText.trim();
@@ -296,7 +300,9 @@ public abstract class EntityUrlMapper implements MetalconUrlMapper {
      * @throws IllegalStateException
      *             if path variable not contained in URL
      */
-    protected static String getPathVar(Map<String, String> url, String pathVar) {
+    protected static String getPathVar(
+            final Map<String, String> url,
+            final String pathVar) {
         String value = url.get(pathVar);
         if (value != null) {
             return value;

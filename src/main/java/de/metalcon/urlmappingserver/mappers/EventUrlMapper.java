@@ -3,7 +3,7 @@ package de.metalcon.urlmappingserver.mappers;
 import java.text.SimpleDateFormat;
 import java.util.Set;
 
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -29,13 +29,13 @@ public class EventUrlMapper extends EntityUrlMapper {
      *            URL mapping manager to resolve other MUIDs
      */
     public EventUrlMapper(
-            EntityUrlMappingManager manager) {
-        super(manager, MuidType.EVENT, false, "pathEvent");
+            final EntityUrlMappingManager manager) {
+        super(manager, UidType.EVENT, false, "pathEvent");
     }
 
     @Override
-    protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        checkMuidType(entityUrlData.getMuid().getMuidType());
+    protected Set<String> createMapping(final EntityUrlData entityUrlData) {
+        checkUidType(entityUrlData.getMuid().getType());
         Set<String> newMappingsForEvent = createEmptyMappingSet();
 
         // add mapping: /<muid>

@@ -1,7 +1,7 @@
 package de.metalcon.urlmappingserver;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 
 /**
  * exception factory generating exceptions with useful error messages
@@ -12,19 +12,20 @@ import de.metalcon.domain.MuidType;
 public class ExceptionFactory {
 
     public static IllegalArgumentException usageWrongMapper(
-            MuidType muidType,
-            MuidType validType) {
+            final UidType uidType,
+            final UidType validType) {
         return new IllegalArgumentException("mapper handles muid type \""
-                + validType + "\" only (was: \"" + muidType + "\")");
+                + validType + "\" only (was: \"" + uidType + "\")");
     }
 
     public static IllegalArgumentException usageEmptyMuidNotAllowed(
-            MuidType type) {
+            final UidType type) {
         return new IllegalArgumentException("empty MUID is not allowed for "
                 + type);
     }
 
-    public static IllegalStateException internalUrlResolveFailed(Muid muid) {
+    public static IllegalStateException
+        internalUrlResolveFailed(final Muid muid) {
         return new IllegalStateException(
                 "failed to resolve URL of registered MUID " + muid);
     }

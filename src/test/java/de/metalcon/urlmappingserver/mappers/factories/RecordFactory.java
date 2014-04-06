@@ -3,7 +3,7 @@ package de.metalcon.urlmappingserver.mappers.factories;
 import java.util.Calendar;
 import java.util.Map;
 
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -24,7 +24,7 @@ public class RecordFactory extends EntityFactory {
 
     public RecordFactory(
             BandFactory bandFactory) {
-        super("pathRecord", MuidType.RECORD);
+        super("pathRecord", UidType.RECORD);
         useSameParent = false;
         useEmptyParent = false;
         this.bandFactory = bandFactory;
@@ -85,14 +85,14 @@ public class RecordFactory extends EntityFactory {
 
     @Override
     public EntityUrlData getEntityFull() {
-        return new RecordUrlData(MuidFactory.generateMuid(getMuidType()),
+        return new RecordUrlData(MuidFactory.generateMuid(getUidType()),
                 "record" + crrEntityId++, getBand(), getReleaseYear());
     }
 
     @Override
     public EntityUrlData getEntityIdentical(EntityUrlData entity) {
         RecordUrlData record = (RecordUrlData) entity;
-        return new RecordUrlData(MuidFactory.generateMuid(getMuidType()),
+        return new RecordUrlData(MuidFactory.generateMuid(getUidType()),
                 record.getName(), record.getBand(), record.getReleaseYear());
     }
 
@@ -100,7 +100,7 @@ public class RecordFactory extends EntityFactory {
      * create record having the same name like another record
      */
     public RecordUrlData getRecordSameName(RecordUrlData record) {
-        return new RecordUrlData(MuidFactory.generateMuid(getMuidType()),
+        return new RecordUrlData(MuidFactory.generateMuid(getUidType()),
                 record.getName(), getBand(), getReleaseYear());
     }
 
@@ -124,7 +124,7 @@ public class RecordFactory extends EntityFactory {
      * create copy of another record but remove release year
      */
     public RecordUrlData getRecordWoReleaseYear(RecordUrlData record) {
-        return new RecordUrlData(MuidFactory.generateMuid(getMuidType()),
+        return new RecordUrlData(MuidFactory.generateMuid(getUidType()),
                 record.getName(), record.getBand(), 0);
     }
 

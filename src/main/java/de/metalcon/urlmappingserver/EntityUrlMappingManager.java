@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.mappers.BandUrlMapper;
 import de.metalcon.urlmappingserver.mappers.CityUrlMapper;
@@ -30,27 +30,27 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
     /**
      * storage to make mapping persistent
      */
-    private PersistentStorage persistentStorage;
+    private final PersistentStorage persistentStorage;
 
-    private BandUrlMapper bandMapper;
+    private final BandUrlMapper bandMapper;
 
-    private CityUrlMapper cityMapper;
+    private final CityUrlMapper cityMapper;
 
-    private EventUrlMapper eventMapper;
+    private final EventUrlMapper eventMapper;
 
-    private GenreUrlMapper genreMapper;
+    private final GenreUrlMapper genreMapper;
 
-    private InstrumentUrlMapper instrumentMapper;
+    private final InstrumentUrlMapper instrumentMapper;
 
-    private RecordUrlMapper recordMapper;
+    private final RecordUrlMapper recordMapper;
 
-    private TourUrlMapper tourMapper;
+    private final TourUrlMapper tourMapper;
 
-    private TrackUrlMapper trackMapper;
+    private final TrackUrlMapper trackMapper;
 
-    private UserUrlMapper userMapper;
+    private final UserUrlMapper userMapper;
 
-    private VenueUrlMapper venueMapper;
+    private final VenueUrlMapper venueMapper;
 
     /**
      * create URL mapping manager for all Metalcon entities<br>
@@ -67,7 +67,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
      *            storage to make mapping persistent
      */
     public EntityUrlMappingManager(
-            PersistentStorage persistentStorage) {
+            final PersistentStorage persistentStorage) {
         this.persistentStorage = persistentStorage;
         bandMapper = new BandUrlMapper(this);
         cityMapper = new CityUrlMapper(this);
@@ -97,7 +97,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
      * @throws UnsupportedOperationException
      *             if no mapper for this entity type existing
      */
-    public EntityUrlMapper getMapper(MuidType muidType) {
+    public EntityUrlMapper getMapper(final UidType muidType) {
         switch (muidType) {
 
             case BAND:
@@ -138,18 +138,18 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
     }
 
     @Override
-    public void registerMuid(EntityUrlData urlData) {
-        getMapper(urlData.getMuid().getMuidType()).registerMuid(urlData);
+    public void registerMuid(final EntityUrlData urlData) {
+        getMapper(urlData.getMuid().getType()).registerMuid(urlData);
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, MuidType type) {
+    public Muid resolveMuid(final Map<String, String> url, final UidType type) {
         return getMapper(type).resolveMuid(url, type);
     }
 
     @Override
-    public String resolveUrl(Muid muid) {
-        return getMapper(muid.getMuidType()).resolveUrl(muid);
+    public String resolveUrl(final Muid muid) {
+        return getMapper(muid.getType()).resolveUrl(muid);
     }
 
     public void loadFromDatabase() {
@@ -167,7 +167,7 @@ public class EntityUrlMappingManager implements MetalconUrlMapper {
         // loop through all MUIDs
         for (Muid muid : mappingsOfEntities.keySet()) {
             // get correct mapper
-            mapper = getMapper(muid.getMuidType());
+            mapper = getMapper(muid.getType());
             mappingsOfEntity = mappingsOfEntities.get(muid);
 
             // register all mappings for this MUID

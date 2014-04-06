@@ -11,7 +11,7 @@ import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 
 /**
  * persistence layer based upon levelDB
@@ -47,16 +47,16 @@ public class LevelDbStorage implements PersistentStorage {
      *            levelDB to make URL mappings persistent
      */
     public LevelDbStorage(
-            DB db) {
+            final DB db) {
         this.db = db;
     }
 
     @Override
     public void saveMapping(
-            short muidType,
-            long muidValue,
-            String mapping,
-            long muidParentValue) {
+            final short muidType,
+            final long muidValue,
+            final String mapping,
+            final long muidParentValue) {
         // key: MUID type + parental MUID + mapping
         byte[] key = buildKey(muidType, muidParentValue, mapping);
 
@@ -69,7 +69,7 @@ public class LevelDbStorage implements PersistentStorage {
     }
 
     @Override
-    public void saveParent(long muidValue, long muidParentValue) {
+    public void saveParent(final long muidValue, final long muidParentValue) {
         // key: MUID
         MUID_BUFFER.putLong(muidValue);
         byte[] key = MUID_BUFFER.array().clone();
@@ -95,7 +95,7 @@ public class LevelDbStorage implements PersistentStorage {
         DBIterator iterator = db.iterator();
 
         try {
-            short muidType;
+            short uidType;
             long muidParentValue;
             Muid muidParent;
             byte[] value;
@@ -113,9 +113,9 @@ public class LevelDbStorage implements PersistentStorage {
 
                 // parent entry
                 if (key.length == 8) {
-                    muid = new Muid(extractMuid(key, 0));
-                    muidParent = new Muid(extractMuid(value, 0));
-                    if (muidParent.getMuidType() == MuidType.BAND) {
+                    muid = Muid.createFromID(extractMuid(key, 0));
+                    muidParent = Muid.createFromID(extractMuid(value, 0));
+                    if (muidParent.getType() == UidType.BAND) {
                         parentalBands.put(muid, muidParent);
                     }
 
@@ -123,7 +123,7 @@ public class LevelDbStorage implements PersistentStorage {
                 }
 
                 // extract MUID type
-                muidType = extractMuidType(key, arrayCursor);
+                uidType = extractUidType(key, arrayCursor);
                 arrayCursor += BA_MUID_TYPE.length;
 
                 // extract parental MUID
@@ -135,21 +135,21 @@ public class LevelDbStorage implements PersistentStorage {
 
                 // deserialize MUID
                 muidValue = deserializeMuidValue(value);
-                muid = new Muid(muidValue);
+                muid = Muid.createFromID(muidValue);
 
                 // check if empty MUID and allowed
-                if (muidType != MuidType.BAND.getRawIdentifier()
-                        && muidType != MuidType.RECORD.getRawIdentifier()
-                        && muid.equals(Muid.EMPTY_MUID)) {
+                if (uidType != UidType.BAND.getRawIdentifier()
+                        && uidType != UidType.RECORD.getRawIdentifier()
+                        && muid.isEmpty()) {
                     throw new IllegalStateException(
                             "empty MUID not allowed for MUID type with value \""
-                                    + muidType + "\"");
+                                    + uidType + "\"");
                 }
 
                 // add links between mappings
-                if (muidType == MuidType.RECORD.getRawIdentifier()) {
+                if (uidType == UidType.RECORD.getRawIdentifier()) {
                     // band -> record mapping
-                    muidParent = new Muid(muidParentValue);
+                    muidParent = Muid.createFromID(muidParentValue);
                     mappingsToEntity = mappingsOfRecordsOfBand.get(muidParent);
                     if (mappingsToEntity == null) {
                         mappingsToEntity = new HashMap<String, Muid>();
@@ -159,9 +159,9 @@ public class LevelDbStorage implements PersistentStorage {
 
                     // mapping -> record MUID
                     mappingsToEntity.put(mapping, muid);
-                } else if (muidType == MuidType.TRACK.getRawIdentifier()) {
+                } else if (uidType == UidType.TRACK.getRawIdentifier()) {
                     // record -> track mapping
-                    muidParent = new Muid(muidParentValue);
+                    muidParent = Muid.createFromID(muidParentValue);
                     mappingsToEntity = mappingsOfTracksOfRecord.get(muidParent);
                     if (mappingsToEntity == null) {
                         mappingsToEntity = new HashMap<String, Muid>();
@@ -198,21 +198,23 @@ public class LevelDbStorage implements PersistentStorage {
                 parentalBands);
     }
 
-    protected static short extractMuidType(byte[] key, int arrayCursor) {
+    protected static short extractUidType(
+            final byte[] key,
+            final int arrayCursor) {
         System.arraycopy(key, arrayCursor, BA_MUID_TYPE, 0, BA_MUID_TYPE.length);
         MUID_TYPE_BUFFER.put(BA_MUID_TYPE);
         MUID_TYPE_BUFFER.flip();
-        short muidType = MUID_TYPE_BUFFER.getShort();
+        short uidType = MUID_TYPE_BUFFER.getShort();
         MUID_TYPE_BUFFER.clear();
-        return muidType;
+        return uidType;
     }
 
-    protected static long extractMuid(byte[] key, int arrayCursor) {
+    protected static long extractMuid(final byte[] key, final int arrayCursor) {
         System.arraycopy(key, arrayCursor, BA_MUID, 0, BA_MUID.length);
         return deserializeMuidValue(BA_MUID);
     }
 
-    protected static long deserializeMuidValue(byte[] baMuidValue) {
+    protected static long deserializeMuidValue(final byte[] baMuidValue) {
         MUID_BUFFER.put(baMuidValue);
         MUID_BUFFER.flip();
         long muidValue = MUID_BUFFER.getLong();
@@ -220,16 +222,18 @@ public class LevelDbStorage implements PersistentStorage {
         return muidValue;
     }
 
-    protected static String extractMapping(byte[] key, int arrayCursor) {
+    protected static String extractMapping(
+            final byte[] key,
+            final int arrayCursor) {
         byte[] baMapping = new byte[key.length - arrayCursor];
         System.arraycopy(key, arrayCursor, baMapping, 0, baMapping.length);
         return asString(baMapping);
     }
 
     protected static byte[] buildKey(
-            short muidType,
-            long muidParentValue,
-            String mapping) {
+            final short muidType,
+            final long muidParentValue,
+            final String mapping) {
         // prepare key parts
         int keyLength = 10;
         byte[] baMapping = mapping.getBytes();
@@ -253,7 +257,7 @@ public class LevelDbStorage implements PersistentStorage {
         return key;
     }
 
-    protected static String asString(byte[] bytes) {
+    protected static String asString(final byte[] bytes) {
         return new String(bytes);
     }
 }

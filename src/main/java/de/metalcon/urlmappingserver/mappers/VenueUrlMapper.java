@@ -2,7 +2,7 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Set;
 
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
@@ -24,13 +24,13 @@ public class VenueUrlMapper extends EntityUrlMapper {
      *            URL mapping manager to resolve other MUIDs
      */
     public VenueUrlMapper(
-            EntityUrlMappingManager manager) {
-        super(manager, MuidType.VENUE, false, "pathVenue");
+            final EntityUrlMappingManager manager) {
+        super(manager, UidType.VENUE, false, "pathVenue");
     }
 
     @Override
-    protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        checkMuidType(entityUrlData.getMuid().getMuidType());
+    protected Set<String> createMapping(final EntityUrlData entityUrlData) {
+        checkUidType(entityUrlData.getMuid().getType());
         Set<String> newMappingsForVenue = createEmptyMappingSet();
         VenueUrlData venueUrlData = (VenueUrlData) entityUrlData;
 

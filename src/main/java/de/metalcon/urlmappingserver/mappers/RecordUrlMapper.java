@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.ExceptionFactory;
@@ -46,9 +46,9 @@ public class RecordUrlMapper extends EntityUrlMapper {
      *            mapper for band entities to ensure parental mapping tree
      */
     public RecordUrlMapper(
-            EntityUrlMappingManager manager,
-            BandUrlMapper bandMapper) {
-        super(manager, MuidType.RECORD, true, "pathRecord");
+            final EntityUrlMappingManager manager,
+            final BandUrlMapper bandMapper) {
+        super(manager, UidType.RECORD, true, "pathRecord");
         this.bandMapper = bandMapper;
         mappingsToRecordsOfBands = new HashMap<Muid, Map<String, Muid>>();
         parentalBands = new HashMap<Muid, Muid>();
@@ -61,7 +61,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
      *            record to be searched for
      * @return true - if record is registered
      */
-    public boolean checkForRecord(RecordUrlData record) {
+    public boolean checkForRecord(final RecordUrlData record) {
         if (!record.hasEmptyMuid()) {
             // MUID is unique across all bands -> must exist
             return mappingsOfEntities.containsKey(record.getMuid());
@@ -77,7 +77,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     public void setMappingsOfRecordsOfBand(
-            Map<Muid, Map<String, Muid>> mappingsOfRecordsOfBand) {
+            final Map<Muid, Map<String, Muid>> mappingsOfRecordsOfBand) {
         mappingsToRecordsOfBands = mappingsOfRecordsOfBand;
 
         Map<String, Muid> mappingsToRecord;
@@ -93,7 +93,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
                 muidRecord = mappingsToRecord.get(recordMapping);
 
                 // register parental band
-                if (muidRecord.getID() != 0) {
+                if (!muidRecord.isEmpty()) {
                     parentalBands.put(muidRecord, muidBand);
                 }
 
@@ -109,7 +109,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    protected Set<String> createMapping(EntityUrlData entityUrlData) {
+    protected Set<String> createMapping(final EntityUrlData entityUrlData) {
         // TODO check MUID type
         RecordUrlData recordUrlData = (RecordUrlData) entityUrlData;
 
@@ -155,21 +155,22 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    protected void storeMapping(EntityUrlData entity, String mapping) {
+    protected void
+        storeMapping(final EntityUrlData entity, final String mapping) {
         // MUID can be empty here, parental band MUID gets set
         RecordUrlData record = (RecordUrlData) entity;
-        persistentStorage.saveMapping(MuidType.RECORD.getRawIdentifier(),
-                entity.getMuid().getValue(), mapping, record.getBand()
-                        .getMuid().getValue());
+        persistentStorage.saveMapping(UidType.RECORD.getRawIdentifier(), entity
+                .getMuid().getValue(), mapping, record.getBand().getMuid()
+                .getValue());
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        checkMuidType(type);
+    public Muid resolveMuid(final Map<String, String> url, final UidType type) {
+        checkUidType(type);
         String recordMapping = getPathVar(url, urlPathVarName);
 
         // resolve band
-        Muid band = resolveOtherMuid(url, MuidType.BAND);
+        Muid band = resolveOtherMuid(url, UidType.BAND);
         if (band != null) {
             // resolve record
             if (mappingsToRecordsOfBands.containsKey(band)) {
@@ -182,7 +183,7 @@ public class RecordUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    public String resolveUrl(Muid muidRecord) {
+    public String resolveUrl(final Muid muidRecord) {
         // TODO: check MUID type
         if (mappingsOfEntities.containsKey(muidRecord)) {
             // record was registered

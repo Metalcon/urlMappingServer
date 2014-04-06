@@ -2,7 +2,7 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Set;
 
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
@@ -24,7 +24,7 @@ public class BandUrlMapper extends EntityUrlMapper {
      */
     public BandUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, MuidType.BAND, true, "pathBand");
+        super(manager, UidType.BAND, true, "pathBand");
     }
 
     /**

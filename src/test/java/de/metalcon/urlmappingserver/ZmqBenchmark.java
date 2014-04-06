@@ -13,7 +13,7 @@ import org.zeromq.ZMQ;
 import de.metalcon.api.responses.Response;
 import de.metalcon.api.responses.errors.ErrorResponse;
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRegistrationRequest;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRequest;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingResolveRequest;
@@ -54,7 +54,7 @@ public class ZmqBenchmark extends Benchmark {
                     public void onSuccess(Response response) {
                         if (response instanceof ErrorResponse) {
                             fail("failed to register "
-                                    + entity.getMuid().getMuidType() + " \""
+                                    + entity.getMuid().getType() + " \""
                                     + entity.getName() + "\" ("
                                     + entity.getMuid() + ")");
                         }
@@ -67,7 +67,7 @@ public class ZmqBenchmark extends Benchmark {
     @Override
     protected Muid resolveMuid(
             final Map<String, String> urlPathVars,
-            final MuidType muidType) {
+            final UidType muidType) {
         final Muid[] muid = new Muid[1];
         dispatcher.execute(new UrlMappingResolveRequest(urlPathVars, muidType),
                 new Callback<Response>() {

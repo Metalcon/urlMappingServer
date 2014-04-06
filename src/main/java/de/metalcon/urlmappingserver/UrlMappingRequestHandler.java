@@ -18,15 +18,15 @@ public class UrlMappingRequestHandler implements
 
     private static final long serialVersionUID = -6731628161635337159L;
 
-    private EntityUrlMappingManager urlMappingManager;
+    private final EntityUrlMappingManager urlMappingManager;
 
     public UrlMappingRequestHandler(
-            EntityUrlMappingManager urlMappingManager) {
+            final EntityUrlMappingManager urlMappingManager) {
         this.urlMappingManager = urlMappingManager;
     }
 
     @Override
-    public Response handleRequest(UrlMappingRequest request) {
+    public Response handleRequest(final UrlMappingRequest request) {
         if (request instanceof UrlMappingRegistrationRequest) {
             return handleRegistrationRequest((UrlMappingRegistrationRequest) request);
         } else if (request instanceof UrlMappingResolveRequest) {
@@ -38,24 +38,24 @@ public class UrlMappingRequestHandler implements
     }
 
     private Response handleRegistrationRequest(
-            UrlMappingRegistrationRequest request) {
+            final UrlMappingRegistrationRequest request) {
         EntityUrlData urlData = request.getUrlData();
 
         try {
             urlMappingManager.registerMuid(urlData);
         } catch (MetalconRuntimeException e) {
             return new UsageErrorResponse("unknown entity type \""
-                    + urlData.getMuid().getMuidType() + "\"",
-                    "use a valid MUID");
+                    + urlData.getMuid().getType() + "\"", "use a valid MUID");
         }
 
         return new SuccessResponse();
     }
 
-    private Response handleResolveRequest(UrlMappingResolveRequest request) {
+    private Response
+        handleResolveRequest(final UrlMappingResolveRequest request) {
         Muid muid =
                 urlMappingManager.resolveMuid(request.getUrlPathVars(),
-                        request.getMuidType());
+                        request.getUidType());
 
         if (muid != null) {
             return new MuidResolvedResponse(muid);

@@ -2,7 +2,7 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Set;
 
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -22,13 +22,13 @@ public class TourUrlMapper extends EntityUrlMapper {
      *            URL mapping manager to resolve other MUIDs
      */
     public TourUrlMapper(
-            EntityUrlMappingManager manager) {
-        super(manager, MuidType.TOUR, false, "pathTour");
+            final EntityUrlMappingManager manager) {
+        super(manager, UidType.TOUR, false, "pathTour");
     }
 
     @Override
-    protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        checkMuidType(entityUrlData.getMuid().getMuidType());
+    protected Set<String> createMapping(final EntityUrlData entityUrlData) {
+        checkUidType(entityUrlData.getMuid().getType());
         Set<String> newMappingsForTour = createEmptyMappingSet();
 
         // add mapping: /<muid>

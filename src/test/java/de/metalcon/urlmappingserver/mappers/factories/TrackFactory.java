@@ -2,7 +2,7 @@ package de.metalcon.urlmappingserver.mappers.factories;
 
 import java.util.Map;
 
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
@@ -27,7 +27,7 @@ public class TrackFactory extends EntityFactory {
     public TrackFactory(
             BandFactory bandFactory,
             RecordFactory recordFactory) {
-        super("pathTrack", MuidType.TRACK);
+        super("pathTrack", UidType.TRACK);
         useSameParent = false;
         useEmptyParent = false;
         this.bandFactory = bandFactory;
@@ -81,7 +81,7 @@ public class TrackFactory extends EntityFactory {
             record = null;
         }
 
-        return new TrackUrlData(MuidFactory.generateMuid(getMuidType()),
+        return new TrackUrlData(MuidFactory.generateMuid(getUidType()),
                 "track" + crrEntityId++, band, record, getTrackNumber());
     }
 
@@ -94,7 +94,7 @@ public class TrackFactory extends EntityFactory {
             record = null;
         }
 
-        return new TrackUrlData(MuidFactory.generateMuid(getMuidType()),
+        return new TrackUrlData(MuidFactory.generateMuid(getUidType()),
                 track.getName(), band, record, track.getTrackNumber());
     }
 
@@ -104,7 +104,7 @@ public class TrackFactory extends EntityFactory {
         if (band != null) {
             record = null;
         }
-        return new TrackUrlData(MuidFactory.generateMuid(getMuidType()),
+        return new TrackUrlData(MuidFactory.generateMuid(getUidType()),
                 track.getName(), band, record, getTrackNumber());
     }
 
@@ -114,7 +114,7 @@ public class TrackFactory extends EntityFactory {
         if (band != null) {
             record = null;
         }
-        return new TrackUrlData(MuidFactory.generateMuid(getMuidType()),
+        return new TrackUrlData(MuidFactory.generateMuid(getUidType()),
                 track.getName(), band, record, 0);
     }
 

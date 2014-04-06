@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Random;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.CityUrlData;
@@ -42,14 +42,14 @@ public abstract class Benchmark {
 
     abstract protected Muid resolveMuid(
             Map<String, String> urlPathVars,
-            MuidType muidType);
+            UidType muidType);
 
-    protected void benchmark(int numWrites, int numReads) {
+    protected void benchmark(final int numWrites, final int numReads) {
         benchmarkWrite(numWrites);
         benchmarkRead(numReads);
     }
 
-    protected void benchmarkWrite(long totalWrites) {
+    protected void benchmarkWrite(final long totalWrites) {
         short type = 9;
         long crrNano = System.nanoTime();
 
@@ -107,7 +107,7 @@ public abstract class Benchmark {
                 / (crrMs / (double) totalWrites));
     }
 
-    protected void benchmarkRead(long totalReads) {
+    protected void benchmarkRead(final long totalReads) {
         long read = 0;
         long crrNano = System.nanoTime();
         Muid muid;
@@ -126,11 +126,11 @@ public abstract class Benchmark {
 
                 // resolve MUID
                 url = generateUrl(entity);
-                muid = resolveMuid(url, entity.getMuid().getMuidType());
+                muid = resolveMuid(url, entity.getMuid().getType());
 
                 if (muid == null) {
                     System.err.println("failed to resolve MUID ("
-                            + entity.getMuid().getMuidType() + ") from ");
+                            + entity.getMuid().getType() + ") from ");
                     for (String pathVar : url.keySet()) {
                         System.out.println(pathVar + " = " + url.get(pathVar));
                     }
@@ -162,13 +162,13 @@ public abstract class Benchmark {
         System.out.println("closed");
     }
 
-    protected static EntityUrlData generatedData(short type) {
-        MuidType muidType = MuidType.parseShort(type);
-        Muid muid = MuidFactory.generateMuid(muidType);
+    protected static EntityUrlData generatedData(final short type) {
+        UidType uidType = UidType.parseShort(type);
+        Muid muid = MuidFactory.generateMuid(uidType);
         String name = "id" + ID;
         ID += 1;
 
-        switch (muidType) {
+        switch (uidType) {
             case BAND:
                 return new BandUrlData(muid, name);
             case CITY:
@@ -186,7 +186,7 @@ public abstract class Benchmark {
                             1914 + (int) (ID % 100));
                 }
                 return new RecordUrlData(muid, name,
-                        (BandUrlData) generatedData(MuidType.BAND
+                        (BandUrlData) generatedData(UidType.BAND
                                 .getRawIdentifier()), 1914 + (int) (ID % 100));
             case TOUR:
                 return new TourUrlData(muid);
@@ -194,7 +194,7 @@ public abstract class Benchmark {
                 // 10% of all tracks have unknown record
                 if (RAND.nextInt(100) < 10) {
                     return new TrackUrlData(muid, name,
-                            (BandUrlData) generatedData(MuidType.BAND
+                            (BandUrlData) generatedData(UidType.BAND
                                     .getRawIdentifier()), null,
                             1 + (int) (ID % 30));
                 }
@@ -205,27 +205,29 @@ public abstract class Benchmark {
                 }
                 // 10% of remaining 80% of all records have unknown band
                 return new TrackUrlData(muid, name, null,
-                        (RecordUrlData) generatedData(MuidType.RECORD
+                        (RecordUrlData) generatedData(UidType.RECORD
                                 .getRawIdentifier()), 1 + (int) (ID % 30));
             case USER:
                 return new UserUrlData(muid, String.valueOf(ID),
                         String.valueOf(ID));
             case VENUE:
                 return new VenueUrlData(muid, name,
-                        (CityUrlData) generatedData(MuidType.CITY
+                        (CityUrlData) generatedData(UidType.CITY
                                 .getRawIdentifier()));
+            default:
+                throw new UnsupportedOperationException("unknown MUID type");
         }
 
-        throw new UnsupportedOperationException("unknown MUID type");
     }
 
-    protected static Map<String, String> generateUrl(EntityUrlData entity) {
+    protected static Map<String, String>
+        generateUrl(final EntityUrlData entity) {
         Map<String, String> pathVars = new HashMap<String, String>();
         String mapping = entity.getName() + "-" + entity.getMuid();
 
         BandUrlData band;
         RecordUrlData record;
-        switch (entity.getMuid().getMuidType()) {
+        switch (entity.getMuid().getType()) {
 
             case BAND:
                 pathVars.put("pathBand", mapping);

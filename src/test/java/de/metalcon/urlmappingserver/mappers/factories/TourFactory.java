@@ -1,6 +1,6 @@
 package de.metalcon.urlmappingserver.mappers.factories;
 
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.testing.MuidFactory;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.TourUrlData;
@@ -9,7 +9,7 @@ import de.metalcon.urlmappingserver.mappers.EntityFactory;
 public class TourFactory extends EntityFactory {
 
     public TourFactory() {
-        super("pathTour", MuidType.TOUR);
+        super("pathTour", UidType.TOUR);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class TourFactory extends EntityFactory {
 
     @Override
     public EntityUrlData getEntityFull() {
-        return new TourUrlData(MuidFactory.generateMuid(getMuidType()));
+        return new TourUrlData(MuidFactory.generateMuid(getUidType()));
     }
 
     @Override

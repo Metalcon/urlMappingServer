@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.metalcon.domain.Muid;
-import de.metalcon.domain.MuidType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.ExceptionFactory;
@@ -52,9 +52,9 @@ public class TrackUrlMapper extends EntityUrlMapper {
      *            mapper for record entities to ensure parental mapping tree
      */
     public TrackUrlMapper(
-            EntityUrlMappingManager manager,
-            RecordUrlMapper recordMapper) {
-        super(manager, MuidType.TRACK, false, "pathTrack");
+            final EntityUrlMappingManager manager,
+            final RecordUrlMapper recordMapper) {
+        super(manager, UidType.TRACK, false, "pathTrack");
         this.recordMapper = recordMapper;
         mappingsToTracksOfRecords = new HashMap<Muid, Map<String, Muid>>();
         parentalRecords = new HashMap<Muid, Muid>();
@@ -62,8 +62,8 @@ public class TrackUrlMapper extends EntityUrlMapper {
     }
 
     public void setMappingsToTracksOfRecords(
-            Map<Muid, Map<String, Muid>> mappingsToTracksOfRecords,
-            Map<Muid, Muid> parentalBands) {
+            final Map<Muid, Map<String, Muid>> mappingsToTracksOfRecords,
+            final Map<Muid, Muid> parentalBands) {
         this.mappingsToTracksOfRecords = mappingsToTracksOfRecords;
 
         Map<String, Muid> mappingsToTrack;
@@ -84,7 +84,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
                     mappingsOfEntities.put(muidTrack, mappingsOfTrack);
 
                     // register parental record
-                    if (muidRecord.getID() != 0) {
+                    if (!muidRecord.isEmpty()) {
                         parentalRecords.put(muidTrack, muidRecord);
                     } else {
                         // register parental band
@@ -102,8 +102,8 @@ public class TrackUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        checkMuidType(entityUrlData.getMuid().getMuidType());
+    protected Set<String> createMapping(final EntityUrlData entityUrlData) {
+        checkUidType(entityUrlData.getMuid().getType());
         TrackUrlData trackUrlData = (TrackUrlData) entityUrlData;
 
         // register record if not registered yet
@@ -161,20 +161,21 @@ public class TrackUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    protected void storeMapping(EntityUrlData entity, String mapping) {
+    protected void
+        storeMapping(final EntityUrlData entity, final String mapping) {
         // MUID can not be empty here, parental record MUID gets set
         TrackUrlData track = (TrackUrlData) entity;
-        persistentStorage.saveMapping(entity.getMuid().getMuidType()
+        persistentStorage.saveMapping(entity.getMuid().getType()
                 .getRawIdentifier(), entity.getMuid().getValue(), mapping,
                 track.getRecord().getMuid().getValue());
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, MuidType type) {
-        checkMuidType(type);
+    public Muid resolveMuid(final Map<String, String> url, final UidType type) {
+        checkUidType(type);
 
         // resolve record
-        Muid record = resolveOtherMuid(url, MuidType.RECORD);
+        Muid record = resolveOtherMuid(url, UidType.RECORD);
         if (record != null) {
             // resolve track        
             String trackMapping = getPathVar(url, urlPathVarName);
@@ -190,7 +191,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
     }
 
     @Override
-    public String resolveUrl(Muid muidTrack) {
+    public String resolveUrl(final Muid muidTrack) {
         if (mappingsOfEntities.containsKey(muidTrack)) {
             // track was registered
             String urlTrack = super.resolveUrl(muidTrack);
@@ -210,8 +211,8 @@ public class TrackUrlMapper extends EntityUrlMapper {
                 if (muidBand != null) {
                     // track has parental band
                     String urlBand =
-                            manager.getMapper(MuidType.BAND).resolveUrl(
-                                    muidBand);
+                            manager.getMapper(UidType.BAND)
+                                    .resolveUrl(muidBand);
                     if (urlBand != null) {
                         return urlBand + PATH_SEPARATOR + EMPTY_ENTITY
                                 + PATH_SEPARATOR + urlTrack;
@@ -226,7 +227,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
             }
         }
         // track is unknown
-        checkMuidType(muidTrack.getMuidType());
+        checkUidType(muidTrack.getType());
         return null;
     }
 
@@ -237,7 +238,7 @@ public class TrackUrlMapper extends EntityUrlMapper {
      *            track number to be formatted
      * @return formatted track number
      */
-    protected static String formatTrackNumber(int trackNumber) {
+    protected static String formatTrackNumber(final int trackNumber) {
         // return String.format("%02d");
         return String.valueOf(trackNumber);
     }
