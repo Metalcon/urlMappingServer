@@ -2,6 +2,7 @@ package de.metalcon.urlmappingserver;
 
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.Map;
 
 import net.hh.request_dispatcher.Callback;
@@ -15,7 +16,6 @@ import de.metalcon.api.responses.errors.ErrorResponse;
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRegistrationRequest;
-import de.metalcon.urlmappingserver.api.requests.UrlMappingRequest;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingResolveRequest;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.responses.MuidResolvedResponse;
@@ -33,9 +33,8 @@ public class ZmqBenchmark extends Benchmark {
         server = new UrlMappingServer(CONFIG, context);
 
         dispatcher = new Dispatcher();
-        ZmqAdapter<UrlMappingRequest, Response> adapter =
-                new ZmqAdapter<UrlMappingRequest, Response>(context, server
-                        .getConfig().getEndpoint());
+        ZmqAdapter adapter =
+                new ZmqAdapter(context, server.getConfig().getEndpoint());
         dispatcher.registerServiceAdapter("URL_MAPPING", adapter);
         dispatcher.setDefaultService(UrlMappingRegistrationRequest.class,
                 "URL_MAPPING");
@@ -95,7 +94,11 @@ public class ZmqBenchmark extends Benchmark {
 
     @Override
     protected void cleanUp() {
-        dispatcher.close();
+        try {
+            dispatcher.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         context.close();
         super.cleanUp();
     }
