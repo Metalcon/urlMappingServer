@@ -3,7 +3,7 @@
   <parent>
     <groupId>de.metalcon</groupId>
     <artifactId>pom</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.3</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -19,17 +19,12 @@
   </repositories>
 
   <properties>
-    <!-- version of testing framework JUnit -->
-    <junit.version>4.9</junit.version>
+    <java.exec.launcherClass>de.metalcon.urlmappingserver.UrlMappingServer</java.exec.launcherClass>
 
-    <!-- version of server API -->
-    <api.version>0.4.0-SNAPSHOT</api.version>
-    <!-- version of logging tool -->
-    <slf4j.version>1.7.5</slf4j.version>
     <!-- version of levelDB -->
     <leveldb.version>1.7</leveldb.version>
-    <!-- version of ZMQ worker -->
-    <zmq.worker.version>0.4.0</zmq.worker.version>
+    <!-- version of logging tool -->
+    <slf4j.version>1.7.5</slf4j.version>
   </properties>
 
   <build>
@@ -38,26 +33,31 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-        <forkMode>pertest</forkMode>
+          <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
     </plugins>
   </build>
 
   <dependencies>
-    <!-- testing framework -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <!-- URL Mapping Server API -->
     <dependency>
       <groupId>de.metalcon</groupId>
       <artifactId>url-mapping-server-api</artifactId>
-      <version>${api.version}</version>
+      <version>${metalcon.urlMappingServer.api.version}</version>
+    </dependency>
+    <!-- ZMQ communicator to middleware -->
+    <dependency>
+      <groupId>de.metalcon</groupId>
+      <artifactId>zmq-worker-helper</artifactId>
+      <version>${metalcon.zmqWorkerHelper.version}</version>
+    </dependency>
+
+    <!-- database for persistence -->
+    <dependency>
+      <groupId>org.fusesource.leveldbjni</groupId>
+      <artifactId>leveldbjni-all</artifactId>
+      <version>${leveldb.version}</version>
     </dependency>
     <!-- logging tool -->
     <dependency>
@@ -65,17 +65,13 @@
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
-    <!-- database for persistence -->
+
+    <!-- testing framework -->
     <dependency>
-      <groupId>org.fusesource.leveldbjni</groupId>
-      <artifactId>leveldbjni-all</artifactId>
-      <version>${leveldb.version}</version>
-    </dependency>
-    <!-- ZMQ communicator to middleware -->
-    <dependency>
-      <groupId>de.metalcon</groupId>
-      <artifactId>zmq-worker</artifactId>
-      <version>${zmq.worker.version}</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
