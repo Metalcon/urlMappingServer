@@ -6,12 +6,13 @@ import de.metalcon.api.responses.SuccessResponse;
 import de.metalcon.api.responses.errors.UsageErrorResponse;
 import de.metalcon.domain.Muid;
 import de.metalcon.exceptions.MetalconRuntimeException;
-import de.metalcon.urlmappingserver.api.requests.UrlMappingRegistrationRequest;
+import de.metalcon.urlmappingserver.api.requests.ResolveMuidRequest;
+import de.metalcon.urlmappingserver.api.requests.ResolveUrlRequest;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRequest;
-import de.metalcon.urlmappingserver.api.requests.UrlMappingResolveRequest;
+import de.metalcon.urlmappingserver.api.requests.UrlRegistrationRequest;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.responses.MuidResolvedResponse;
-import de.metalcon.urlmappingserver.api.responses.UnknownMuidResponse;
+import de.metalcon.urlmappingserver.api.responses.UrlResolvedResponse;
 
 public class UrlMappingRequestHandler implements
         RequestHandler<UrlMappingRequest, Response> {
@@ -27,10 +28,12 @@ public class UrlMappingRequestHandler implements
 
     @Override
     public Response handleRequest(final UrlMappingRequest request) {
-        if (request instanceof UrlMappingRegistrationRequest) {
-            return handleRegistrationRequest((UrlMappingRegistrationRequest) request);
-        } else if (request instanceof UrlMappingResolveRequest) {
-            return handleResolveRequest((UrlMappingResolveRequest) request);
+        if (request instanceof UrlRegistrationRequest) {
+            return handleRegistrationRequest((UrlRegistrationRequest) request);
+        } else if (request instanceof ResolveUrlRequest) {
+            return handleUrlResolveRequest((ResolveUrlRequest) request);
+        } else if (request instanceof ResolveMuidRequest) {
+            return handleMuidResolveRequest((ResolveMuidRequest) request);
         }
 
         return new UsageErrorResponse("unknown request type",
@@ -38,7 +41,7 @@ public class UrlMappingRequestHandler implements
     }
 
     private Response handleRegistrationRequest(
-            final UrlMappingRegistrationRequest request) {
+            final UrlRegistrationRequest request) {
         EntityUrlData urlData = request.getUrlData();
 
         try {
@@ -51,16 +54,25 @@ public class UrlMappingRequestHandler implements
         return new SuccessResponse();
     }
 
-    private Response
-        handleResolveRequest(final UrlMappingResolveRequest request) {
+    private Response handleUrlResolveRequest(final ResolveUrlRequest request) {
         Muid muid =
                 urlMappingManager.resolveMuid(request.getUrlPathVars(),
                         request.getUidType());
 
         if (muid != null) {
-            return new MuidResolvedResponse(muid);
+            return new UrlResolvedResponse(muid);
         }
-        return new UnknownMuidResponse();
+
+        throw ExceptionFactory.usageUnknownUrl(request);
+    }
+
+    private Response handleMuidResolveRequest(final ResolveMuidRequest request) {
+        String url = urlMappingManager.resolveUrl(request.getMuid());
+        if (url != null) {
+            return new MuidResolvedResponse(url);
+        }
+
+        throw ExceptionFactory.usageUnknownMuid(request);
     }
 
 }

@@ -15,10 +15,11 @@ import de.metalcon.api.responses.Response;
 import de.metalcon.api.responses.errors.ErrorResponse;
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.UidType;
-import de.metalcon.urlmappingserver.api.requests.UrlMappingRegistrationRequest;
-import de.metalcon.urlmappingserver.api.requests.UrlMappingResolveRequest;
+import de.metalcon.urlmappingserver.api.requests.ResolveUrlRequest;
+import de.metalcon.urlmappingserver.api.requests.UrlRegistrationRequest;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.responses.MuidResolvedResponse;
+import de.metalcon.urlmappingserver.api.responses.UrlResolvedResponse;
 
 public class ZmqBenchmark extends Benchmark {
 
@@ -36,17 +37,16 @@ public class ZmqBenchmark extends Benchmark {
         ZmqAdapter adapter =
                 new ZmqAdapter(context, server.getConfig().getEndpoint());
         dispatcher.registerServiceAdapter("URL_MAPPING", adapter);
-        dispatcher.setDefaultService(UrlMappingRegistrationRequest.class,
+        dispatcher.setDefaultService(UrlRegistrationRequest.class,
                 "URL_MAPPING");
-        dispatcher.setDefaultService(UrlMappingResolveRequest.class,
-                "URL_MAPPING");
+        dispatcher.setDefaultService(ResolveUrlRequest.class, "URL_MAPPING");
         System.out.println("dispatcher sending to "
                 + server.getConfig().getEndpoint());
     }
 
     @Override
     protected void registerMuid(final EntityUrlData entity) {
-        dispatcher.execute(new UrlMappingRegistrationRequest(entity),
+        dispatcher.execute(new UrlRegistrationRequest(entity),
                 new Callback<Response>() {
 
                     @Override
@@ -68,14 +68,14 @@ public class ZmqBenchmark extends Benchmark {
             final Map<String, String> urlPathVars,
             final UidType muidType) {
         final Muid[] muid = new Muid[1];
-        dispatcher.execute(new UrlMappingResolveRequest(urlPathVars, muidType),
+        dispatcher.execute(new ResolveUrlRequest(urlPathVars, muidType),
                 new Callback<Response>() {
 
                     @Override
                     public void onSuccess(Response response) {
                         if (response instanceof MuidResolvedResponse) {
                             muid[0] =
-                                    ((MuidResolvedResponse) response).getMuid();
+                                    ((UrlResolvedResponse) response).getMuid();
                         } else {
                             fail("failed to resolve " + muidType);
                         }
