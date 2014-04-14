@@ -2,20 +2,16 @@ package de.metalcon.urlmappingserver;
 
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.util.Map;
 
 import net.hh.request_dispatcher.Callback;
 import net.hh.request_dispatcher.Dispatcher;
-import net.hh.request_dispatcher.service_adapter.ZmqAdapter;
-
-import org.zeromq.ZMQ;
-
 import de.metalcon.api.responses.Response;
 import de.metalcon.api.responses.errors.ErrorResponse;
 import de.metalcon.domain.Muid;
 import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.api.requests.ResolveUrlRequest;
+import de.metalcon.urlmappingserver.api.requests.UrlMappingRequest;
 import de.metalcon.urlmappingserver.api.requests.UrlRegistrationRequest;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.responses.MuidResolvedResponse;
@@ -23,25 +19,15 @@ import de.metalcon.urlmappingserver.api.responses.UrlResolvedResponse;
 
 public class ZmqBenchmark extends Benchmark {
 
-    protected ZMQ.Context context;
-
     protected Dispatcher dispatcher;
 
     public ZmqBenchmark() {
-        context = ZMQ.context(CONFIG.getNumIOThreads());
-
         CONFIG.endpoint = "inproc:///tmp/zmqWorker";
-        server = new UrlMappingServer(CONFIG, context);
+        server = new UrlMappingServer(CONFIG);
 
         dispatcher = new Dispatcher();
-        ZmqAdapter adapter =
-                new ZmqAdapter(context, server.getConfig().getEndpoint());
-        dispatcher.registerServiceAdapter("URL_MAPPING", adapter);
-        dispatcher.setDefaultService(UrlRegistrationRequest.class,
-                "URL_MAPPING");
-        dispatcher.setDefaultService(ResolveUrlRequest.class, "URL_MAPPING");
-        System.out.println("dispatcher sending to "
-                + server.getConfig().getEndpoint());
+        dispatcher.registerService(UrlMappingRequest.class, server.getConfig()
+                .getEndpoint());
     }
 
     @Override
@@ -94,12 +80,7 @@ public class ZmqBenchmark extends Benchmark {
 
     @Override
     protected void cleanUp() {
-        try {
-            dispatcher.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        context.close();
+        dispatcher.shutdown();
         super.cleanUp();
     }
 

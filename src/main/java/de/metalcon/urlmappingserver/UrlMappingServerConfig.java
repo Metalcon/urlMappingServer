@@ -30,19 +30,9 @@ public class UrlMappingServerConfig extends Config implements ZmqConfig {
     public String endpoint;
 
     /**
-     * number of ZMQ threads
-     */
-    public int num_zmq_threads;
-
-    /**
      * database path for levelDB
      */
     public String database_path;
-
-    @Override
-    public int getNumIOThreads() {
-        return num_zmq_threads;
-    }
 
     @Override
     public String getEndpoint() {

@@ -3,12 +3,11 @@ package de.metalcon.urlmappingserver;
 import java.io.File;
 import java.io.IOException;
 
-import net.hh.request_dispatcher.server.RequestHandler;
+import net.hh.request_dispatcher.RequestHandler;
 
 import org.fusesource.leveldbjni.JniDBFactory;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
-import org.zeromq.ZMQ;
 
 import de.metalcon.api.responses.Response;
 import de.metalcon.urlmappingserver.api.requests.UrlMappingRequest;
@@ -86,36 +85,6 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
     public UrlMappingServer(
             UrlMappingServerConfig config) {
         super(config);
-
-        // load database
-        levelDb = loadDatabase(config.database_path);
-        if (levelDb == null) {
-            throw new IllegalStateException("failed to load database");
-        }
-
-        // initialize request handler
-        PersistentStorage persistentStorage = new LevelDbStorage(levelDb);
-        mappingManager = new EntityUrlMappingManager(persistentStorage);
-        RequestHandler<UrlMappingRequest, Response> requestHandler =
-                new UrlMappingRequestHandler(mappingManager);
-
-        // start ZMQ communication
-        start(requestHandler);
-    }
-
-    /**
-     * creates and startes URL mapping server<br>
-     * has its own ZMQ worker thread
-     * 
-     * @param config
-     *            URL mapping server configuration object
-     * @param context
-     *            ZMQ context the server will live in
-     */
-    public UrlMappingServer(
-            UrlMappingServerConfig config,
-            ZMQ.Context context) {
-        super(config, context);
 
         // load database
         levelDb = loadDatabase(config.database_path);

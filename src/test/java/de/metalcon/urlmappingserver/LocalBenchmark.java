@@ -11,7 +11,7 @@ public class LocalBenchmark extends Benchmark {
     protected EntityUrlMappingManager mappingManager;
 
     public LocalBenchmark() {
-        server = new UrlMappingServer(CONFIG, null);
+        server = new UrlMappingServer(CONFIG);
         mappingManager = server.getMappingManager();
     }
 
@@ -21,9 +21,8 @@ public class LocalBenchmark extends Benchmark {
     }
 
     @Override
-    protected Muid resolveMuid(
-            Map<String, String> urlPathVars,
-            UidType muidType) {
+    protected Muid
+        resolveMuid(Map<String, String> urlPathVars, UidType muidType) {
         return mappingManager.resolveMuid(urlPathVars, muidType);
     }
 
@@ -31,7 +30,7 @@ public class LocalBenchmark extends Benchmark {
         // benchmark restart
         long crrNano = System.nanoTime();
 
-        server = new UrlMappingServer(CONFIG, null);
+        server = new UrlMappingServer(CONFIG);
         server.loadFromDatabase();
 
         crrNano = System.nanoTime() - crrNano;
