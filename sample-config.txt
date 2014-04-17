@@ -1,3 +1,2 @@
 endpoint = tcp://127.0.0.1:12666
-num_zmq_threads = 1
 database_path = /etc/urlMappingServer/db
