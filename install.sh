@@ -8,13 +8,14 @@ then
 fi
 
 source $configFile
+CONFIG_NAME="config.txt"
 
 # check for server config
-if [ ! -e "config.txt" ]
+if [ ! -e "$CONFIG_NAME" ]
 then
-	echo "URL mapping server config not found: config.txt"
+	echo "URL mapping server config not found: \"$CONFIG_NAME\""
 	echo "edit \"sample-config.txt\" to match your needs and do"
-	echo "cp sample-config.txt config.txt"
+	echo "cp sample-config.txt $CONFIG_NAME"
 	exit
 fi
 
@@ -34,6 +35,6 @@ echo "set directory rights to \"$SERVER_DIR_RIGHTS\""
 rm -rf $SERVER_DIR/*
 echo "server directory cleaned"
 
-cp config.txt $CONFIG_PATH
+cp $CONFIG_NAME $CONFIG_PATH
 echo "server config is \"$CONFIG_PATH\""
 
