@@ -1,2 +1,2 @@
 endpoint = tcp://127.0.0.1:12666
-database_path = /etc/urlMappingServer/db
+database_path = /usr/share/metalcon/urlMappingServer/db
