@@ -4,7 +4,7 @@ configFile="installConfig.sh"
 if [ ! -e "$configFile" ]
 then
         echo "Installation config not found: $configFile"
-        exit
+        exit 1
 fi
 
 source $configFile
@@ -16,7 +16,7 @@ then
 	echo "URL mapping server config not found: \"$CONFIG_NAME\""
 	echo "edit \"sample-config.txt\" to match your needs and do"
 	echo "cp sample-config.txt $CONFIG_NAME"
-	exit
+	exit 1
 fi
 
 echo "server directory is \"$SERVER_DIR\""
