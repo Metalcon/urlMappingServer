@@ -24,10 +24,12 @@ public class UrlMappingRequestHandler implements
     public UrlMappingRequestHandler(
             final EntityUrlMappingManager urlMappingManager) {
         this.urlMappingManager = urlMappingManager;
+        System.out.println("start request handler CONSTRUCTOR");
     }
 
     @Override
     public Response handleRequest(final UrlMappingRequest request) {
+        System.out.println("received request: " + request.toString());
         if (request instanceof UrlRegistrationRequest) {
             return handleRegistrationRequest((UrlRegistrationRequest) request);
         } else if (request instanceof ResolveUrlRequest) {
@@ -46,6 +48,7 @@ public class UrlMappingRequestHandler implements
 
         try {
             urlMappingManager.registerMuid(urlData);
+            System.out.println("\t registration request:" + urlData.getName());
         } catch (MetalconRuntimeException e) {
             return new UsageErrorResponse("unknown entity type \""
                     + urlData.getMuid().getType() + "\"", "use a valid MUID");
