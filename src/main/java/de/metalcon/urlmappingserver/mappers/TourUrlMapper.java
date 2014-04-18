@@ -2,12 +2,17 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Set;
 
-import de.metalcon.domain.EntityType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
-import de.metalcon.urlmappingserver.api.requests.registration.TourUrlData;
 
+/**
+ * mapper for tour entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class TourUrlMapper extends EntityUrlMapper {
 
     /**
@@ -17,22 +22,18 @@ public class TourUrlMapper extends EntityUrlMapper {
      *            URL mapping manager to resolve other MUIDs
      */
     public TourUrlMapper(
-            EntityUrlMappingManager manager) {
-        super(manager, EntityType.TOUR, "pathTour");
+            final EntityUrlMappingManager manager) {
+        super(manager, UidType.TOUR, false, "pathTour");
     }
 
     @Override
-    protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        Set<String> newMappingsForTour = super.createMapping(entityUrlData);
-        TourUrlData tourUrlData = (TourUrlData) entityUrlData;
+    protected Set<String> createMapping(final EntityUrlData entityUrlData) {
+        checkUidType(entityUrlData.getMuid().getType());
+        Set<String> newMappingsForTour = createEmptyMappingSet();
 
-        // add mapping: /<tour year>-<tour name>
-        int year = tourUrlData.getYear();
-        if (year != 0) {
-            String sYear = String.valueOf(year);
-            newMappingsForTour.add(sYear + WORD_SEPERATOR
-                    + convertToUrlText(tourUrlData.getName()));
-        }
+        // add mapping: /<muid>
+        String uniqueMapping = entityUrlData.getMuid().toString();
+        newMappingsForTour.add(uniqueMapping);
 
         return newMappingsForTour;
     }

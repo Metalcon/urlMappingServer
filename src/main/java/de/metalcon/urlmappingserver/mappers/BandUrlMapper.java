@@ -1,12 +1,19 @@
 package de.metalcon.urlmappingserver.mappers;
 
-import java.util.Map;
+import java.util.Set;
 
-import de.metalcon.domain.EntityType;
-import de.metalcon.domain.Muid;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
+import de.metalcon.urlmappingserver.api.requests.registration.BandUrlData;
+import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 
+/**
+ * mapper for band entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class BandUrlMapper extends EntityUrlMapper {
 
     /**
@@ -17,19 +24,27 @@ public class BandUrlMapper extends EntityUrlMapper {
      */
     public BandUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.BAND, "pathBand");
+        super(manager, UidType.BAND, true, "pathBand");
+    }
+
+    /**
+     * check if a band is registered
+     * 
+     * @param band
+     *            band URL information
+     * @return true - if the band is registered and thus can be resolved<br>
+     *         false otherwise
+     */
+    public boolean checkForBand(BandUrlData band) {
+        return mappingsOfEntities.containsKey(band.getMuid());
     }
 
     @Override
-    public Muid resolveMuid(Map<String, String> url, EntityType type) {
-        String bandMapping = getPathVar(url, urlPathVarName);
-
-        // allow empty MUIDs to access specific records and below
-        if (bandMapping.equals(EMPTY_ENTITY)) {
-            return Muid.EMPTY_MUID;
+    protected Set<String> createMapping(EntityUrlData entityUrlData) {
+        if (!entityUrlData.hasEmptyMuid()) {
+            return super.createMapping(entityUrlData);
         }
-
-        return mappingToEntity.get(bandMapping);
+        return null;
     }
 
 }

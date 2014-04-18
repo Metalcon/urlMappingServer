@@ -1,9 +1,15 @@
 package de.metalcon.urlmappingserver.mappers;
 
-import de.metalcon.domain.EntityType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 
+/**
+ * mapper for instrument entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class InstrumentUrlMapper extends EntityUrlMapper {
 
     /**
@@ -14,7 +20,7 @@ public class InstrumentUrlMapper extends EntityUrlMapper {
      */
     public InstrumentUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.INSTRUMENT, "pathInstrument");
+        super(manager, UidType.INSTRUMENT, false, "pathInstrument");
     }
 
 }

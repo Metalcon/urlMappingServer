@@ -1,15 +1,19 @@
 package de.metalcon.urlmappingserver.mappers;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Set;
 
-import de.metalcon.domain.EntityType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
-import de.metalcon.urlmappingserver.api.requests.registration.EventUrlData;
 
+/**
+ * mapper for event entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class EventUrlMapper extends EntityUrlMapper {
 
     /**
@@ -25,24 +29,19 @@ public class EventUrlMapper extends EntityUrlMapper {
      *            URL mapping manager to resolve other MUIDs
      */
     public EventUrlMapper(
-            EntityUrlMappingManager manager) {
-        super(manager, EntityType.EVENT, "pathEvent");
+            final EntityUrlMappingManager manager) {
+        super(manager, UidType.EVENT, false, "pathEvent");
     }
 
     @Override
-    protected Set<String> createMapping(EntityUrlData entityUrlData) {
-        Set<String> newMappingsForEvent = super.createMapping(entityUrlData);
-        EventUrlData eventUrlData = (EventUrlData) entityUrlData;
+    protected Set<String> createMapping(final EntityUrlData entityUrlData) {
+        checkUidType(entityUrlData.getMuid().getType());
+        Set<String> newMappingsForEvent = createEmptyMappingSet();
 
-        // add mapping: /<event date>-<event name>
-        Date date = eventUrlData.getDate();
-        if (date != null) {
-            String sDate = DATE_FORMATTER.format(date);
-            newMappingsForEvent.add(sDate + WORD_SEPERATOR
-                    + convertToUrlText(eventUrlData.getName()));
-        }
+        // add mapping: /<muid>
+        String uniqueMapping = entityUrlData.getMuid().toString();
+        newMappingsForEvent.add(uniqueMapping);
 
         return newMappingsForEvent;
     }
-
 }

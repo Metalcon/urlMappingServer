@@ -2,12 +2,18 @@ package de.metalcon.urlmappingserver.mappers;
 
 import java.util.Set;
 
-import de.metalcon.domain.EntityType;
+import de.metalcon.domain.UidType;
 import de.metalcon.urlmappingserver.EntityUrlMapper;
 import de.metalcon.urlmappingserver.EntityUrlMappingManager;
 import de.metalcon.urlmappingserver.api.requests.registration.EntityUrlData;
 import de.metalcon.urlmappingserver.api.requests.registration.UserUrlData;
 
+/**
+ * mapper for user entities
+ * 
+ * @author sebschlicht
+ * 
+ */
 public class UserUrlMapper extends EntityUrlMapper {
 
     /**
@@ -18,7 +24,7 @@ public class UserUrlMapper extends EntityUrlMapper {
      */
     public UserUrlMapper(
             EntityUrlMappingManager manager) {
-        super(manager, EntityType.USER, "pathUser");
+        super(manager, UidType.USER, false, "pathUser");
     }
 
     @Override
@@ -29,7 +35,7 @@ public class UserUrlMapper extends EntityUrlMapper {
         // add mapping: /<user's first name>-<user's last name>
         String firstName = convertToUrlText(userUrlData.getFirstName());
         String lastName = convertToUrlText(userUrlData.getLastName());
-        newMappingsForUser.add(firstName + WORD_SEPERATOR + lastName);
+        newMappingsForUser.add(firstName + WORD_SEPARATOR + lastName);
 
         return newMappingsForUser;
     }
