@@ -27,7 +27,7 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
      * default value for configuration file path
      */
     protected static final String DEFAULT_CONFIG_PATH =
-            "src/main/resources/test.config";
+            "/usr/share/metalcon/urlMappingServer/config.txt";
 
     /**
      * URL mapping server configuration
