@@ -95,11 +95,16 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
         // initialize request handler
         PersistentStorage persistentStorage = new LevelDbStorage(levelDb);
         mappingManager = new EntityUrlMappingManager(persistentStorage);
+        System.out.println("start request handler");
         RequestHandler<UrlMappingRequest, Response> requestHandler =
                 new UrlMappingRequestHandler(mappingManager);
 
         // start ZMQ communication
-        start(requestHandler);
+        if (start(requestHandler)) {
+            System.out.println("started all proxies");
+        } else {
+            System.out.println("FAILED TO started all proxies");
+        }
     }
 
     /**
