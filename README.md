@@ -2,6 +2,36 @@
 
 server for URL mapping to entities
 
+## Installation
+
+There is an installation script `install.sh` that installs the server.  
+It uses variables set in `installConfig.sh` to copy the server config and create necessary directories. Change this file to match your needs.  
+
+The next step is to create a configuration file for the server.
+It is expected to be `config.txt` and is not present by default.
+There is a sample config `sample-config.txt` you can use.
+
+    cp sample-config.txt config.txt
+
+Change this file to match your needs, too, and finally install the URL mapping server with
+
+    run ./install.sh
+
+### Default paths
+* database directory: /usr/share/metalcon/urlMappingServer/db
+* config path: /usr/share/metalcon/urlMappingServer/config.txt
+
+## Run
+
+You can simply call
+
+    ./run.sh
+
+to start the server. It then expects the configuration file to be placed at it's default path.  
+If this is not the case you can pass the configuration file path as an argument.
+
+    ./run.sh /anywhere/myconfig.file
+
 ## Benchmark
 
 [The benchmark](src/test/java/de/metalcon/urlmappingserver/LocalBenchmark.java) was executed with 2GB memory for the Java VM.
