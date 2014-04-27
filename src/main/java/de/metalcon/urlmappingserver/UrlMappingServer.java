@@ -60,15 +60,14 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
             configPath = args[0];
         } else {
             configPath = DEFAULT_CONFIG_PATH;
-            System.out
-                    .println("[INFO] using default configuration file path \""
-                            + DEFAULT_CONFIG_PATH + "\"");
+            LOG.info("using default configuration file path \""
+                    + DEFAULT_CONFIG_PATH + "\"");
         }
 
         // load server configuration
         UrlMappingServerConfig config = new UrlMappingServerConfig(configPath);
         if (!config.isLoaded()) {
-            System.err.println("failed to load configuration");
+            LOG.error("failed to load configuration");
             return;
         }
 
@@ -95,15 +94,14 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
         // initialize request handler
         PersistentStorage persistentStorage = new LevelDbStorage(levelDb);
         mappingManager = new EntityUrlMappingManager(persistentStorage);
-        System.out.println("start request handler");
         RequestHandler<UrlMappingRequest, Response> requestHandler =
                 new UrlMappingRequestHandler(mappingManager);
 
         // start ZMQ communication
         if (start(requestHandler)) {
-            System.out.println("started all proxies");
+            LOG.info("URL mapping server online");
         } else {
-            System.out.println("FAILED TO started all proxies");
+            LOG.error("failed to start URL mapping server");
         }
     }
 
@@ -126,14 +124,15 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
      */
     @Override
     public void close() {
+        LOG.info("shutting down...");
         if (levelDb != null) {
             try {
                 levelDb.close();
                 levelDb = null;
-                System.out.println("database shutted down");
+                LOG.info("database shutted down");
             } catch (IOException e) {
                 e.printStackTrace();
-                System.err.println("failed to close database");
+                LOG.error("failed to close database");
             }
         }
         super.close();
@@ -143,7 +142,7 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
         Options options = new Options();
         options.createIfMissing(true);
         try {
-            System.out.println("loading database from path: " + databasePath);
+            LOG.info("loading database from path: " + databasePath);
             return JniDBFactory.factory.open(new File(databasePath), options);
         } catch (IOException e) {
             e.printStackTrace();
