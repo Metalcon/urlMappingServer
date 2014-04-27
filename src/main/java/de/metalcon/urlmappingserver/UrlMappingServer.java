@@ -124,7 +124,6 @@ public class UrlMappingServer extends Server<UrlMappingRequest> {
      */
     @Override
     public void close() {
-        LOG.info("shutting down...");
         if (levelDb != null) {
             try {
                 levelDb.close();
