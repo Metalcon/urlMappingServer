@@ -35,7 +35,7 @@ echo "set directory rights to \"$SERVER_DIR_RIGHTS\""
 
 if [ "$SERVER_DIR" ]
 then
-        rm -rf /$SERVER_DIR/*
+        sudo rm -rf /$SERVER_DIR/*
         echo "server directory cleaned"
 fi
 
